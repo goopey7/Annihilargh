@@ -175,6 +175,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Annihilargh.cpp" />
+    <ClCompile Include="Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Window.h" />
+    <ClInclude Include="WindowsWithoutTheCrap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
