@@ -7,6 +7,15 @@ LRESULT CALLBACK WndProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_CLOSE:
 			PostQuitMessage(1);
 			break;
+		case WM_KEYDOWN:
+			if(wParam=='F')
+				SetWindowText(hWnd,"Respects have been paid");
+			break;
+		case WM_KEYUP:
+			if(wParam=='F')
+			{
+				SetWindowText(hWnd,"Press F to pay respects");
+			}
 	}
 	return DefWindowProc(hWnd,msg,wParam,lParam);
 }
