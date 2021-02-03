@@ -1,5 +1,16 @@
 #include <Windows.h>
 
+LRESULT CALLBACK WndProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch(msg)
+	{
+		case WM_CLOSE:
+			PostQuitMessage(1);
+			break;
+	}
+	return DefWindowProc(hWnd,msg,wParam,lParam);
+}
+
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -10,7 +21,7 @@ int CALLBACK WinMain(
 	WNDCLASSEX wc = {0};
 	wc.cbSize = sizeof(wc);
 	wc.style = CS_OWNDC;
-	wc.lpfnWndProc = DefWindowProc;
+	wc.lpfnWndProc = WndProcedure;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = hInstance;
@@ -20,12 +31,23 @@ int CALLBACK WinMain(
 	wc.lpszMenuName = nullptr;
 	wc.lpszClassName = pClassName;
 	RegisterClassEx(&wc);
-	HWND hwnd = CreateWindowExA(
+	HWND hWnd = CreateWindowExA(
 		0, pClassName, "Annihilargh",
 		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
 		200, 200, 640, 480,
 		nullptr, nullptr, hInstance, nullptr
 	);
-	ShowWindow(hwnd, SW_SHOW);
-	while (true);
+	ShowWindow(hWnd, SW_SHOW);
+
+	// message loop
+	MSG msg;
+	BOOL result;
+	while(result=GetMessage(&msg,nullptr,0,0)>0)
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+	if(result==-1)
+		return -1;
+	return msg.wParam;
 }
