@@ -1,0 +1,13 @@
+﻿Wednesday (2/3/21)
+After watching quite a few C++ and WINAPI tutorials. I finally decided to start writing some code in class today.
+I have learned/watched videos that should cover pretty much everything I need to implement before getting into DirectX.
+I have also learned of some things that DirectX does use such as COM objects and how to use interfaces with them.
+
+Anyways, did a ton of stuff today. I created a really cool wrapper class for creating Windows which nicely encapsulates
+all of the nasty WINAPI stuff. I also have implemented a very verbose way to throw exceptions using the WINAPI 
+and I have implemented some error checking in my code. I'm not going to error check the stuff that happens before the 
+creation of a window because I've never had it fail, and it would be too much time and effort.
+
+Tomorrow or Friday I plan to create a Keyboard class which will act as an interface between the Window class and the 
+game engine. The message handler in the Window class deals with input, so we need to give that to the keyboard and
+then the game will get key events from the keyboard. Nice encapsulation away from the WINAPI.
