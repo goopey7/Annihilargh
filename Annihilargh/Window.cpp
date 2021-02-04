@@ -1,5 +1,5 @@
 ﻿#include "Window.h"
-
+#include "resource.h"
 #include <sstream>
 
 // ************WindowClass************
@@ -15,12 +15,12 @@ Window::WindowClass::WindowClass() noexcept
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = GetInstance();
-	wc.hIcon = nullptr;
+	wc.hIcon = static_cast<HICON>(LoadImage(hInst,MAKEINTRESOURCE(IDI_ICON1),IMAGE_ICON,0,0,0));
 	wc.hCursor = nullptr;
 	wc.hbrBackground = nullptr;
 	wc.lpszMenuName = nullptr;
 	wc.lpszClassName = GetName();
-	wc.hIconSm=nullptr;
+	wc.hIconSm=wc.hIcon;
 	RegisterClassEx(&wc);
 }
 
@@ -41,7 +41,7 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 
 //************Window************
 // constructor creates and shows the window
-Window::Window(int width, int height, const char* name) noexcept
+Window::Window(int width, int height, const char* name)
 {
 	// the specified height and width should be the client width and height, not the window width and height
 	// 
@@ -51,13 +51,19 @@ Window::Window(int width, int height, const char* name) noexcept
 	wr.top = 100;
 	wr.bottom=height+wr.top;
 	// Calculates Window Size based on desired client region
-	AdjustWindowRect(&wr,WS_CAPTION|WS_MINIMIZEBOX|WS_SYSMENU,FALSE);
-
+	if(FAILED(AdjustWindowRect(&wr,WS_CAPTION|WS_MINIMIZEBOX|WS_SYSMENU,FALSE)))
+	{
+		throw WND_ANOMALY_LAST_ERROR();
+	}
+	
 	hWnd = CreateWindow(WindowClass::GetName(),name,
         WS_CAPTION|WS_MINIMIZEBOX|WS_SYSMENU,
         CW_USEDEFAULT,CW_USEDEFAULT,wr.right-wr.left,wr.bottom-wr.top,
         nullptr,nullptr,WindowClass::GetInstance(),this);
 
+	if(hWnd == nullptr)
+		throw WND_ANOMALY_LAST_ERROR();
+	
 	ShowWindow(hWnd,SW_SHOWDEFAULT);
 }
 
@@ -132,3 +138,53 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 	return DefWindowProc(hWnd,msg,wParam,lParam);
 }
+
+// Window Anomaly
+Window::Anomaly::Anomaly(int line, const char* file, HRESULT hr) noexcept
+: BaseAnomaly(line,file),hr(hr)
+{
+}
+
+const char* Window::Anomaly::what() const noexcept
+{
+	std::ostringstream oss;
+	oss << GetType() << std::endl
+	<< "ERROR CODE: " << GetErrorCode() << std::endl
+	<< "DESCRIPTION: " << GetErrorString() << std::endl
+	<< GetOriginString();
+	whatBuffer=oss.str();
+	return  whatBuffer.c_str();
+}
+
+
+const char* Window::Anomaly::GetType() const noexcept
+{
+	return "Window Anomaly";
+}
+
+std::string Window::Anomaly::TranslateErrorCode(HRESULT hr) noexcept
+{
+	char* pMsgBuf = nullptr;
+	// basically takes hresult (error code) and gives us a description
+	DWORD nMsgLen = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER|
+		FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS,
+		nullptr,hr,MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT),
+		reinterpret_cast<LPSTR>(&pMsgBuf),0,nullptr);
+	if(nMsgLen==0) // if length is 0 something went wrong
+		return "Unidentified Anomaly";
+	// otherwise we allocate it into a string and then free the buffer
+	std::string errorString = pMsgBuf;
+	LocalFree(pMsgBuf);
+	return errorString;
+}
+
+HRESULT Window::Anomaly::GetErrorCode() const noexcept
+{
+	return hr;
+}
+
+std::string Window::Anomaly::GetErrorString() const noexcept
+{
+	return TranslateErrorCode(hr);
+}
+
