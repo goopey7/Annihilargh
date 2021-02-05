@@ -20,6 +20,10 @@ int CALLBACK WinMain(
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			if(window.keyboard.KeyIsPressed(VK_MENU))
+			{
+				MessageBox(nullptr,"AAAAAAAAAAAHHHHHHHHHH","YOU HIT THE ALT KEY",MB_OK|MB_ICONINFORMATION);
+			}
 		}
 		if(result==-1)
 			return -1;
@@ -31,11 +35,11 @@ int CALLBACK WinMain(
 	}
 	catch(const std::exception &e)
 	{
-		MessageBox(nullptr,e.what(),"Standard Exception", MB_OK|MB_ICONEXCLAMATION);
+		MessageBox(nullptr,e.what(),"Standard Exception", MB_OK|MB_ICONERROR);
 	}
 	catch (...)
 	{
-		MessageBox(nullptr,"No idea lol","Unknown Anomaly", MB_OK|MB_ICONEXCLAMATION);
+		MessageBox(nullptr,"No idea lol","Unknown Anomaly", MB_OK|MB_ICONERROR);
 	}
 	return -1;
 }

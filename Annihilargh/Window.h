@@ -1,22 +1,10 @@
 ﻿#pragma once
 #include "WindowsWithoutTheCrap.h"
 #include "BaseAnomaly.h"
+#include "Keyboard.h"
 
 class Window
 {
-public:
-class Anomaly : public BaseAnomaly
-{
-public:
-	Anomaly(int line, const char* file, HRESULT hr) noexcept;
-	const char* what() const noexcept override;
-	virtual const char* GetType() const noexcept override;
-	static std::string TranslateErrorCode(HRESULT hr) noexcept;
-	HRESULT GetErrorCode() const noexcept;
-	std::string GetErrorString() const noexcept;
-private:
-	HRESULT hr; // windows error code
-};
 private:
 	// we create a singleton because we are only going to need one window
 	// hence all the static stuff
@@ -46,6 +34,21 @@ private:
 	int width;
 	int height;
 	HWND hWnd;
+public:
+	class Anomaly : public BaseAnomaly
+	{
+	public:
+		Anomaly(int line, const char* file, HRESULT hr) noexcept;
+		const char* what() const noexcept override;
+		virtual const char* GetType() const noexcept override;
+		static std::string TranslateErrorCode(HRESULT hr) noexcept;
+		HRESULT GetErrorCode() const noexcept;
+		std::string GetErrorString() const noexcept;
+	private:
+		HRESULT hr; // windows error code
+	};
+public:
+	Keyboard keyboard;
 };
 
 // cheeky macro for getting the line and file from the hresult

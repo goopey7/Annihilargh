@@ -176,10 +176,12 @@
   <ItemGroup>
     <ClCompile Include="Annihilargh.cpp" />
     <ClCompile Include="BaseAnomaly.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseAnomaly.h" />
+    <ClInclude Include="Keyboard.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsWithoutTheCrap.h" />
@@ -189,6 +191,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\Downloads\Annihilargh.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="devlog.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

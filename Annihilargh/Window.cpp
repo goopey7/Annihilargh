@@ -105,35 +105,27 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch(msg)
 	{
-	case WM_CLOSE:
-		PostQuitMessage(0);
-		// we return 0 here instead of going to the defaultWindowProc because we only want to call the destructor once!
-		// we already have a destructor that calls destroy window, so no need to have the windowproc call it.
-		return 0; 
-	case WM_KEYDOWN:
-		if(wParam=='F')
-			SetWindowText(hWnd,"Respects have been paid");
-		break;
-	case WM_KEYUP:
-		if(wParam=='F')
-		{
-			SetWindowText(hWnd,"Press F to pay respects");
-		}
-		break;
-	case WM_CHAR:
-		{
-			static std::string title;
-			title.push_back((char)wParam);
-			SetWindowText(hWnd,title.c_str());
-		}
-		break;
-	case WM_LBUTTONDOWN:
-		{
-			POINTS pt = MAKEPOINTS(lParam);
-			std::ostringstream oss;
-			oss << "(" << pt.x << "," << pt.y << ")";
-			SetWindowText(hWnd,oss.str().c_str());
-		}
+		case WM_CLOSE:
+			PostQuitMessage(0);
+			return 0;
+		// **** KEYBOARD MESSAGES ****
+		case WM_KEYDOWN:
+		case WM_SYSKEYDOWN: // we also want to handle syskeys like ALT
+			// filter auto repeat key events. Bit 30 is auto repeat
+			if(keyboard.IsAutoRepeat()||!(lParam & 0x40000000))
+				keyboard.OnKeyPressed(static_cast<unsigned char>(wParam));
+			break;
+		case WM_KEYUP:
+		case WM_SYSKEYUP:
+			keyboard.OnKeyReleased(static_cast<unsigned char>(wParam));
+			break;
+		case WM_CHAR:
+			keyboard.OnChar(static_cast<unsigned char>(wParam));
+			break;
+		// **** ----------------- ****
+		case WM_KILLFOCUS:
+			keyboard.ClearState(); // reset states to released when we loose focus
+		// so when a messagebox pops up all keys are released
 		break;
 	}
 	return DefWindowProc(hWnd,msg,wParam,lParam);
