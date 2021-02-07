@@ -147,6 +147,10 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				// since this means that the user is dragging something and their mouse has left the client region
 				// so we don't want to loose whatever is being dragged, we only want to stop dragging when the user
 				// has released a mouse button
+				/*TODO keep track of the buttons that were being pressed until we return to the client region
+				 * So if I left the region holding middle mouse, but then hold left mb and released middle,
+				 * That stop capture..... maybe idk depends. Maybe I make this a setting in the engine.
+				 */
 				if(mouse.LeftIsPressed()||mouse.RightIsPressed()||mouse.MiddleIsPressed())
 				{
 					mouse.OnMouseMove(p.x,p.y);

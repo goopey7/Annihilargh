@@ -11,3 +11,13 @@ creation of a window because I've never had it fail, and it would be too much ti
 Tomorrow or Friday I plan to create a Keyboard class which will act as an interface between the Window class and the 
 game engine. The message handler in the Window class deals with input, so we need to give that to the keyboard and
 then the game will get key events from the keyboard. Nice encapsulation away from the WINAPI.
+
+Friday (2/5/21)
+Today I created the keyboard class which acts as an interface between the Window class and the rest of the engine.
+Next we have to deal with the mouse.
+
+Saturday (2/6/21)
+Got a nice mouse class similar to the keyboard class. Also got mouse capturing working. So, if the user drags off 
+the client region and doesn't release a mouse button, move events still occur until the mouse buttons are released.
+Also dealt with wheel delta. So now all mice are treated equally. So one mouse doesn't scroll faster or slower
+than the other.
