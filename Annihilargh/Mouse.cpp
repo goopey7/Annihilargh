@@ -1,4 +1,5 @@
 ﻿#include "Mouse.h"
+#include "WindowsWithoutTheCrap.h"
 
 std::pair<int, int> Mouse::GetPos() const noexcept
 {
@@ -127,6 +128,25 @@ void Mouse::OnWheelDown(int x, int y) noexcept
 {
 	buffer.push(Event(Event::Type::WheelDown,*this));
 	TrimBuffer();
+}
+
+void Mouse::OnWheelDelta(int x, int y, int delta) noexcept
+{
+	// to support various mice including the ones with free scrolling with no notches
+	// or ones with different notch gaps, we make sure that the mice are treated equally
+	// and get to 120 (WHEEL_DELTA) fairly. As opposed to just checking to see if wheel delta
+	// is positive or negative for up or down.
+	wheelDeltaAccumulator+=delta;
+	while(wheelDeltaAccumulator >= WHEEL_DELTA)
+	{
+		wheelDeltaAccumulator -= WHEEL_DELTA;
+		OnWheelUp(x,y);
+	}
+	while(wheelDeltaAccumulator <= -WHEEL_DELTA)
+	{
+		wheelDeltaAccumulator+=WHEEL_DELTA;
+		OnWheelDown(x,y);
+	}
 }
 
 void Mouse::TrimBuffer() noexcept

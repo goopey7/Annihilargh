@@ -12,47 +12,54 @@ int CALLBACK WinMain(
 {
 	try
 	{
-		Window window(640,480,"Big good");
+		Window window(640, 480, "Big good");
 		// message loop
 		MSG msg;
 		BOOL result;
-		while(result=GetMessage(&msg,nullptr,0,0)>0)
+		int i = 0;
+		while (result = GetMessage(&msg, nullptr, 0, 0) > 0)
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 			while (!window.mouse.IsEmpty())
 			{
 				const auto event = window.mouse.Read();
-				switch(event.GetType())
+				switch (event.GetType())
 				{
-					case Mouse::Event::Type::Leave:
-						window.SetTitle("Outside Client Region!");
-						break;
-					case Mouse::Event::Type::Move:
-						{
-							std::ostringstream oss;
-							oss << "Mouse Pos ("<< window.mouse.GetXPos() << "," << window.mouse.GetYPos() << ")";
-							window.SetTitle(oss.str());
-						}
+				case Mouse::Event::Type::WheelUp:
+					i++;
+					{
+						std::ostringstream oss;
+						oss << "Up: " << i;
+						window.SetTitle(oss.str());
+					}
+					break;
+				case Mouse::Event::Type::WheelDown:
+					i--;
+					{
+						std::ostringstream oss;
+						oss << "Down: " << i;
+						window.SetTitle(oss.str());
+					}
 					break;
 				}
 			}
 		}
-		if(result==-1)
+		if (result == -1)
 			return -1;
 		return msg.wParam;
 	}
-	catch(const BaseAnomaly &a)
+	catch (const BaseAnomaly& a)
 	{
-		MessageBox(nullptr,a.what(),a.GetType(),MB_OK|MB_ICONERROR);
+		MessageBox(nullptr, a.what(), a.GetType(),MB_OK | MB_ICONERROR);
 	}
-	catch(const std::exception &e)
+	catch (const std::exception& e)
 	{
-		MessageBox(nullptr,e.what(),"Standard Exception", MB_OK|MB_ICONERROR);
+		MessageBox(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONERROR);
 	}
 	catch (...)
 	{
-		MessageBox(nullptr,"No idea lol","Unknown Anomaly", MB_OK|MB_ICONERROR);
+		MessageBox(nullptr, "No idea lol", "Unknown Anomaly", MB_OK | MB_ICONERROR);
 	}
 	return -1;
 }
