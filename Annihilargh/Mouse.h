@@ -21,6 +21,8 @@ public:
 			MiddleRelease,
 			WheelUp,
 			WheelDown,
+			Enter,
+			Leave,
             Invalid
         };
 	private:
@@ -95,6 +97,7 @@ public:
 	std::pair<int,int> GetPos() const noexcept;
 	int GetXPos() const noexcept;
 	int GetYPos() const noexcept;
+	bool IsInWindow() const noexcept;
 	bool LeftIsPressed() const noexcept;
 	bool RightIsPressed() const noexcept;
 	bool MiddleIsPressed() const noexcept;
@@ -107,6 +110,8 @@ public:
 private:
 	// these functions will register our events and get called by Window in the message handler
 	void OnMouseMove(int x, int y) noexcept;
+	void OnMouseLeave() noexcept;
+	void OnMouseEnter() noexcept;
 	void OnLeftPressed(int x, int y) noexcept;
 	void OnLeftReleased(int x, int y) noexcept;
 	void OnRightPressed(int x, int y) noexcept;
@@ -122,5 +127,6 @@ private:
 	bool bLeftIsPressed = false;
 	bool bRightIsPressed = false;
 	bool bMiddleIsPressed = false;
+	bool bIsInWindow = false;
 	std::queue<Event> buffer;
 };

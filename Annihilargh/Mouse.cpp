@@ -15,6 +15,11 @@ int Mouse::GetYPos() const noexcept
 	return y;
 }
 
+bool Mouse::IsInWindow() const noexcept
+{
+	return bIsInWindow;
+}
+
 bool Mouse::LeftIsPressed() const noexcept
 {
 	return bLeftIsPressed;
@@ -56,10 +61,22 @@ void Mouse::OnMouseMove(int x, int y) noexcept
 	TrimBuffer();
 }
 
+void Mouse::OnMouseLeave() noexcept
+{
+	bIsInWindow=false;
+	buffer.push(Event(Event::Type::Leave,*this));
+	TrimBuffer();
+}
+
+void Mouse::OnMouseEnter() noexcept
+{
+	bIsInWindow=true;
+	buffer.push(Event(Event::Type::Enter,*this));
+	TrimBuffer();
+}
+
 void Mouse::OnLeftPressed(int x, int y) noexcept
 {
-	this->x=x;
-	this->y=y;
 	bLeftIsPressed=true;
 	buffer.push(Event(Event::Type::LeftPress,*this));
 	TrimBuffer();
@@ -67,8 +84,6 @@ void Mouse::OnLeftPressed(int x, int y) noexcept
 
 void Mouse::OnLeftReleased(int x, int y) noexcept
 {
-	this->x=x;
-	this->y=y;
 	bLeftIsPressed=false;
 	buffer.push(Event(Event::Type::LeftRelease,*this));
 	TrimBuffer();
@@ -76,8 +91,6 @@ void Mouse::OnLeftReleased(int x, int y) noexcept
 
 void Mouse::OnRightPressed(int x, int y) noexcept
 {
-	this->x=x;
-	this->y=y;
 	bRightIsPressed=true;
 	buffer.push(Event(Event::Type::RightPress,*this));
 	TrimBuffer();
@@ -85,8 +98,6 @@ void Mouse::OnRightPressed(int x, int y) noexcept
 
 void Mouse::OnRightReleased(int x, int y) noexcept
 {
-	this->x=x;
-	this->y=y;
 	bRightIsPressed=false;
 	buffer.push(Event(Event::Type::RightRelease,*this));
 	TrimBuffer();
@@ -94,8 +105,6 @@ void Mouse::OnRightReleased(int x, int y) noexcept
 
 void Mouse::OnMiddlePressed(int x, int y) noexcept
 {
-	this->x=x;
-	this->y=y;
 	bMiddleIsPressed=true;
 	buffer.push(Event(Event::Type::MiddlePress,*this));
 	TrimBuffer();
@@ -103,8 +112,6 @@ void Mouse::OnMiddlePressed(int x, int y) noexcept
 
 void Mouse::OnMiddleReleased(int x, int y) noexcept
 {
-	this->x=x;
-	this->y=y;
 	bMiddleIsPressed=false;
 	buffer.push(Event(Event::Type::MiddleRelease,*this));
 	TrimBuffer();
@@ -112,16 +119,12 @@ void Mouse::OnMiddleReleased(int x, int y) noexcept
 
 void Mouse::OnWheelUp(int x, int y) noexcept
 {
-	this->x=x;
-	this->y=y;
 	buffer.push(Event(Event::Type::WheelUp,*this));
 	TrimBuffer();
 }
 
 void Mouse::OnWheelDown(int x, int y) noexcept
 {
-	this->x=x;
-	this->y=y;
 	buffer.push(Event(Event::Type::WheelDown,*this));
 	TrimBuffer();
 }

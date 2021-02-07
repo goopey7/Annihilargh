@@ -23,15 +23,18 @@ int CALLBACK WinMain(
 			while (!window.mouse.IsEmpty())
 			{
 				const auto event = window.mouse.Read();
-				if(event.IsMove())
+				switch(event.GetType())
 				{
-					std::ostringstream oss;
-					oss << "Mouse Pos: (" << event.GetXPos() << "," << event.GetYPos() << ")";
-					window.SetTitle(oss.str());
-				}
-				if(window.mouse.MiddleIsPressed())
-				{
-					MessageBox(nullptr,"MIDDLE MOUSE IS PRESSED", "AAAAAAAHHHHHHHHH",MB_OK|MB_ICONINFORMATION);
+					case Mouse::Event::Type::Leave:
+						window.SetTitle("Outside Client Region!");
+						break;
+					case Mouse::Event::Type::Move:
+						{
+							std::ostringstream oss;
+							oss << "Mouse Pos ("<< window.mouse.GetXPos() << "," << window.mouse.GetYPos() << ")";
+							window.SetTitle(oss.str());
+						}
+					break;
 				}
 			}
 		}

@@ -42,6 +42,7 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 //************Window************
 // constructor creates and shows the window
 Window::Window(int width, int height, const char* name)
+	: width(width),height(height)
 {
 	// the specified height and width should be the client width and height, not the window width and height
 	// 
@@ -127,7 +128,35 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		{
 			const POINTS p = MAKEPOINTS(lParam);
-			mouse.OnMouseMove(p.x, p.y);
+			
+			// check if we are in the client region
+			if(p.x >=0 && p.y>=0 && p.x < width && p.y < height)
+			{
+				mouse.OnMouseMove(p.x, p.y);
+				
+				// if we previously were not in the client region
+				if(!mouse.IsInWindow())
+				{
+					SetCapture(hWnd);
+					mouse.OnMouseEnter();
+				}
+			}
+			else // not in the client region
+			{
+				// if any of these buttons are down we keep tracking the mouse
+				// since this means that the user is dragging something and their mouse has left the client region
+				// so we don't want to loose whatever is being dragged, we only want to stop dragging when the user
+				// has released a mouse button
+				if(mouse.LeftIsPressed()||mouse.RightIsPressed()||mouse.MiddleIsPressed())
+				{
+					mouse.OnMouseMove(p.x,p.y);
+				}
+				else // released button, so we don't care about the mouse anymore
+				{
+					ReleaseCapture();
+					mouse.OnMouseLeave();
+				}
+			}
 		}
 		break;
 	case WM_LBUTTONDOWN:
