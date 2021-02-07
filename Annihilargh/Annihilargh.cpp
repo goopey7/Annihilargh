@@ -20,9 +20,19 @@ int CALLBACK WinMain(
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-			if(window.keyboard.KeyIsPressed(VK_MENU))
+			while (!window.mouse.IsEmpty())
 			{
-				MessageBox(nullptr,"AAAAAAAAAAAHHHHHHHHHH","YOU HIT THE ALT KEY",MB_OK|MB_ICONINFORMATION);
+				const auto event = window.mouse.Read();
+				if(event.IsMove())
+				{
+					std::ostringstream oss;
+					oss << "Mouse Pos: (" << event.GetXPos() << "," << event.GetYPos() << ")";
+					window.SetTitle(oss.str());
+				}
+				if(window.mouse.MiddleIsPressed())
+				{
+					MessageBox(nullptr,"MIDDLE MOUSE IS PRESSED", "AAAAAAAHHHHHHHHH",MB_OK|MB_ICONINFORMATION);
+				}
 			}
 		}
 		if(result==-1)

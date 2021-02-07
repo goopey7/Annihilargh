@@ -98,6 +98,3 @@ void Keyboard::ClearState() noexcept
 {
 	keyStates.reset();
 }
-
-
-

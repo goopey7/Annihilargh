@@ -7,7 +7,8 @@ class Keyboard
 	// the keyboard befriends Window because we want Window to be able to call our private event functions
 	// ex. OnKeyPressed
 	// this does mean that everything private is exposed between Window and Keyboard, but that should be fine.
-	// Keyboard is an extension of Window anyways
+	// Keyboard can be seen as an extension of Window anyways
+	// Just good design not to have Window doing everything
 	friend class Window;
 public:
 	class Event
@@ -43,6 +44,10 @@ public:
 		bool IsValid() const noexcept
 		{
 			return type != Type::Invalid;
+		}
+		Type GetType() const noexcept
+		{
+			return type;
 		}
 	};
 	Keyboard() = default;
@@ -82,7 +87,6 @@ private:
 	std::bitset<nKeys> keyStates;
 	std::queue<Event> keyBuffer;
 	std::queue<char> charBuffer;
-	
 };
 
 template <typename T> // templated so it works on both char queues and event queues

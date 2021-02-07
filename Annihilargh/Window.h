@@ -2,6 +2,13 @@
 #include "WindowsWithoutTheCrap.h"
 #include "BaseAnomaly.h"
 #include "Keyboard.h"
+#include "Mouse.h"
+
+// cheeky macro for getting the line and file from the hresult
+#define WND_ANOMALY(hr) Window::Anomaly(__LINE__,__FILE__,hr)
+
+// some windows functions don't return an hresult, so here's another version that gets the last error
+#define WND_ANOMALY_LAST_ERROR() Window::Anomaly(__LINE__,__FILE__,GetLastError())
 
 class Window
 {
@@ -23,10 +30,17 @@ private:
 		HINSTANCE hInst;
 	};
 public:
-	Window(int width,int height, const char* name);
+	Window(int width,int height, const char* name)
+	:width(width),height(height)
+	{}
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
+	void SetTitle(const std::string &title)
+	{
+		if(!SetWindowText(hWnd,title.c_str()))
+			throw WND_ANOMALY_LAST_ERROR();
+	}
 private:
 	static LRESULT WINAPI HandleMessageSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT WINAPI HandleMessageAfterCreation(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
@@ -49,10 +63,5 @@ public:
 	};
 public:
 	Keyboard keyboard;
+	Mouse mouse;
 };
-
-// cheeky macro for getting the line and file from the hresult
-#define WND_ANOMALY(hr) Window::Anomaly(__LINE__,__FILE__,hr)
-
-// some windows functions don't return an hresult, so here's another version that gets the last error
-#define WND_ANOMALY_LAST_ERROR() Window::Anomaly(__LINE__,__FILE__,GetLastError())
