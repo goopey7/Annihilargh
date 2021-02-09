@@ -21,3 +21,14 @@ Got a nice mouse class similar to the keyboard class. Also got mouse capturing w
 the client region and doesn't release a mouse button, move events still occur until the mouse buttons are released.
 Also dealt with wheel delta. So now all mice are treated equally. So one mouse doesn't scroll faster or slower
 than the other.
+
+Tuesday (2/9/21)
+Added a class to deal with game logic.
+Also, moved the message processing in Annihilargh.cpp over to the Window class
+
+Currently learning a bit about COM (Component Object Model) which DirectX utilizes.
+Fortunately Direct3D will do a lot of this for me, so I don't have to become an expert in COM.
+Basically COM gives us binary compatibility. Provides us a nice stable interface.
+COM is language agnostic. It gives compatibility between different programming languages as well since
+it is binary. Has it's own way of resource allocation since it is language independent.
+Every COM object has a unique ID. COM objects are interacted with using an interface.

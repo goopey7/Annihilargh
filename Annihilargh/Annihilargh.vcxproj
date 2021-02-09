@@ -198,6 +198,7 @@
     <Image Include="..\..\..\Downloads\Annihilargh.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Annihilargh.ico" />
     <Content Include="devlog.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
