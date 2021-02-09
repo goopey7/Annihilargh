@@ -1,6 +1,8 @@
 #include <string>
 #include <sstream>
 
+
+#include "Game.h"
 #include "Window.h"
 #include "WindowsWithoutTheCrap.h"
 
@@ -12,42 +14,7 @@ int CALLBACK WinMain(
 {
 	try
 	{
-		Window window(640, 480, "Big good");
-		// message loop
-		MSG msg;
-		BOOL result;
-		int i = 0;
-		while (result = GetMessage(&msg, nullptr, 0, 0) > 0)
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			while (!window.mouse.IsEmpty())
-			{
-				const auto event = window.mouse.Read();
-				switch (event.GetType())
-				{
-				case Mouse::Event::Type::WheelUp:
-					i++;
-					{
-						std::ostringstream oss;
-						oss << "Up: " << i;
-						window.SetTitle(oss.str());
-					}
-					break;
-				case Mouse::Event::Type::WheelDown:
-					i--;
-					{
-						std::ostringstream oss;
-						oss << "Down: " << i;
-						window.SetTitle(oss.str());
-					}
-					break;
-				}
-			}
-		}
-		if (result == -1)
-			return -1;
-		return msg.wParam;
+		return Game{}.BeginPlay();
 	}
 	catch (const BaseAnomaly& a)
 	{

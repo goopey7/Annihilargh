@@ -3,6 +3,7 @@
 #include "BaseAnomaly.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include <optional>
 
 // cheeky macro for getting the line and file from the hresult
 #define WND_ANOMALY(hr) Window::Anomaly(__LINE__,__FILE__,hr)
@@ -39,6 +40,10 @@ public:
 		if(!SetWindowText(hWnd,title.c_str()))
 			throw WND_ANOMALY_LAST_ERROR();
 	}
+	// static because it should process messages for ALL windows
+	// using optional from C++17. Allows us to either return an int or an empty optional, so we'll know if something
+	// goes wrong and what it is.
+	static std::optional<int> ProcessMessages();
 private:
 	static LRESULT WINAPI HandleMessageSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT WINAPI HandleMessageAfterCreation(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;

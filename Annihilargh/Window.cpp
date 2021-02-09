@@ -73,6 +73,25 @@ Window::~Window()
 	DestroyWindow(hWnd);
 }
 
+std::optional<int> Window::ProcessMessages()
+{
+	MSG msg;
+	// while there are messages, remove them and process them
+	// but if there aren't any messages, keep going. We don't want the game to freeze because
+	// there aren't any messages
+	while(PeekMessage(&msg,nullptr,0,0,PM_REMOVE))
+	{
+		// check for quit since PeekMessage returns whether or not it has a message, not if it is a quit.
+		if(msg.message==WM_QUIT)
+			return msg.wParam; // arg to PostQuitMessage is in wParam, so we return it.
+
+		TranslateMessage(&msg); // Posts WM_CHAR messages from key messages
+		DispatchMessage(&msg);
+	}
+	// return an empty optional if not quitting the game.
+	return{};
+}
+
 // messages come in here
 LRESULT WINAPI Window::HandleMessageSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
