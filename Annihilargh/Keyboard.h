@@ -20,38 +20,48 @@ public:
 			Release,
 			Invalid
 		};
+
 	private:
 		Type type;
 		unsigned char code;
 	public:
-		Event() noexcept : type(Type::Invalid),code(0u)
-		{}
+		Event() noexcept : type(Type::Invalid), code(0u)
+		{
+		}
+
 		Event(Type type, unsigned char code) noexcept
-		: type(type),code(code)
-		{}
+			: type(type), code(code)
+		{
+		}
+
 		bool IsPress() const noexcept
 		{
 			return type == Type::Press;
 		}
+
 		bool IsRelease() const noexcept
 		{
 			return type == Type::Release;
 		}
+
 		unsigned char GetCode() const noexcept
 		{
 			return code;
 		}
+
 		bool IsValid() const noexcept
 		{
 			return type != Type::Invalid;
 		}
+
 		Type GetType() const noexcept
 		{
 			return type;
 		}
 	};
+
 	Keyboard() = default;
-	Keyboard(const Keyboard&)=delete;
+	Keyboard(const Keyboard&) = delete;
 	Keyboard& operator=(const Keyboard&) = delete;
 
 	// KEY EVENTS
@@ -65,7 +75,7 @@ public:
 	char ReadChar() noexcept;
 	bool CharIsEmpty() const noexcept;
 	void ClearChar() noexcept;
-	
+
 	void Clear() noexcept; // Flushes both Key and Char
 
 	// AUTOREPEAT
@@ -79,10 +89,10 @@ private:
 	void OnChar(char character) noexcept;
 	void ClearState() noexcept; // clear the bitset that holds key states
 
-	template<typename T>
+	template <typename T>
 	static void TrimBuffer(std::queue<T>& buffer) noexcept;
 	static constexpr unsigned int nKeys = 256u; // there are 256 virtual keycodes
-	static constexpr unsigned int bufferSize = 16u; 
+	static constexpr unsigned int bufferSize = 16u;
 	bool bIsAutoRepeat = false;
 	std::bitset<nKeys> keyStates;
 	std::queue<Event> keyBuffer;
@@ -94,6 +104,6 @@ void Keyboard::TrimBuffer(std::queue<T>& buffer) noexcept
 {
 	// make sure our buffer doesn't exceed bufferSize by popping elements until
 	// our buffer is no more than our buffer size
-	while(buffer.size() > bufferSize)
+	while (buffer.size() > bufferSize)
 		buffer.pop();
 }

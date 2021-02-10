@@ -8,7 +8,7 @@ bool Keyboard::KeyIsPressed(unsigned char keyCode) const noexcept
 Keyboard::Event Keyboard::ReadKey() noexcept
 {
 	// if there are events in the queue
-	if(keyBuffer.size() > 0u)
+	if (keyBuffer.size() > 0u)
 	{
 		// get event in front of the queue
 		Event e = keyBuffer.front();
@@ -31,7 +31,7 @@ void Keyboard::ClearKey() noexcept
 char Keyboard::ReadChar() noexcept
 {
 	// if there are events in the queue
-	if(charBuffer.size() > 0u)
+	if (charBuffer.size() > 0u)
 	{
 		// get char in front of the queue
 		unsigned char charCode = charBuffer.front();
@@ -59,12 +59,12 @@ void Keyboard::Clear() noexcept
 
 void Keyboard::EnableAutoRepeat() noexcept
 {
-	bIsAutoRepeat=true;
+	bIsAutoRepeat = true;
 }
 
 void Keyboard::DisableAutoRepeat() noexcept
 {
-	bIsAutoRepeat=false;
+	bIsAutoRepeat = false;
 }
 
 bool Keyboard::IsAutoRepeat() noexcept
@@ -75,14 +75,14 @@ bool Keyboard::IsAutoRepeat() noexcept
 void Keyboard::OnKeyPressed(unsigned char keyCode) noexcept
 {
 	keyStates[keyCode] = true; // key is being pressed
-	keyBuffer.push(Event(Event::Type::Press,keyCode)); // construct Press event
+	keyBuffer.push(Event(Event::Type::Press, keyCode)); // construct Press event
 	TrimBuffer(keyBuffer); // just in case buffer gets too big
 }
 
 void Keyboard::OnKeyReleased(unsigned char keyCode) noexcept
 {
-	keyStates[keyCode]=false; // key is not being pressed
-	keyBuffer.push(Event(Event::Type::Release,keyCode)); // construct Release event
+	keyStates[keyCode] = false; // key is not being pressed
+	keyBuffer.push(Event(Event::Type::Release, keyCode)); // construct Release event
 	TrimBuffer(keyBuffer); // just in case buffer gets too big
 }
 

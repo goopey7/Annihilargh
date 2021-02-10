@@ -38,18 +38,18 @@ Graphics::Graphics(HWND hWnd)
 		&pDeviceContext);
 
 	// gain access to back buffer
-	ID3D11Resource* pBackBuffer=nullptr;
+	ID3D11Resource* pBackBuffer = nullptr;
 	// 0 gives us the index, our back buffer, the uuid of the interface, the ptr to fill.
-	pSwapChain->GetBuffer(0,__uuidof(ID3D11Resource),reinterpret_cast<void**>(&pBackBuffer));
-	
-	pDevice->CreateRenderTargetView(pBackBuffer,nullptr,&pTargetView);
+	pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
+
+	pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTargetView);
 
 	pBackBuffer->Release();
 }
 
 Graphics::~Graphics()
 {
-	if(pTargetView!=nullptr)
+	if (pTargetView != nullptr)
 		pTargetView->Release();
 	if (pDevice != nullptr)
 		pDeviceContext->Release();
@@ -61,5 +61,5 @@ Graphics::~Graphics()
 
 void Graphics::EndFrame()
 {
-	pSwapChain->Present(1u,0u);
+	pSwapChain->Present(1u, 0u);
 }

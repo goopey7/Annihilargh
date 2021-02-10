@@ -3,7 +3,7 @@
 
 std::pair<int, int> Mouse::GetPos() const noexcept
 {
-	return {x,y};
+	return {x, y};
 }
 
 int Mouse::GetXPos() const noexcept
@@ -39,7 +39,7 @@ bool Mouse::MiddleIsPressed() const noexcept
 Mouse::Event Mouse::Read() noexcept
 {
 	// if there are events in the queue
-	if(buffer.size() > 0u)
+	if (buffer.size() > 0u)
 	{
 		// get event in front of the queue
 		Event e = buffer.front();
@@ -56,77 +56,77 @@ void Mouse::Clear() noexcept
 
 void Mouse::OnMouseMove(int x, int y) noexcept
 {
-	this->x=x;
-	this->y=y;
-	buffer.push(Event(Event::Type::Move,*this));
+	this->x = x;
+	this->y = y;
+	buffer.push(Event(Event::Type::Move, *this));
 	TrimBuffer();
 }
 
 void Mouse::OnMouseLeave() noexcept
 {
-	bIsInWindow=false;
-	buffer.push(Event(Event::Type::Leave,*this));
+	bIsInWindow = false;
+	buffer.push(Event(Event::Type::Leave, *this));
 	TrimBuffer();
 }
 
 void Mouse::OnMouseEnter() noexcept
 {
-	bIsInWindow=true;
-	buffer.push(Event(Event::Type::Enter,*this));
+	bIsInWindow = true;
+	buffer.push(Event(Event::Type::Enter, *this));
 	TrimBuffer();
 }
 
 void Mouse::OnLeftPressed(int x, int y) noexcept
 {
-	bLeftIsPressed=true;
-	buffer.push(Event(Event::Type::LeftPress,*this));
+	bLeftIsPressed = true;
+	buffer.push(Event(Event::Type::LeftPress, *this));
 	TrimBuffer();
 }
 
 void Mouse::OnLeftReleased(int x, int y) noexcept
 {
-	bLeftIsPressed=false;
-	buffer.push(Event(Event::Type::LeftRelease,*this));
+	bLeftIsPressed = false;
+	buffer.push(Event(Event::Type::LeftRelease, *this));
 	TrimBuffer();
 }
 
 void Mouse::OnRightPressed(int x, int y) noexcept
 {
-	bRightIsPressed=true;
-	buffer.push(Event(Event::Type::RightPress,*this));
+	bRightIsPressed = true;
+	buffer.push(Event(Event::Type::RightPress, *this));
 	TrimBuffer();
 }
 
 void Mouse::OnRightReleased(int x, int y) noexcept
 {
-	bRightIsPressed=false;
-	buffer.push(Event(Event::Type::RightRelease,*this));
+	bRightIsPressed = false;
+	buffer.push(Event(Event::Type::RightRelease, *this));
 	TrimBuffer();
 }
 
 void Mouse::OnMiddlePressed(int x, int y) noexcept
 {
-	bMiddleIsPressed=true;
-	buffer.push(Event(Event::Type::MiddlePress,*this));
+	bMiddleIsPressed = true;
+	buffer.push(Event(Event::Type::MiddlePress, *this));
 	TrimBuffer();
 }
 
 void Mouse::OnMiddleReleased(int x, int y) noexcept
 {
-	bMiddleIsPressed=false;
-	buffer.push(Event(Event::Type::MiddleRelease,*this));
+	bMiddleIsPressed = false;
+	buffer.push(Event(Event::Type::MiddleRelease, *this));
 	TrimBuffer();
 }
 
 void Mouse::OnWheelUp(int x, int y) noexcept
 {
-	buffer.push(Event(Event::Type::WheelUp,*this));
+	buffer.push(Event(Event::Type::WheelUp, *this));
 	TrimBuffer();
 }
 
 void Mouse::OnWheelDown(int x, int y) noexcept
 {
-	buffer.push(Event(Event::Type::WheelDown,*this));
+	buffer.push(Event(Event::Type::WheelDown, *this));
 	TrimBuffer();
 }
 
@@ -136,16 +136,16 @@ void Mouse::OnWheelDelta(int x, int y, int delta) noexcept
 	// or ones with different notch gaps, we make sure that the mice are treated equally
 	// and get to 120 (WHEEL_DELTA) fairly. As opposed to just checking to see if wheel delta
 	// is positive or negative for up or down.
-	wheelDeltaAccumulator+=delta;
-	while(wheelDeltaAccumulator >= WHEEL_DELTA)
+	wheelDeltaAccumulator += delta;
+	while (wheelDeltaAccumulator >= WHEEL_DELTA)
 	{
 		wheelDeltaAccumulator -= WHEEL_DELTA;
-		OnWheelUp(x,y);
+		OnWheelUp(x, y);
 	}
-	while(wheelDeltaAccumulator <= -WHEEL_DELTA)
+	while (wheelDeltaAccumulator <= -WHEEL_DELTA)
 	{
-		wheelDeltaAccumulator+=WHEEL_DELTA;
-		OnWheelDown(x,y);
+		wheelDeltaAccumulator += WHEEL_DELTA;
+		OnWheelDown(x, y);
 	}
 }
 
@@ -153,6 +153,6 @@ void Mouse::TrimBuffer() noexcept
 {
 	// make sure our buffer doesn't exceed bufferSize by popping elements until
 	// our buffer is no more than our buffer size
-	while(buffer.size() > bufferSize)
+	while (buffer.size() > bufferSize)
 		buffer.pop();
 }

@@ -27,22 +27,25 @@ private:
 	private:
 		WindowClass() noexcept;
 		~WindowClass(); // when creating a destructor, it's could practice to deal with copy assignment.
-		WindowClass(const WindowClass& ) = delete;
-		WindowClass& operator=(const WindowClass&)=delete;
+		WindowClass(const WindowClass&) = delete;
+		WindowClass& operator=(const WindowClass&) = delete;
 		static constexpr const char* wndClassName = "Annihilargh";
 		static WindowClass wndClass;
 		HINSTANCE hInst;
 	};
+
 public:
-	Window(int width,int height, const char* name);
+	Window(int width, int height, const char* name);
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
-	void SetTitle(const std::string &title)
+
+	void SetTitle(const std::string& title)
 	{
-		if(!SetWindowText(hWnd,title.c_str()))
+		if (!SetWindowText(hWnd, title.c_str()))
 			throw WND_ANOMALY_LAST_ERROR();
 	}
+
 	// static because it should process messages for ALL windows
 	// using optional from C++17. Allows us to either return an int or an empty optional, so we'll know if something
 	// goes wrong and what it is.
@@ -55,7 +58,7 @@ private:
 	int width;
 	int height;
 	HWND hWnd;
-	
+
 	// smart ptr so we don't have to worry about deleting it
 	std::unique_ptr<Graphics> pGraphics;
 public:
@@ -71,6 +74,7 @@ public:
 	private:
 		HRESULT hr; // windows error code
 	};
+
 public:
 	Keyboard keyboard;
 	Mouse mouse;

@@ -17,4 +17,3 @@ private:
 protected: // can be accessed by any children
 	mutable std::string whatBuffer; // mutable allows us to change this in a const function
 };
-

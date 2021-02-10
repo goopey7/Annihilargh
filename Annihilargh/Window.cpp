@@ -42,7 +42,7 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 //************Window************
 // constructor creates and shows the window
 Window::Window(int width, int height, const char* name)
-	: width(width),height(height)
+	: width(width), height(height)
 {
 	// the specified height and width should be the client width and height, not the window width and height
 	// 
@@ -52,7 +52,7 @@ Window::Window(int width, int height, const char* name)
 	wr.top = 100;
 	wr.bottom = height + wr.top;
 	// Calculates Window Size based on desired client region
-	if (!AdjustWindowRect(&wr,WS_CAPTION|WS_MINIMIZEBOX|WS_SYSMENU,FALSE))
+	if (!AdjustWindowRect(&wr,WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,FALSE))
 	{
 		throw WND_ANOMALY_LAST_ERROR();
 	}
@@ -82,17 +82,17 @@ std::optional<int> Window::ProcessMessages()
 	// while there are messages, remove them and process them
 	// but if there aren't any messages, keep going. We don't want the game to freeze because
 	// there aren't any messages
-	while(PeekMessage(&msg,nullptr,0,0,PM_REMOVE))
+	while (PeekMessage(&msg, nullptr, 0, 0,PM_REMOVE))
 	{
 		// check for quit since PeekMessage returns whether or not it has a message, not if it is a quit.
-		if(msg.message==WM_QUIT)
+		if (msg.message == WM_QUIT)
 			return msg.wParam; // arg to PostQuitMessage is in wParam, so we return it.
 
 		TranslateMessage(&msg); // Posts WM_CHAR messages from key messages
 		DispatchMessage(&msg);
 	}
 	// return an empty optional if not quitting the game.
-	return{};
+	return {};
 }
 
 Graphics& Window::GetGraphics()
@@ -155,14 +155,14 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		{
 			const POINTS p = MAKEPOINTS(lParam);
-			
+
 			// check if we are in the client region
-			if(p.x >=0 && p.y>=0 && p.x < width && p.y < height)
+			if (p.x >= 0 && p.y >= 0 && p.x < width && p.y < height)
 			{
 				mouse.OnMouseMove(p.x, p.y);
-				
+
 				// if we previously were not in the client region
-				if(!mouse.IsInWindow())
+				if (!mouse.IsInWindow())
 				{
 					SetCapture(hWnd);
 					mouse.OnMouseEnter();
@@ -178,9 +178,9 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				 * So if I left the region holding middle mouse, but then hold left mb and released middle,
 				 * That stop capture..... maybe idk depends. Maybe I make this a setting in the engine.
 				 */
-				if(mouse.LeftIsPressed()||mouse.RightIsPressed()||mouse.MiddleIsPressed())
+				if (mouse.LeftIsPressed() || mouse.RightIsPressed() || mouse.MiddleIsPressed())
 				{
-					mouse.OnMouseMove(p.x,p.y);
+					mouse.OnMouseMove(p.x, p.y);
 				}
 				else // released button, so we don't care about the mouse anymore
 				{
@@ -230,7 +230,7 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			const POINTS p = MAKEPOINTS(lParam);
 			const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
-			mouse.OnWheelDelta(p.x,p.y,delta);
+			mouse.OnWheelDelta(p.x, p.y, delta);
 		}
 		break;
 		// **** ----------------- ****
