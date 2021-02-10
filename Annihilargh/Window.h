@@ -3,7 +3,10 @@
 #include "BaseAnomaly.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include "Graphics.h"
 #include <optional>
+#include <memory>
+
 
 // cheeky macro for getting the line and file from the hresult
 #define WND_ANOMALY(hr) Window::Anomaly(__LINE__,__FILE__,hr)
@@ -44,6 +47,7 @@ public:
 	// using optional from C++17. Allows us to either return an int or an empty optional, so we'll know if something
 	// goes wrong and what it is.
 	static std::optional<int> ProcessMessages();
+	Graphics& GetGraphics();
 private:
 	static LRESULT WINAPI HandleMessageSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT WINAPI HandleMessageAfterCreation(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
@@ -51,6 +55,9 @@ private:
 	int width;
 	int height;
 	HWND hWnd;
+	
+	// smart ptr so we don't have to worry about deleting it
+	std::unique_ptr<Graphics> pGraphics;
 public:
 	class Anomaly : public BaseAnomaly
 	{

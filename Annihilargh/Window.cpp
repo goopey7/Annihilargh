@@ -66,6 +66,9 @@ Window::Window(int width, int height, const char* name)
 		throw WND_ANOMALY_LAST_ERROR();
 
 	ShowWindow(hWnd,SW_SHOWDEFAULT);
+
+	// create graphics object
+	pGraphics = std::make_unique<Graphics>(hWnd);
 }
 
 Window::~Window()
@@ -90,6 +93,11 @@ std::optional<int> Window::ProcessMessages()
 	}
 	// return an empty optional if not quitting the game.
 	return{};
+}
+
+Graphics& Window::GetGraphics()
+{
+	return *pGraphics;
 }
 
 // messages come in here
