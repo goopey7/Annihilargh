@@ -26,9 +26,35 @@ Tuesday (2/9/21)
 Added a class to deal with game logic.
 Also, moved the message processing in Annihilargh.cpp over to the Window class
 
+// Yeah I know this isn't grammatically correct but it gets the info across.
 Currently learning a bit about COM (Component Object Model) which DirectX utilizes.
 Fortunately Direct3D will do a lot of this for me, so I don't have to become an expert in COM.
 Basically COM gives us binary compatibility. Provides us a nice stable interface.
 COM is language agnostic. It gives compatibility between different programming languages as well since
 it is binary. Has it's own way of resource allocation since it is language independent.
 Every COM object has a unique ID. COM objects are interacted with using an interface.
+So if the way COM objects work or get created ever get changed via an update or something. The code will still work
+thanks to the interface. COM uses reference counting, so we never explicitly have to delete it. Instead we call
+Release which will decrement the reference count. We don't use 'new' either since that is language specific.
+We use some kind of function to create a COM object. You call AddRef when you want to add something that works with
+a COM object. QueryInterface takes a uuid (Universal Unique Identifier) of a COM object and a ptr to a ptr of the 
+desired interface. It then checks to see if the COM object actually supports the interface provided, and
+if it does, fills the ptr with a ptr to the queried interface. If QueryInterface is successful it will also
+increase the reference count on the COM object since there is now another interface pointing to it.
+
+Ok now I'm going to try and explain a bit about the Direct3D architecture.
+We start with the Device which represents the graphics card/adapter.
+The Device object is used to create all the other objects.
+
+A SwapChain contains two frame buffers. The front buffer only contains a finished frame, and is what gets sent to the
+screen. The back buffer is what we draw onto. We then swap the front and back buffers and repeat the process.
+The reason we do this is because it would look awful if the monitor was reading row by row of our frame buffer while
+we are also drawing onto it at the same time. What if we aren't done drawing an object that the screen has already read?
+That's why we use this double buffer system.
+
+However, screen tearing is still a possible issue. If the framebuffers swap while the monitor is in the middle of 
+reading a frame buffer, there will be a tear in the screen (not literally). So we must make sure we only swap buffers
+once the screen is done drawing. That's what Vsync is.
+
+Device is used for allocating resources and creating objects. The Device Context is used for actually drawing and 
+issuing rendering commands. 
