@@ -63,3 +63,6 @@ Sunday (2/14/21)
 Implemented Error handling for graphics w/directx functions
 Also changed all dumb COM ptrs to smart COM ptrs.
 
+Drew first triangle using the Direct3D pipeline. Currently very sloppy and inefficient since we are having to allocate
+everything in the pipeline every draw call, but the entire pipeline is easy to see in one function.
+
