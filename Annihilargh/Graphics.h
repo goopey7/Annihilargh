@@ -34,11 +34,9 @@ public:
 	Graphics& operator=(const Graphics&) = delete;
 	void EndFrame();
 
-	void ClearBuffer(float r, float g, float b) noexcept
-	{
-		const float colour[] = {r, g, b, 1.f};
-		pDeviceContext->ClearRenderTargetView(pTargetView.Get(), colour);
-	}
+	void ClearBuffer(float r, float g, float b) noexcept;
+
+	void DrawTestTriangle();
 
 private:
 	// smart ptrs that already know the COM interface. Good stuff

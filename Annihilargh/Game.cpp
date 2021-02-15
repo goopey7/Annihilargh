@@ -22,6 +22,7 @@ int Game::BeginPlay()
 void Game::Tick()
 {
 	window.GetGraphics().ClearBuffer(0,0,0);
+	window.GetGraphics().DrawTestTriangle();
 	window.GetGraphics().EndFrame();
 	if (window.mouse.MiddleIsPressed())
 	{

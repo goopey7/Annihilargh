@@ -61,3 +61,5 @@ issuing rendering commands.
 
 Sunday (2/14/21)
 Implemented Error handling for graphics w/directx functions
+Also changed all dumb COM ptrs to smart COM ptrs.
+
