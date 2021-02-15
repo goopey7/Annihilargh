@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "WindowsWithoutTheCrap.h"
 #include <d3d11.h>
-
+#include <wrl.h>
 #include "BaseAnomaly.h"
 
 class Graphics
@@ -29,7 +29,7 @@ public:
 		const char* GetType() const noexcept override;
 	};
 	Graphics(HWND hWnd);
-	~Graphics();
+	~Graphics()=default;
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 	void EndFrame();
@@ -37,12 +37,13 @@ public:
 	void ClearBuffer(float r, float g, float b) noexcept
 	{
 		const float colour[] = {r, g, b, 1.f};
-		pDeviceContext->ClearRenderTargetView(pTargetView, colour);
+		pDeviceContext->ClearRenderTargetView(pTargetView.Get(), colour);
 	}
 
 private:
-	ID3D11Device* pDevice = nullptr;
-	ID3D11DeviceContext* pDeviceContext = nullptr;
-	IDXGISwapChain* pSwapChain = nullptr;
-	ID3D11RenderTargetView* pTargetView = nullptr;
+	// smart ptrs that already know the COM interface. Good stuff
+	Microsoft::WRL::ComPtr<ID3D11Device> pDevice = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext = nullptr;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetView = nullptr;
 };

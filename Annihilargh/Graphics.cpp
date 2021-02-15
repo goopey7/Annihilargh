@@ -4,7 +4,7 @@
 #include <sstream>
 
 #include "Window.h"
-
+namespace wrl = Microsoft::WRL;
 #pragma comment(lib,"d3d11.lib")
 
 // checks the return value of an expression that returns an hresult to see if it is a failure code
@@ -100,27 +100,18 @@ Graphics::Graphics(HWND hWnd)
 		&pDevice,
 		nullptr,
 		&pDeviceContext));
+	// the wrl comptr overloads the addressof operator. How convenient! Keep in mind when using the operator it does
+	// also call release which is mostly convenient because we usually use the operator to modify the ptr anyway
+	// use .addressOf() if you don't want to call release
 
 	// gain access to back buffer
-	ID3D11Resource* pBackBuffer = nullptr;
+	wrl::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
 	// 0 gives us the index, our back buffer, the uuid of the interface, the ptr to fill.
-	GFX_THROW_FAILED(pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer)));
+	GFX_THROW_FAILED(pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
 
-	GFX_THROW_FAILED(pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTargetView));
+	GFX_THROW_FAILED(pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &pTargetView));
 
 	pBackBuffer->Release();
-}
-
-Graphics::~Graphics()
-{
-	if (pTargetView != nullptr)
-		pTargetView->Release();
-	if (pDevice != nullptr)
-		pDeviceContext->Release();
-	if (pSwapChain != nullptr)
-		pSwapChain->Release();
-	if (pDevice != nullptr)
-		pDevice->Release();
 }
 
 void Graphics::EndFrame()
