@@ -2,9 +2,32 @@
 #include "WindowsWithoutTheCrap.h"
 #include <d3d11.h>
 
+#include "BaseAnomaly.h"
+
 class Graphics
 {
 public:
+	class Anomaly : public BaseAnomaly
+	{
+		using BaseAnomaly::BaseAnomaly;
+	};
+	class AnomalyHresult : public Anomaly
+	{
+	public:
+		AnomalyHresult(int line,const char* file, HRESULT hr) noexcept;
+		const char* what() const noexcept override;
+		const char* GetType() const noexcept override;
+		HRESULT GetErrorCode() const noexcept;
+		std::string GetErrorString() const noexcept;
+	private:
+		HRESULT hr;
+	};
+	class DeviceRemovedAnomaly : public AnomalyHresult
+	{
+		using AnomalyHresult::AnomalyHresult;
+	public:
+		const char* GetType() const noexcept override;
+	};
 	Graphics(HWND hWnd);
 	~Graphics();
 	Graphics(const Graphics&) = delete;

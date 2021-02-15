@@ -76,7 +76,7 @@ Window::~Window()
 	DestroyWindow(hWnd);
 }
 
-std::optional<int> Window::ProcessMessages()
+std::optional<int> Window::ProcessMessages() noexcept
 {
 	MSG msg;
 	// while there are messages, remove them and process them
@@ -97,6 +97,8 @@ std::optional<int> Window::ProcessMessages()
 
 Graphics& Window::GetGraphics()
 {
+	if(!pGraphics)
+		throw WND_NOGFX_ANOMALY();
 	return *pGraphics;
 }
 
@@ -289,4 +291,9 @@ HRESULT Window::Anomaly::GetErrorCode() const noexcept
 std::string Window::Anomaly::GetErrorString() const noexcept
 {
 	return TranslateErrorCode(hr);
+}
+
+const char* Window::NoGraphicsAnomaly::GetType() const noexcept
+{
+	return "No Graphics Anomaly";
 }

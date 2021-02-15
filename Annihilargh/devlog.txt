@@ -58,3 +58,6 @@ once the screen is done drawing. That's what Vsync is.
 
 Device is used for allocating resources and creating objects. The Device Context is used for actually drawing and 
 issuing rendering commands. 
+
+Sunday (2/14/21)
+Implemented Error handling for graphics w/directx functions

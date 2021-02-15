@@ -14,6 +14,8 @@
 // some windows functions don't return an hresult, so here's another version that gets the last error
 #define WND_ANOMALY_LAST_ERROR() Window::Anomaly(__LINE__,__FILE__,GetLastError())
 
+#define WND_NOGFX_ANOMALY() Window::NoGraphicsAnomaly(__LINE__,__FILE__)
+
 class Window
 {
 private:
@@ -40,7 +42,7 @@ public:
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 
-	void SetTitle(const std::string& title)
+	void SetTitle(const std::string& title) const
 	{
 		if (!SetWindowText(hWnd, title.c_str()))
 			throw WND_ANOMALY_LAST_ERROR();
@@ -49,7 +51,7 @@ public:
 	// static because it should process messages for ALL windows
 	// using optional from C++17. Allows us to either return an int or an empty optional, so we'll know if something
 	// goes wrong and what it is.
-	static std::optional<int> ProcessMessages();
+	static std::optional<int> ProcessMessages() noexcept;
 	Graphics& GetGraphics();
 private:
 	static LRESULT WINAPI HandleMessageSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
@@ -73,6 +75,12 @@ public:
 		std::string GetErrorString() const noexcept;
 	private:
 		HRESULT hr; // windows error code
+	};
+	class NoGraphicsAnomaly : public BaseAnomaly
+	{
+	public:
+		using BaseAnomaly::BaseAnomaly;
+		const char* GetType() const noexcept override;
 	};
 
 public:

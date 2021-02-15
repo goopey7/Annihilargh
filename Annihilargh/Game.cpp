@@ -21,16 +21,7 @@ int Game::BeginPlay()
 
 void Game::Tick()
 {
-	if (r >= 1.f)
-		r = 0.f;
-	else r += 0.02f;
-	if (g >= 1.f)
-		g = 0.f;
-	else g += 0.1f;
-	if (b <= 0.f)
-		b = 1.f;
-	else b -= 0.04f;
-	window.GetGraphics().ClearBuffer(r, g, b);
+	window.GetGraphics().ClearBuffer(0,0,0);
 	window.GetGraphics().EndFrame();
 	if (window.mouse.MiddleIsPressed())
 	{

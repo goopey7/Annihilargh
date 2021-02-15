@@ -1,6 +1,63 @@
 ﻿#include "Graphics.h"
 
+#include <ostream>
+#include <sstream>
+
+#include "Window.h"
+
 #pragma comment(lib,"d3d11.lib")
+
+// checks the return value of an expression that returns an hresult to see if it is a failure code
+// if it is we throw a gfx anomaly with the hresult
+// expects the hr variable to be in the local scope
+#define GFX_THROW_FAILED(hrcall) if(FAILED(hr=(hrcall)))throw Graphics::AnomalyHresult(__LINE__,__FILE__,hr)
+
+// creates a device removed anomaly
+#define GFX_DEVICE_REMOVED_ANOMALY(hr) Graphics::DeviceRemovedAnomaly(__LINE__,__FILE__,(hr))
+
+// ERROR HANDLING - Similar to how window works
+Graphics::AnomalyHresult::AnomalyHresult(int line, const char* file, HRESULT hr) noexcept
+:
+Anomaly(line,file),
+hr(hr)
+{
+}
+
+const char* Graphics::AnomalyHresult::what() const noexcept
+{
+	std::ostringstream oss;
+	oss << GetType() << std::endl
+	<< "Error Code: 0x" << std::hex << std::uppercase << GetErrorCode() << std::dec
+	<< " (" << (unsigned long)GetErrorCode() << ")" << std::endl
+	<< "Error String: " << GetErrorString() << std::endl
+	<< GetOriginString();
+	whatBuffer = oss.str();
+	return whatBuffer.c_str();
+}
+
+const char* Graphics::AnomalyHresult::GetType() const noexcept
+{
+	return "Graphics Anomaly";
+}
+
+HRESULT Graphics::AnomalyHresult::GetErrorCode() const noexcept
+{
+	return hr;
+}
+
+std::string Graphics::AnomalyHresult::GetErrorString() const noexcept
+{
+	/*TODO I don't really like that I'm having to deal with window to get this function
+	 * There must be a better way
+	 */
+	return Window::Anomaly::TranslateErrorCode(hr);
+}
+
+
+const char* Graphics::DeviceRemovedAnomaly::GetType() const noexcept
+{
+	return "Graphics Anomaly: Device Removed";
+}
 
 Graphics::Graphics(HWND hWnd)
 {
@@ -23,11 +80,18 @@ Graphics::Graphics(HWND hWnd)
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	sd.Flags = 0;
 
-	D3D11CreateDeviceAndSwapChain(
+	// for checking the hresults returned by d3d functions
+	HRESULT hr;
+	UINT swapFlags = 0u;
+#ifndef NDEBUG
+	swapFlags=D3D11_CREATE_DEVICE_DEBUG;
+#endif
+	
+	GFX_THROW_FAILED(D3D11CreateDeviceAndSwapChain(
 		nullptr, // choose default gfx card
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr, // if we wanted to load a software driver
-		0,
+		swapFlags,
 		nullptr, // feature level for the gfx card
 		0,
 		D3D11_SDK_VERSION,
@@ -35,14 +99,14 @@ Graphics::Graphics(HWND hWnd)
 		&pSwapChain,
 		&pDevice,
 		nullptr,
-		&pDeviceContext);
+		&pDeviceContext));
 
 	// gain access to back buffer
 	ID3D11Resource* pBackBuffer = nullptr;
 	// 0 gives us the index, our back buffer, the uuid of the interface, the ptr to fill.
-	pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
+	GFX_THROW_FAILED(pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer)));
 
-	pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTargetView);
+	GFX_THROW_FAILED(pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTargetView));
 
 	pBackBuffer->Release();
 }
@@ -61,5 +125,19 @@ Graphics::~Graphics()
 
 void Graphics::EndFrame()
 {
-	pSwapChain->Present(1u, 0u);
+	HRESULT hr;
+	// SyncInterval according to msdn:
+	// 0: Presentation occurs immediately. No synchronization
+	// 1-4: Synchronize presentation for at least n vertical blocks
+	if(FAILED(hr = pSwapChain->Present(1u, 0u)))
+	{
+		// occurs usually due to some kind of gfx driver failure
+		if(hr == DXGI_ERROR_DEVICE_REMOVED)
+		{
+			throw GFX_DEVICE_REMOVED_ANOMALY(pDevice->GetDeviceRemovedReason());
+		}
+		GFX_THROW_FAILED(hr);
+	}
+	
+	
 }
