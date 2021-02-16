@@ -52,6 +52,10 @@ Mouse::Event Mouse::Read() noexcept
 void Mouse::Clear() noexcept
 {
 	buffer = std::queue<Event>();
+	bLeftIsPressed = false;
+	bRightIsPressed = false;
+	bMiddleIsPressed = false;
+	bIsInWindow=false;
 }
 
 void Mouse::OnMouseMove(int x, int y) noexcept

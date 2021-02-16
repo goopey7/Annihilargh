@@ -239,6 +239,8 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_KILLFOCUS:
 		keyboard.ClearState(); // reset states to released when we loose focus
 		// so when a messagebox pops up all keys are released
+		// reset mouse states as well
+		mouse.Clear();
 		break;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
