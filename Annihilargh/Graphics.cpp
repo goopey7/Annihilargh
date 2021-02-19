@@ -88,7 +88,6 @@ Graphics::Graphics(HWND hWnd)
 #ifndef NDEBUG
 	swapFlags=D3D11_CREATE_DEVICE_DEBUG;
 #endif
-	
 	GFX_THROW_FAILED(D3D11CreateDeviceAndSwapChain(
 		nullptr, // choose default gfx card
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -129,8 +128,6 @@ void Graphics::EndFrame()
 		}
 		GFX_THROW_FAILED(hr);
 	}
-	
-	
 }
 
 void Graphics::ClearBuffer(float r, float g, float b) noexcept
@@ -139,19 +136,31 @@ void Graphics::ClearBuffer(float r, float g, float b) noexcept
 	pDeviceContext->ClearRenderTargetView(pTargetView.Get(), colour);
 }
 
-void Graphics::DrawTestTriangle()
+void Graphics::DrawTestTriangle(float angle)
 {
 	HRESULT hr;
 	namespace wrl = Microsoft::WRL;
 	struct Vertex
 	{
-		float x, y;
+		struct
+		{
+			float x, y;
+		} pos;
+
+		struct
+		{
+			unsigned char r,g,b,a;
+		} colour;
+		
 	};
 	const Vertex vertices[] =
 	{
-		{0.f, 0.5f},
-		{0.5f, -0.5f},
-		{-0.5f, -0.5f}
+		{0.f, 0.5f,255,0,255,0},
+		{0.5f, -0.5f,0,255,0,0},
+		{-0.5f, -0.5f,0,0,255,0},
+		{-.3f,.3f,0,0,255,0},
+		{.3f,.3f,0,0,255,0},
+		{0.f,-.8f,255,0,0,0},
 	};
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer = nullptr;
 	D3D11_BUFFER_DESC bufferDesc = {};
@@ -164,6 +173,65 @@ void Graphics::DrawTestTriangle()
 	D3D11_SUBRESOURCE_DATA subresourceData = {};
 	subresourceData.pSysMem = vertices;
 	GFX_THROW_FAILED(pDevice->CreateBuffer(&bufferDesc, &subresourceData, &pVertexBuffer));
+
+	// index buffer for indexed drawing
+	const unsigned short indices[] =
+	{
+		0,1,2,
+		0,2,3,
+		0,4,1,
+		2,1,5,
+	};
+
+	wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
+	D3D11_BUFFER_DESC ibd = {};
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.Usage = D3D11_USAGE_DEFAULT;
+	ibd.CPUAccessFlags = 0u;
+	ibd.MiscFlags = 0u;
+	ibd.ByteWidth = sizeof(indices);
+	ibd.StructureByteStride = sizeof(unsigned short);
+	D3D11_SUBRESOURCE_DATA isd = {};
+	isd.pSysMem = indices;
+	GFX_THROW_FAILED(pDevice->CreateBuffer(&ibd, &isd, &pIndexBuffer));
+
+	// bind index buffer to pipeline
+	pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(),DXGI_FORMAT_R16_UINT,0u);
+
+	// create constant buffer for transformation matrix
+	struct ConstantBuffer
+	{
+		struct
+		{
+			// 4x4 matrix
+			float element[4][4];
+		}transformation;
+	};
+	const ConstantBuffer cb=
+	{
+		//rotation around z-axis
+		{
+			.75f*std::cos(angle),std::sin(angle),0.f,0.f,
+			.75f*-std::sin(angle),std::cos(angle),0.f,0.f,
+			0.f,0.f,1.f,0.f,
+			0.f,0.f,0.f,1.f,
+		}
+	};
+
+	wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
+	D3D11_BUFFER_DESC cbd = {};
+	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbd.Usage = D3D11_USAGE_DYNAMIC; //updates every frame
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cbd.MiscFlags = 0u;
+	cbd.ByteWidth = sizeof(cb);
+	cbd.StructureByteStride = 0u;
+	D3D11_SUBRESOURCE_DATA csd = {};
+	csd.pSysMem = &cb;
+	GFX_THROW_FAILED(pDevice->CreateBuffer(&cbd, &csd, &pConstantBuffer));
+
+	// bind constant buffer to the vertex shader
+	pDeviceContext->VSSetConstantBuffers(0u,1u,pConstantBuffer.GetAddressOf());
 	
 	const UINT stride = sizeof(Vertex);
 	const UINT offset=0u;
@@ -190,10 +258,12 @@ void Graphics::DrawTestTriangle()
 	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
 	const D3D11_INPUT_ELEMENT_DESC ied[]=
 	{
-		{
-			"Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,
-            D3D11_INPUT_PER_VERTEX_DATA,0
-        },
+		{"Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,
+            D3D11_INPUT_PER_VERTEX_DATA,0},
+		//UNORM will not only convert our byte to float for the shader, but will also change the value so it works.
+		//So 255 becomes 1.f
+		{"Colour",0,DXGI_FORMAT_R8G8B8A8_UNORM,0,D3D11_APPEND_ALIGNED_ELEMENT,
+    D3D11_INPUT_PER_VERTEX_DATA,0},
     };
 	GFX_THROW_FAILED(pDevice->CreateInputLayout(ied,(UINT)std::size(ied),
         pBlob->GetBufferPointer(),
@@ -214,9 +284,9 @@ void Graphics::DrawTestTriangle()
 	viewport.TopLeftX=0;
 	viewport.TopLeftY=0;
 	pDeviceContext->RSSetViewports(1u,&viewport);
-
+	
 	// create triangle list
 	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
-	pDeviceContext->Draw((UINT)std::size(vertices), 0u);
+	pDeviceContext->DrawIndexed((UINT)std::size(indices),0u,0u);
 }

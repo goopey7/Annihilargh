@@ -21,8 +21,9 @@ int Game::BeginPlay()
 
 void Game::Tick()
 {
-	window.GetGraphics().ClearBuffer(0,0,0);
-	window.GetGraphics().DrawTestTriangle();
+	const float c = sin(timer.GetElapsed()/2.f+.5f);
+	window.GetGraphics().ClearBuffer(c,0.f,0.f);
+	window.GetGraphics().DrawTestTriangle(timer.GetElapsed());
 	window.GetGraphics().EndFrame();
 	if (window.mouse.MiddleIsPressed())
 	{
