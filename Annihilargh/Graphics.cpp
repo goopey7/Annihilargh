@@ -150,7 +150,7 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
 	{
 		struct
 		{
-			float x, y;
+			float x, y, z;
 		} pos;
 
 		struct
@@ -161,12 +161,14 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
 	};
 	const Vertex vertices[] =
 	{
-		{0.f, 0.5f,255,0,255,0},
-		{0.5f, -0.5f,0,255,0,0},
-		{-0.5f, -0.5f,0,0,255,0},
-		{-.3f,.3f,0,0,255,0},
-		{.3f,.3f,0,0,255,0},
-		{0.f,-.8f,255,0,0,0},
+		{1.f,1.f,1.f,0,127,0},
+		{-1.f,1.f,1.f,127,0,127},
+		{1.f,-1.f,1.f,127,0,0},
+		{-1.f,-1.f,1.f,0,127,0},
+		{1.f,1.f,-1.f,0,127,0},
+		{-1.f,1.f,-1.f,0,0,127},
+		{1.f,-1.f,-1.f,0,127,0},
+		{-1.f,-1.f,-1.f,127,0,127},
 	};
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer = nullptr;
 	D3D11_BUFFER_DESC bufferDesc = {};
@@ -183,10 +185,12 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
 	// index buffer for indexed drawing
 	const unsigned short indices[] =
 	{
-		0,1,2,
-		0,2,3,
-		0,4,1,
-		2,1,5,
+		7,5,6, 5,4,6,
+		6,4,2, 4,0,2,
+		5,1,4, 4,1,0,
+		3,2,0, 3,0,1,
+		7,3,5, 5,3,1,
+		7,6,3, 6,2,3,
 	};
 
 	wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
@@ -214,15 +218,18 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
 	const ConstantBuffer cb=
 	{
 		//rotation around z-axis
-		//we have to scale the x-axis by 3/4
+		//Since aspect ratio is currently 4:3, the x-axis needs to be scaled to 3/4.
 		//these matrices are row-major, and the shader is more efficient with column-major matrices,
 		// so we transpose the result to make it column-major. Which makes sense because 1 operation on the CPU
 		// optimises thousands of operations on the GPU.
 {
 			dx::XMMatrixTranspose(
-				dx::XMMatrixRotationZ(angle) *
-				dx::XMMatrixScaling(.75f,1.f,1.f)*
-				dx::XMMatrixTranslation(x,y,0.f))
+				dx::XMMatrixRotationY(angle)*
+				dx::XMMatrixRotationX(angle)*
+				dx::XMMatrixRotationZ(angle)*
+				dx::XMMatrixTranslation(x,y,3.5f)*
+				dx::XMMatrixPerspectiveLH(1.f,3.f/4.f,.5f,10.f)
+			)
 		}
 	};
 
@@ -266,7 +273,7 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
 	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
 	const D3D11_INPUT_ELEMENT_DESC ied[]=
 	{
-		{"Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,
+		{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,
             D3D11_INPUT_PER_VERTEX_DATA,0},
 		//UNORM will not only convert our byte to float for the shader, but will also change the value so it works.
 		//So 255 becomes 1.f
