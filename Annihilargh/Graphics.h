@@ -36,7 +36,7 @@ public:
 
 	void ClearBuffer(float r, float g, float b) noexcept;
 
-	void DrawTestTriangle(float angle);
+	void DrawTestTriangle(float angle,float x,float y);
 
 private:
 	// smart ptrs that already know the COM interface. Good stuff

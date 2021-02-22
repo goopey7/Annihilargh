@@ -142,7 +142,7 @@ void Graphics::ClearBuffer(float r, float g, float b) noexcept
 	pDeviceContext->ClearRenderTargetView(pTargetView.Get(), colour);
 }
 
-void Graphics::DrawTestTriangle(float angle)
+void Graphics::DrawTestTriangle(float angle,float x,float y)
 {
 	HRESULT hr;
 	namespace wrl = Microsoft::WRL;
@@ -219,7 +219,10 @@ void Graphics::DrawTestTriangle(float angle)
 		// so we transpose the result to make it column-major. Which makes sense because 1 operation on the CPU
 		// optimises thousands of operations on the GPU.
 {
-			dx::XMMatrixTranspose(dx::XMMatrixRotationZ(angle) * dx::XMMatrixScaling(.75f,1.f,1.f))
+			dx::XMMatrixTranspose(
+				dx::XMMatrixRotationZ(angle) *
+				dx::XMMatrixScaling(.75f,1.f,1.f)*
+				dx::XMMatrixTranslation(x,y,0.f))
 		}
 	};
 
