@@ -3,9 +3,15 @@
 #include <ostream>
 #include <sstream>
 #include <d3dcompiler.h>
+#include <DirectXMath.h>
 
 #include "Window.h"
+
+// these namespaces will just make things look nicer
 namespace wrl = Microsoft::WRL;
+namespace dx=DirectX;
+
+// this way you don't have to worry about configuring your project correctly.
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
 
@@ -201,20 +207,19 @@ void Graphics::DrawTestTriangle(float angle)
 	// create constant buffer for transformation matrix
 	struct ConstantBuffer
 	{
-		struct
-		{
-			// 4x4 matrix
-			float element[4][4];
-		}transformation;
+		// 4x4 floating point matrix. Optimised for SIMD, so can't directly access elements.
+		// only interfaced with using directxmath
+		dx::XMMATRIX transform;
 	};
 	const ConstantBuffer cb=
 	{
 		//rotation around z-axis
-		{
-			.75f*std::cos(angle),std::sin(angle),0.f,0.f,
-			.75f*-std::sin(angle),std::cos(angle),0.f,0.f,
-			0.f,0.f,1.f,0.f,
-			0.f,0.f,0.f,1.f,
+		//we have to scale the x-axis by 3/4
+		//these matrices are row-major, and the shader is more efficient with column-major matrices,
+		// so we transpose the result to make it column-major. Which makes sense because 1 operation on the CPU
+		// optimises thousands of operations on the GPU.
+{
+			dx::XMMatrixTranspose(dx::XMMatrixRotationZ(angle) * dx::XMMatrixScaling(.75f,1.f,1.f))
 		}
 	};
 

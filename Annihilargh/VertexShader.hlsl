@@ -6,7 +6,7 @@ struct VSOut
 
 cbuffer cb
 {
-	row_major matrix transform; // matrix represents 4x4 float
+	matrix transform; // matrix represents 4x4 float
 };
 
 VSOut main(float2 pos : Position,float3 colour : Colour)
