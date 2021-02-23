@@ -152,23 +152,17 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
 		{
 			float x, y, z;
 		} pos;
-
-		struct
-		{
-			unsigned char r,g,b,a;
-		} colour;
-		
 	};
 	const Vertex vertices[] =
 	{
-		{1.f,1.f,1.f,0,127,0},
-		{-1.f,1.f,1.f,127,0,127},
-		{1.f,-1.f,1.f,127,0,0},
-		{-1.f,-1.f,1.f,0,127,0},
-		{1.f,1.f,-1.f,0,127,0},
-		{-1.f,1.f,-1.f,0,0,127},
-		{1.f,-1.f,-1.f,0,127,0},
-		{-1.f,-1.f,-1.f,127,0,127},
+		{1.f,1.f,1.f},
+		{-1.f,1.f,1.f},
+		{1.f,-1.f,1.f},
+		{-1.f,-1.f,1.f},
+		{1.f,1.f,-1.f},
+		{-1.f,1.f,-1.f},
+		{1.f,-1.f,-1.f},
+		{-1.f,-1.f,-1.f},
 	};
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer = nullptr;
 	D3D11_BUFFER_DESC bufferDesc = {};
@@ -226,8 +220,8 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
 			dx::XMMatrixTranspose(
 				dx::XMMatrixRotationY(angle)*
 				dx::XMMatrixRotationX(angle)*
-				dx::XMMatrixRotationZ(angle)*
-				dx::XMMatrixTranslation(x,y,3.5f)*
+				//dx::XMMatrixRotationZ(angle)*
+				dx::XMMatrixTranslation(x,y,3.5f+y)*
 				dx::XMMatrixPerspectiveLH(1.f,3.f/4.f,.5f,10.f)
 			)
 		}
@@ -255,6 +249,42 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
 
 	wrl::ComPtr<ID3D11VertexShader> pVertexShader;
 	wrl::ComPtr<ID3DBlob> pBlob;
+
+	// create pixelConstantBuffer
+	struct PixelConstantBuffer
+	{
+		struct
+		{
+			float r,g,b,a;
+		}faceColours[6];
+	};
+
+	const PixelConstantBuffer pcb=
+	{
+{
+			{1.f,0.f,1.f},
+			{1.f,0.f,0.f},
+			{0.f,1.f,0.f},
+			{0.f,0.f,1.f},
+			{1.f,1.f,0.f},
+			{0.f,1.f,1.f},
+		}
+	};
+
+	wrl::ComPtr<ID3D11Buffer> pPixelConstantBuffer;
+	D3D11_BUFFER_DESC pcbd = {};
+	pcbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	pcbd.Usage = D3D11_USAGE_DYNAMIC; //updates every frame
+	pcbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	pcbd.MiscFlags = 0u;
+	pcbd.ByteWidth = sizeof(pcb);
+	pcbd.StructureByteStride = 0u;
+	D3D11_SUBRESOURCE_DATA pcsd = {};
+	pcsd.pSysMem = &pcb;
+	GFX_THROW_FAILED(pDevice->CreateBuffer(&pcbd, &pcsd, &pPixelConstantBuffer));
+
+	// bind to pixel shader
+	pDeviceContext->PSSetConstantBuffers(0u,1u,pPixelConstantBuffer.GetAddressOf());
 	
 	// create and bind pixel shader
 	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
@@ -262,6 +292,8 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
 	GFX_THROW_FAILED(pDevice->CreatePixelShader(pBlob->GetBufferPointer()
         ,pBlob->GetBufferSize(),nullptr,&pPixelShader));
 	pDeviceContext->PSSetShader(pPixelShader.Get(),nullptr,0u);
+
+	
 	
 	// create and bind vertex shader
 	GFX_THROW_FAILED(D3DReadFileToBlob(L"VertexShader.cso",&pBlob));
@@ -275,10 +307,10 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
 	{
 		{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,
             D3D11_INPUT_PER_VERTEX_DATA,0},
-		//UNORM will not only convert our byte to float for the shader, but will also change the value so it works.
+		/*//UNORM will not only convert our byte to float for the shader, but will also change the value so it works.
 		//So 255 becomes 1.f
 		{"Colour",0,DXGI_FORMAT_R8G8B8A8_UNORM,0,D3D11_APPEND_ALIGNED_ELEMENT,
-    D3D11_INPUT_PER_VERTEX_DATA,0},
+    D3D11_INPUT_PER_VERTEX_DATA,0},*/
     };
 	GFX_THROW_FAILED(pDevice->CreateInputLayout(ied,(UINT)std::size(ied),
         pBlob->GetBufferPointer(),

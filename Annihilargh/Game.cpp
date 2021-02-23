@@ -24,12 +24,15 @@ void Game::Tick()
 	const float c = sin(abs(timer.GetElapsed())/2.f+.5f);
 	window.GetGraphics().ClearBuffer(c,c/3.f,0.f);
 	window.GetGraphics().DrawTestTriangle(
-		timer.GetElapsed(),window.mouse.GetXPos()/400.f-1,-(window.mouse.GetYPos()/300.f-1)
-		);
+        timer.GetElapsed(),window.mouse.GetXPos()/400.f-1,-(window.mouse.GetYPos()/300.f-1)
+        );
+	window.GetGraphics().DrawTestTriangle(
+        timer.GetElapsed(),0.f,0.f)
+        ;
 	window.GetGraphics().EndFrame();
 	if (window.mouse.MiddleIsPressed())
 	{
-		MessageBox(nullptr, "MIDDLE MOUSE PRESSED", "MIDDLE MOUSE PRESSED",MB_OK | MB_ICONINFORMATION);
+		//MessageBox(nullptr, "MIDDLE MOUSE PRESSED", "MIDDLE MOUSE PRESSED",MB_OK | MB_ICONINFORMATION);
 	}
 	if (window.mouse.Read().IsMove())
 	{
