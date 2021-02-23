@@ -26,9 +26,9 @@ void Game::Tick()
 	window.GetGraphics().DrawTestTriangle(
         timer.GetElapsed(),window.mouse.GetXPos()/400.f-1,-(window.mouse.GetYPos()/300.f-1)
         );
-	window.GetGraphics().DrawTestTriangle(
+	/*window.GetGraphics().DrawTestTriangle(
         timer.GetElapsed(),0.f,0.f)
-        ;
+        ;*/
 	window.GetGraphics().EndFrame();
 	if (window.mouse.MiddleIsPressed())
 	{
