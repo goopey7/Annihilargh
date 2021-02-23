@@ -66,3 +66,40 @@ Also changed all dumb COM ptrs to smart COM ptrs.
 Drew first triangle using the Direct3D pipeline. Currently very sloppy and inefficient since we are having to allocate
 everything in the pipeline every draw call, but the entire pipeline is easy to see in one function.
 
+Tuesday (2/16/21)
+Now that I have a quick and dirty triangle drawing function, I am going to mess around with the pipeline.
+See what I can do, and I'll probably also break stuff.
+
+Adding triangles is as simple as just adding three more vertices to the list of vertices.
+One thing I have found is that triangles are not displayed if the vertices wind counter clockwise.
+Meaning we have to draw vertices in a clockwise manner. (top then right then left)
+
+If I want to draw lines instead of triangles, all I have to do is change the primitive topology.
+pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+Obviously lines are different from triangles. They require two vertices not three. But nothing bad
+happens if the amount of vertices is not a multiple of two.
+
+I have assigned each vertex of the triangle a different colour. The rasterizer blends them together in a cool way.
+
+Friday (2/19/21)
+Implemented indexed drawing. This allows us to compress the vertex buffer because we don't have to fill the buffer
+with duplicate vertices. Instead, we have an index buffer that indexes into the vertex buffer so we can reuse the same
+vertex without duplicating it in the vertex buffer!
+This reduces the amount of vertex data that is sent to the graphics adapter, and also gives the chance for the graphics
+adapter to fetch a recently used vertex from its vertex cache which is better for performance.
+
+Monday (2/22/21)
+Unfortunately I did not work on this over the weekend. I left my literature review for senior plan for that weekend,
+so I mainly did that. I also have no free periods. Meaning I am in 9 classes including senior plan.
+
+Anyways, had a big session today. Today I accomplished drawing a 3D cube that rotates. I also managed to colour in all
+the sides an individual colour. Each side is made up of two triangles. The triangles are drawn using indexed drawing.
+So we have a vertex buffer containing the vertices, and an index buffer defining how the vertices are connected, so
+the actual triangles that are drawn. To actually colour the faces, I setup a constant buffer containing 6 colours,
+one for each face, for the pixel shader. Then in the pixel shader you can get Direct3D to assign an index all the 
+triangles, and then I used that index to select a colour from the constant buffer that was just bound to the shader.
+
+Also added a z-buffer. This allows us to properly simulate depth. Before adding the z-buffer, objects would be drawn one
+on top of the other just depending on the order they were drawn. So, we create a depth texture by comparing the z-value
+of all vertices or maybe pixels hmmmmmm. Smaller z-values are closer to the screen, so they should be drawn last. That's
+the idea, and it works now. 
