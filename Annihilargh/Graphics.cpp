@@ -4,6 +4,8 @@
 #include <sstream>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
+#include <wrl/client.h>
+
 
 #include "Window.h"
 
@@ -115,8 +117,42 @@ Graphics::Graphics(HWND hWnd)
 	wrl::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
 	// 0 gives us the index, our back buffer, the uuid of the interface, the ptr to fill.
 	GFX_THROW_FAILED(pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
-
 	GFX_THROW_FAILED(pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &pTargetView));
+
+	// create depth stencil state (we only care about depth though for now)
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+	dsDesc.DepthEnable = TRUE;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS; // we want things closer to the screen to be drawn last
+	wrl::ComPtr<ID3D11DepthStencilState> pDSState;
+	GFX_THROW_FAILED(pDevice->CreateDepthStencilState(&dsDesc,&pDSState));
+
+	// bind state
+	pDeviceContext->OMSetDepthStencilState(pDSState.Get(),1u);
+
+	// bind depth stencil state
+	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
+	D3D11_TEXTURE2D_DESC descDepth = {};
+	descDepth.Width=800u;
+	descDepth.Height=600u;
+	descDepth.MipLevels=1u;
+	descDepth.ArraySize=1u;
+	descDepth.Format=DXGI_FORMAT_D32_FLOAT;
+	descDepth.SampleDesc.Count=1u;
+	descDepth.SampleDesc.Quality=0u;
+	descDepth.Usage=D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags=D3D11_BIND_DEPTH_STENCIL;
+	GFX_THROW_FAILED(pDevice->CreateTexture2D(&descDepth,nullptr,&pDepthStencil));
+
+	// create view of depth stensil texture
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
+	descDSV.Format=DXGI_FORMAT_D32_FLOAT;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice=0u;
+	GFX_THROW_FAILED(pDevice->CreateDepthStencilView(pDepthStencil.Get(),&descDSV,&pDSView));
+
+	// bind depth stencil view to the pipeline
+	pDeviceContext->OMSetRenderTargets(1u,pTargetView.GetAddressOf(),pDSView.Get());
 }
 
 void Graphics::EndFrame()
@@ -140,6 +176,7 @@ void Graphics::ClearBuffer(float r, float g, float b) noexcept
 {
 	const float colour[] = {r, g, b, 1.f};
 	pDeviceContext->ClearRenderTargetView(pTargetView.Get(), colour);
+	pDeviceContext->ClearDepthStencilView(pDSView.Get(),D3D11_CLEAR_DEPTH,1.f,0u);
 }
 
 void Graphics::DrawTestTriangle(float angle,float x,float y)
@@ -221,7 +258,7 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
 				dx::XMMatrixRotationY(angle)*
 				dx::XMMatrixRotationX(angle)*
 				//dx::XMMatrixRotationZ(angle)*
-				dx::XMMatrixTranslation(x,y,3.5f+y)*
+				dx::XMMatrixTranslation(x,0.f,4.f+y)*
 				dx::XMMatrixPerspectiveLH(1.f,3.f/4.f,.5f,10.f)
 			)
 		}
@@ -293,8 +330,6 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
         ,pBlob->GetBufferSize(),nullptr,&pPixelShader));
 	pDeviceContext->PSSetShader(pPixelShader.Get(),nullptr,0u);
 
-	
-	
 	// create and bind vertex shader
 	GFX_THROW_FAILED(D3DReadFileToBlob(L"VertexShader.cso",&pBlob));
 	GFX_THROW_FAILED(pDevice->CreateVertexShader(pBlob->GetBufferPointer(),
@@ -318,9 +353,6 @@ void Graphics::DrawTestTriangle(float angle,float x,float y)
         &pInputLayout));
 
 	pDeviceContext->IASetInputLayout(pInputLayout.Get());
-
-	// bind render target
-	pDeviceContext->OMSetRenderTargets(1u,pTargetView.GetAddressOf(),nullptr);
 
 	// configure the viewport
 	D3D11_VIEWPORT viewport;
