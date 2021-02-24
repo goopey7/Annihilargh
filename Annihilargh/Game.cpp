@@ -11,7 +11,7 @@ Game::Game(): window(800, 600, "Annihilargh")
 	std::uniform_real_distribution<float> ddist( 0.0f,3.1415f * 2.0f );
 	std::uniform_real_distribution<float> odist( 0.0f,3.1415f * 0.3f );
 	std::uniform_real_distribution<float> rdist( 6.0f,20.0f );
-	for(auto i=0;i<80;i++)
+	for(auto i=0;i<200;i++)
 	{
 		cubes.push_back(std::make_unique<Cube>(window.GetGraphics(),rng,adist,ddist,odist,rdist));
 	}
@@ -35,7 +35,7 @@ int Game::BeginPlay()
 void Game::Tick()
 {
 	auto deltaTime = timer.Reset();
-	window.GetGraphics().ClearBuffer(0.07f,0.0f,0.12f);
+	window.GetGraphics().ClearBuffer(0.1f,0.0f,0.0f);
 	for(auto &cube : cubes)
 	{
 		cube->Tick(deltaTime);
