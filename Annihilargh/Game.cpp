@@ -1,8 +1,21 @@
 ﻿#include "Game.h"
-#include <sstream>
+#include <random>
+
+
+
 
 Game::Game(): window(800, 600, "Annihilargh")
 {
+	std::mt19937 rng(std::random_device{}());
+	std::uniform_real_distribution<float> adist( 0.0f,3.1415f * 2.0f );
+	std::uniform_real_distribution<float> ddist( 0.0f,3.1415f * 2.0f );
+	std::uniform_real_distribution<float> odist( 0.0f,3.1415f * 0.3f );
+	std::uniform_real_distribution<float> rdist( 6.0f,20.0f );
+	for(auto i=0;i<80;i++)
+	{
+		cubes.push_back(std::make_unique<Cube>(window.GetGraphics(),rng,adist,ddist,odist,rdist));
+	}
+	window.GetGraphics().SetProjection(DirectX::XMMatrixPerspectiveLH(1.f,3.f/4.f,0.5f,40.f));
 }
 
 int Game::BeginPlay()
@@ -21,23 +34,12 @@ int Game::BeginPlay()
 
 void Game::Tick()
 {
-	const float c = sin(abs(timer.GetElapsed())/2.f+.5f);
-	window.GetGraphics().ClearBuffer(c,c/3.f,0.f);
-	window.GetGraphics().DrawTestTriangle(
-        timer.GetElapsed(),window.mouse.GetXPos()/400.f-1,-(window.mouse.GetYPos()/300.f-1)
-        );
-	/*window.GetGraphics().DrawTestTriangle(
-        timer.GetElapsed(),0.f,0.f)
-        ;*/
+	auto deltaTime = timer.Reset();
+	window.GetGraphics().ClearBuffer(0.07f,0.0f,0.12f);
+	for(auto &cube : cubes)
+	{
+		cube->Tick(deltaTime);
+		cube->Draw(window.GetGraphics());
+	}
 	window.GetGraphics().EndFrame();
-	if (window.mouse.MiddleIsPressed())
-	{
-		//MessageBox(nullptr, "MIDDLE MOUSE PRESSED", "MIDDLE MOUSE PRESSED",MB_OK | MB_ICONINFORMATION);
-	}
-	if (window.mouse.Read().IsMove())
-	{
-		std::ostringstream oss;
-		oss << "(" << window.mouse.GetXPos() << "," << window.mouse.GetYPos() << ")";
-		window.SetTitle(oss.str());
-	}
 }

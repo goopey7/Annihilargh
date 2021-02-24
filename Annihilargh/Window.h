@@ -4,17 +4,9 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "WindowAnomalyMacros.h"
 #include <optional>
 #include <memory>
-
-
-// cheeky macro for getting the line and file from the hresult
-#define WND_ANOMALY(hr) Window::Anomaly(__LINE__,__FILE__,hr)
-
-// some windows functions don't return an hresult, so here's another version that gets the last error
-#define WND_ANOMALY_LAST_ERROR() Window::Anomaly(__LINE__,__FILE__,GetLastError())
-
-#define WND_NOGFX_ANOMALY() Window::NoGraphicsAnomaly(__LINE__,__FILE__)
 
 class Window
 {

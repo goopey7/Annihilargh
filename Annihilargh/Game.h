@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Timer.h"
 #include "Window.h"
+#include "Drawable/Cube.h"
+
 
 
 class Game
@@ -11,6 +13,6 @@ public:
 private:
 	void Tick();
 	Window window;
-	float r = 0.f, g = 0.5f, b = 1.f, a = 1.f;
 	Timer timer;
+	std::vector<std::unique_ptr<Cube>> cubes;
 };

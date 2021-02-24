@@ -1,11 +1,13 @@
 ﻿#pragma once
 #include "WindowsWithoutTheCrap.h"
 #include <d3d11.h>
+#include <DirectXMath.h>
 #include <wrl.h>
 #include "BaseAnomaly.h"
 
 class Graphics
 {
+	friend class Bindable;
 public:
 	class Anomaly : public BaseAnomaly
 	{
@@ -35,10 +37,12 @@ public:
 	void EndFrame();
 
 	void ClearBuffer(float r, float g, float b) noexcept;
-
-	void DrawTestTriangle(float angle,float x,float y);
+	void DrawIndexed(UINT count) noexcept;
+	DirectX::XMMATRIX GetProjection() const noexcept;
+	void SetProjection(DirectX::FXMMATRIX projectionMat) noexcept;
 
 private:
+	DirectX::XMMATRIX projection;
 	// smart ptrs that already know the COM interface. Good stuff
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext = nullptr;

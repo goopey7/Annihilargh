@@ -102,4 +102,42 @@ triangles, and then I used that index to select a colour from the constant buffe
 Also added a z-buffer. This allows us to properly simulate depth. Before adding the z-buffer, objects would be drawn one
 on top of the other just depending on the order they were drawn. So, we create a depth texture by comparing the z-value
 of all vertices or maybe pixels hmmmmmm. Smaller z-values are closer to the screen, so they should be drawn last. That's
-the idea, and it works now. 
+the idea, and it works now.
+
+Tuesday (2/23/21)
+Yesterday was a great success! But now it is time to do some design because right now the entire pipeline is in one 
+function. All bindable elements of the pipeline and the buffers used to represent the cube, are created and destroyed
+every frame. The function was great for learning about the pipeline, but now that I do understand how everything works,
+it is time to refactor. This current function is definitely not going to work in the future because the framerate is
+going to suffer a lot for no good reason if we spawn in a thousand cubes every frame. So, I want these buffers to
+persist between frames.
+
+So, here's what the design is going to look like so everything is nice, neat, and convenient:
+
+Create a Bindable interface containing a Bind function that gets implemented by anything that needs to be bound to the 
+pipeline. Such as our shaders, constant buffer etc. The Bind function will take in a Graphics object as a parameter.
+So we will create classes for each bindable thing, and they will inherit from the bindable interface.
+
+Also create a Drawable interface which can be implemented by things such as a Cube object. Drawable objects will contain
+bindable objects. Definitely a vertex shader and a pixel shader for example. However, objects that implement Drawable
+will have different sets of Bindable objects. So, what's nice about this is that these varying Bindables can just be
+put into a std::vector using polymorphism. So Drawable supports any combination of Bindable objects.
+Drawable will have an already implemented Draw function which takes in a Graphics object as a parameter.
+This function is simply going to bind all bindables to the pipeline using the Bind function. Then it will
+call Draw through the graphics object passed in. 
+
+This design also provides persistence of bindables between frames since they are all going to be their own object.
+So not only does the code look good, but it actually also performs better too.
+
+Now I have to actually implement this ingenious design plan.
+
+A few hours later... (doing other work and dinner)
+
+(22:45) Let's start implementing this plan!
+
+Wednesday (2/24/21)
+
+(2:16AM) well I finally did it. spent 2-3 hrs debugging. I think I probably should have stopped earlier I'm definitely
+too tired. I was copy/pasting from the DrawTestTriangle function in Graphics and so I missed a few things.
+I really think I should probably go to bed. I think I have a calc BC quiz tomorrow lol. Well now I can spawn in 
+loads of cubes with ease!!!
