@@ -160,3 +160,12 @@ So our cube would inherit from DrawableBase<Cube> and DrawableBase<T> inherits f
 That way the compiler will copy/paste the DrawableBase<T> class for every different template used. Meaning we get
 different static vectors for different types. And we can just use the type of Drawable for the template because it 
 works and it's intuitive.
+
+So now that I have implemented that, the only Bindable that is not static for cubes is the TransformationConstantBuffer
+because all the different cube instances are going to have different positions and rotations. However, the entire 
+TransformationConstantBuffer doesn't need to be separate for each cube. All that really needs to happen to transform a
+cube is to update a constant buffer and then bind it to the pipeline. And it turns out that we can reuse the same 
+constant buffer for each cube and then each cube would have to update it with various transformations.
+This is an easy fix. Just simply make a static ptr to a vertex constant buffer. That way the same vertex constant buffer
+persists between different instances of TransformationConstantBuffer. So I have severely decreased the amount of
+resources being duplicated for no reason, and I am noticing an increase in performance when running the program now.
