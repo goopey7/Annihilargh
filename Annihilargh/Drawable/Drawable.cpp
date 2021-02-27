@@ -6,7 +6,8 @@ void Drawable::Draw(Graphics& gfx) const noexcept
 {
 	for(auto &b : bindables)
 		b->Bind(gfx);
-	
+	for(auto &b : GetStaticBindables())
+		b->Bind(gfx);
 	gfx.DrawIndexed(pIndexBuffer->GetCount());
 }
 

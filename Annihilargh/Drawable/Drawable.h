@@ -9,6 +9,8 @@
 
 class Drawable
 {
+	template<class T>
+	friend class DrawableBase;
 public:
 	Drawable() = default;
 	Drawable(const Drawable&) = delete;
@@ -19,6 +21,7 @@ public:
 	virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
 	virtual void Tick(float deltaTime) noexcept = 0;
 private:
+	virtual const std::vector<std::unique_ptr<Bindable>>& GetStaticBindables() const noexcept = 0;
 	const IndexBuffer* pIndexBuffer = nullptr;
 	std::vector<std::unique_ptr<Bindable>> bindables;
 };

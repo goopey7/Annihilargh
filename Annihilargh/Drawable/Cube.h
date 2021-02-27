@@ -2,9 +2,9 @@
 #include <random>
 
 #include "../Graphics.h"
-#include "Drawable.h"
+#include "DrawableBase.h"
 
-class Cube : public Drawable
+class Cube : public DrawableBase<Cube>
 {
 public:
 	Cube(Graphics &gfx, std::mt19937& rng, std::uniform_real_distribution<float>& adist,
