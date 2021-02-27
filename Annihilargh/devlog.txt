@@ -141,3 +141,22 @@ Wednesday (2/24/21)
 too tired. I was copy/pasting from the DrawTestTriangle function in Graphics and so I missed a few things.
 I really think I should probably go to bed. I think I have a calc BC quiz tomorrow lol. Well now I can spawn in 
 loads of cubes with ease!!!
+
+Saturday (2/27/21)
+The Bindable/Drawable design works now, but it can still be improved. First thing I'd like to improve is the fact that
+all 100 cubes being spawned use the exact same D3D elements, but each cube instance has their own instances of D3D 
+elements. So, we're creating 100 vertex buffers, 100 pixel shaders etc.
+That's pretty wasteful and so we want every drawable object to access a list of its common bindables shared with other
+drawables of the same type.
+We can get around that with the use of static variables. However, it would kind of suck if I had to copy/paste this for 
+every type of drawable. Also, the Draw function is only aware of the per instance bindables in the vector, 
+not static ones pertaining to a specific type of Drawable.
+And I can't do it in the Drawable interface because that would create one static vector shared between
+all types that inherit from Drawable. We don't want that. We want each Drawable type to have its own shared vector.
+So for example all Cubes share a vector of Bindables and all spheres share a different vector of Bindables. 
+Fortunately we can get the compiler to do the copy/pasting for us by creating a DrawableBase<T> class which is
+templated. This class would sit in between the drawable types and the drawable interface.
+So our cube would inherit from DrawableBase<Cube> and DrawableBase<T> inherits from Drawable.
+That way the compiler will copy/paste the DrawableBase<T> class for every different template used. Meaning we get
+different static vectors for different types. And we can just use the type of Drawable for the template because it 
+works and it's intuitive.
