@@ -1,12 +1,16 @@
 ﻿#include "TransformationConstantBuffer.h"
 
 TransformationConstantBuffer::TransformationConstantBuffer(Graphics& gfx, const Drawable& parent)
-	: vertexConstantBuffer(gfx),parent(parent)
-{}
+	:parent(parent)
+{
+	if(!pVertexConstantBuffer)
+		pVertexConstantBuffer = std::make_unique<VertexConstantBuffer<DirectX::XMMATRIX>>(gfx);
+}
 
 void TransformationConstantBuffer::Bind(Graphics& gfx) noexcept
 {
-	vertexConstantBuffer.Tick(gfx,
+	pVertexConstantBuffer->Tick(gfx,
 		DirectX::XMMatrixTranspose(parent.GetTransformXM()*gfx.GetProjection()));
-	vertexConstantBuffer.Bind(gfx);
+	pVertexConstantBuffer->Bind(gfx);
 }
+std::unique_ptr<VertexConstantBuffer<DirectX::XMMATRIX>> TransformationConstantBuffer::pVertexConstantBuffer;
