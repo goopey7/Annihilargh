@@ -169,3 +169,13 @@ constant buffer for each cube and then each cube would have to update it with va
 This is an easy fix. Just simply make a static ptr to a vertex constant buffer. That way the same vertex constant buffer
 persists between different instances of TransformationConstantBuffer. So I have severely decreased the amount of
 resources being duplicated for no reason, and I am noticing an increase in performance when running the program now.
+
+To properly test to make sure this works I should definitely add other Drawables than just the Cube.
+
+Monday (3/1/21)
+Separated the Mathematical representation of a Cube from the Drawable Cube that binds to the pipeline.
+I'm going to have some Geometric Primitives that can be created statically. Next I'm going to try and implement
+a sphere which is gonna be difficult.
+
+Well I got the sphere kind of working. Geez that was a lot of math.
+Anyways, I'm looking forward to loading 3D models so I can forget about 3D geometry :)

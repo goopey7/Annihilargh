@@ -2,7 +2,7 @@
 #include "Timer.h"
 #include "Window.h"
 #include "Drawable/Cube.h"
-
+#include "Drawable/Melon.h"
 
 
 class Game
@@ -14,5 +14,5 @@ private:
 	void Tick();
 	Window window;
 	Timer timer;
-	std::vector<std::unique_ptr<Cube>> cubes;
+	std::vector<std::unique_ptr<Melon>> melons;
 };

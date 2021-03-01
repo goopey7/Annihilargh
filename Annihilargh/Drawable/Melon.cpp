@@ -1,5 +1,5 @@
-﻿#include "Cube.h"
-#include "../Geometry/Cube.h"
+﻿#include "Melon.h"
+#include "../Geometry/Sphere.h"
 
 #include <DirectXMath.h>
 
@@ -14,7 +14,7 @@
 #include "../Bindable/Topology.h"
 #include "../Bindable/TransformationConstantBuffer.h"
 
-Cube::Cube(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>& adist,
+Melon::Melon(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>& adist,
            std::uniform_real_distribution<float>& ddist, std::uniform_real_distribution<float>& odist,
            std::uniform_real_distribution<float>& rdist)
 		: offsetX(rdist(rng)),dPitch(ddist(rng)),dYaw(ddist(rng)),dRoll(ddist(rng)),
@@ -29,7 +29,8 @@ Cube::Cube(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<floa
 			dx::XMFLOAT3 pos;
 		};
 
-		auto model = Geometry::Cube::Create<Vertex>();
+		auto model = Geometry::Sphere::Create<Vertex>();
+		model.Transform(dx::XMMatrixScaling(1.f,1.f,1.5f));
 		AddStaticBindable(std::make_unique<VertexBuffer>(gfx,model.vertices));
 
 		auto pVertexShader = std::make_unique<VertexShader>(gfx,L"VertexShader.cso");
@@ -45,18 +46,20 @@ Cube::Cube(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<floa
 			struct
 			{
 				float r,g,b,a;
-			}faceColours[6];
+			}faceColours[8];
 		};
 
 		const PixelCB pcb=
 		{
 			{
-				{1.f,0.f,1.f},
-				{1.f,0.f,0.f},
-				{0.f,1.f,0.f},
-				{0.f,0.f,1.f},
-				{1.f,1.f,0.f},
-				{0.f,1.f,1.f},
+				{ 1.0f,1.0f,1.0f },
+				{ 1.0f,0.0f,0.0f },
+				{ 0.0f,1.0f,0.0f },
+				{ 1.0f,1.0f,0.0f },
+				{ 0.0f,0.0f,1.0f },
+				{ 1.0f,0.0f,1.0f },
+				{ 0.0f,1.0f,1.0f },
+				{ 0.0f,0.0f,0.0f },
 				}
 		};
 		AddStaticBindable(std::make_unique<PixelConstantBuffer<PixelCB>>(gfx,pcb));
@@ -76,7 +79,7 @@ Cube::Cube(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<floa
 	AddBindable(std::make_unique<TransformationConstantBuffer>(gfx,*this));
 }
 
-void Cube::Tick(float deltaTime) noexcept
+void Melon::Tick(float deltaTime) noexcept
 {
 	pitch+=dPitch*deltaTime;
 	yaw+=dYaw*deltaTime;
@@ -86,7 +89,7 @@ void Cube::Tick(float deltaTime) noexcept
 	chi+=dChi*deltaTime;
 }
 
-DirectX::XMMATRIX Cube::GetTransformXM() const noexcept
+DirectX::XMMATRIX Melon::GetTransformXM() const noexcept
 {
 	return DirectX::XMMatrixRotationRollPitchYaw(pitch,yaw,roll)*
 		DirectX::XMMatrixTranslation(offsetX,0.f,0.f)*

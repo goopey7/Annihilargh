@@ -1,7 +1,7 @@
 ﻿#include "Game.h"
 #include <random>
 
-
+#include "Drawable/Melon.h"
 
 
 Game::Game(): window(800, 600, "Annihilargh")
@@ -13,7 +13,7 @@ Game::Game(): window(800, 600, "Annihilargh")
 	std::uniform_real_distribution<float> rdist( 6.0f,20.0f );
 	for(auto i=0;i<200;i++)
 	{
-		cubes.push_back(std::make_unique<Cube>(window.GetGraphics(),rng,adist,ddist,odist,rdist));
+		melons.push_back(std::make_unique<Melon>(window.GetGraphics(),rng,adist,ddist,odist,rdist));
 	}
 	window.GetGraphics().SetProjection(DirectX::XMMatrixPerspectiveLH(1.f,3.f/4.f,0.5f,40.f));
 }
@@ -36,10 +36,10 @@ void Game::Tick()
 {
 	auto deltaTime = timer.Reset();
 	window.GetGraphics().ClearBuffer(0.1f,0.0f,0.0f);
-	for(auto &cube : cubes)
+	for(auto &melon : melons)
 	{
-		cube->Tick(deltaTime);
-		cube->Draw(window.GetGraphics());
+		melon->Tick(deltaTime);
+		melon->Draw(window.GetGraphics());
 	}
 	window.GetGraphics().EndFrame();
 }
