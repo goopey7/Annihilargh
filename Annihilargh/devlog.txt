@@ -177,5 +177,13 @@ Separated the Mathematical representation of a Cube from the Drawable Cube that 
 I'm going to have some Geometric Primitives that can be created statically. Next I'm going to try and implement
 a sphere which is gonna be difficult.
 
-Well I got the sphere kind of working. Geez that was a lot of math.
+Well I got the sphere kind of working. But I can see that the triangles aren't being drawn correctly.
+Geez that was a lot of math.
 Anyways, I'm looking forward to loading 3D models so I can forget about 3D geometry :)
+Ok, I fixed the indexes so now the triangles have disappeared and you see a sphere.
+But the pixel shader was not colouring in all the triangles hmmmmmm.
+Well after 30 minutes turns out my shaders were compiling to a different directory, meaning that the changes I made
+to the pixel shader were not actually affecting my program at all. Lol. Now it all looks good. 
+
+I also tested out how nice it would be to use this system in Game.cpp. It's beautiful. Just have a list of drawables
+containing cubes and melons. Ahhhh beautiful.
