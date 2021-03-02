@@ -30,7 +30,7 @@ Melon::Melon(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<fl
 		};
 
 		auto model = Geometry::Sphere::Create<Vertex>();
-		model.Transform(dx::XMMatrixScaling(1.f,1.f,1.5f));
+		model.Transform(dx::XMMatrixScaling(1.f,1.f,1.0f));
 		AddStaticBindable(std::make_unique<VertexBuffer>(gfx,model.vertices));
 
 		auto pVertexShader = std::make_unique<VertexShader>(gfx,L"VertexShader.cso");
@@ -59,7 +59,7 @@ Melon::Melon(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<fl
 				{ 0.0f,0.0f,1.0f },
 				{ 1.0f,0.0f,1.0f },
 				{ 0.0f,1.0f,1.0f },
-				{ 0.0f,0.0f,0.0f },
+				{ 1.0f,0.5f,0.0f },
 				}
 		};
 		AddStaticBindable(std::make_unique<PixelConstantBuffer<PixelCB>>(gfx,pcb));

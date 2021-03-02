@@ -45,60 +45,63 @@ namespace Geometry
 			vertices.emplace_back();
 			dx::XMStoreFloat3(&vertices.back().pos, dx::XMVectorNegate(base));
 
-			std::vector<unsigned short> indices;
-
 			// calculate indices
+			std::vector<unsigned short> indices;
+			// nice lambda function for doing just that
+
+			const auto calcIndex = [latDiv,longDiv](unsigned short lat, unsigned short longitude)
+			{
+				return lat * longDiv + longitude;
+			};
+			
 			for (unsigned short lat = 0; lat < latDiv - 2; lat++)
 			{
 				for (unsigned short longitude = 0; longitude < longDiv - 1; longitude++)
 				{
-					indices.push_back(lat * longDiv + longitude);
-					indices.push_back((lat + 1) * longDiv + longitude);
-					indices.push_back(lat * longDiv + longitude + 1);
-					indices.push_back(lat * longDiv + longitude + 1);
-					indices.push_back((lat + 1) * latDiv + longitude);
-					indices.push_back((lat + 1) * longDiv + longitude + 1);
+					indices.push_back(calcIndex(lat, longitude));
+					indices.push_back(calcIndex(lat + 1, longitude));
+					indices.push_back(calcIndex(lat, longitude + 1));
+					indices.push_back(calcIndex(lat, longitude + 1));
+					indices.push_back(calcIndex(lat + 1, longitude));
+					indices.push_back(calcIndex(lat + 1, longitude + 1));
 				}
-				indices.push_back(lat * longDiv + longDiv - 1);
-				indices.push_back((lat + 1) * longDiv + longDiv - 1);
-				indices.push_back(lat * longDiv);
-				indices.push_back(lat * longDiv);
-				indices.push_back((lat + 1) * longDiv + longDiv - 1);
-				indices.push_back((lat + 1) * longDiv);
+				indices.push_back(calcIndex(lat, longDiv - 1));
+				indices.push_back(calcIndex(lat + 1, longDiv - 1));
+				indices.push_back(calcIndex(lat, 0));
+				indices.push_back(calcIndex(lat, 0));
+				indices.push_back(calcIndex(lat + 1, longDiv - 1));
+				indices.push_back(calcIndex(lat + 1, 0));
 			}
+
 			// do the north/south caps
-			for (unsigned short longitude = 0; longitude < longDiv - 1; longitude++)
+			for (unsigned short iLong = 0; iLong < longDiv - 1; iLong++)
 			{
 				// north cap
 				indices.push_back(northPole);
-				indices.push_back(longitude);
-				indices.push_back(longitude + 1);
+				indices.push_back(calcIndex(0, iLong));
+				indices.push_back(calcIndex(0, iLong + 1));
 				// south cap
-				indices.push_back((latDiv - 2) * longDiv + longitude + 1);
-				indices.push_back((latDiv - 2) * longDiv + longitude);
+				indices.push_back(calcIndex(latDiv - 2, iLong + 1));
+				indices.push_back(calcIndex(latDiv - 2, iLong));
 				indices.push_back(southPole);
 			}
-
-			//wrap triangles
+			// wrap triangles
 			// north pole
 			indices.push_back(northPole);
-			indices.push_back(longDiv - 1);
-			indices.push_back(0);
+			indices.push_back(calcIndex(0, longDiv - 1));
+			indices.push_back(calcIndex(0, 0));
 			// south pole
-			indices.push_back((latDiv - 2) * longDiv);
-			indices.push_back((latDiv - 2) * longDiv + longDiv - 1);
+			indices.push_back(calcIndex(latDiv - 2, 0));
+			indices.push_back(calcIndex(latDiv - 2, longDiv - 1));
 			indices.push_back(southPole);
 
-			return
-			{
-				std::move(vertices), std::move(indices)
-			};
+			return {std::move(vertices), std::move(indices)};
 		}
 
 		template <class V>
 		static IndexedTriangleList<V> Create()
 		{
-			return CreateTessellated<V>(12, 24);
+			return CreateTessellated<V>(10, 40);
 		}
 	};
 }

@@ -14,5 +14,5 @@ private:
 	void Tick();
 	Window window;
 	Timer timer;
-	std::vector<std::unique_ptr<Melon>> melons;
+	std::vector<std::unique_ptr<Drawable>> drawables;
 };
