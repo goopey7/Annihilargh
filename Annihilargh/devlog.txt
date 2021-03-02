@@ -187,3 +187,15 @@ to the pixel shader were not actually affecting my program at all. Lol. Now it a
 
 I also tested out how nice it would be to use this system in Game.cpp. It's beautiful. Just have a list of drawables
 containing cubes and melons. Ahhhh beautiful.
+
+Tuesday (3/2/21)
+Time to start learning about how to implement textures in Direct3D!
+Instead of using the helper functions in the DirectXTK. I'm gonna load the images using GDIPlus and then manually
+get them into the Direct3D pipeline.
+
+Got GDIPlus working. Now I need to get Textures in Direct3D working. You bind textures to the pipeline, but you also
+need a sampler which specifies how the texture is going to be used. Is it going to be wrapped how will it be filtered?
+Linear interpolation? Point sampling? Anisotropic? Depends on what the art style is.
+
+Well I've done it. Fortunately for more complex meshes loaded from files, the texture coordinates are already done for
+you. 

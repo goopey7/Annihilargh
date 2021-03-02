@@ -21,9 +21,18 @@ Texture::Texture(Graphics& gfx, const Image& img)
 
 	D3D11_SUBRESOURCE_DATA sd = {};
 	sd.pSysMem = img.GetBufferPtr();
+	// pitch is the distance in bytes between the first pixel in row 0 and the first pixel in row 2.
 	sd.SysMemPitch = img.GetWidth()*sizeof(Image::Colour);
 	wrl::ComPtr<ID3D11Texture2D> pTexture;
 	GFX_THROW_FAILED(GetDevice(gfx)->CreateTexture2D(&texDesc,&sd,&pTexture));
+
+	// create the resource view
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = texDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels=1;
+	GFX_THROW_FAILED(GetDevice(gfx)->CreateShaderResourceView(pTexture.Get(),&srvDesc,&pTextureView));
 }
 
 void Texture::Bind(Graphics& gfx) noexcept

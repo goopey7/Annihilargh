@@ -3,6 +3,7 @@
 #include "Image.h"
 #include "GDIPlusManager.h"
 #include "Drawable/Melon.h"
+#include "Drawable/TexturedCube.h"
 
 GDIPlusManager gdiPM;
 
@@ -15,10 +16,9 @@ Game::Game(): window(800, 600, "Annihilargh")
 	std::uniform_real_distribution<float> rdist( 6.0f,20.0f );
 	for(auto i=0;i<100;i++)
 	{
-		drawables.push_back(std::make_unique<Melon>(window.GetGraphics(),rng,adist,ddist,odist,rdist));
-		drawables.push_back(std::make_unique<Cube>(window.GetGraphics(),rng,adist,ddist,odist,rdist));
+		//drawables.push_back(std::make_unique<Melon>(window.GetGraphics(),rng,adist,ddist,odist,rdist));
+		drawables.push_back(std::make_unique<TexturedCube>(window.GetGraphics(),rng,adist,ddist,odist,rdist));
 	}
-	const auto img = Image::FromFile("Images\\AlienX.png");
 	window.GetGraphics().SetProjection(DirectX::XMMatrixPerspectiveLH(1.f,3.f/4.f,0.5f,40.f));
 }
 
@@ -42,6 +42,7 @@ void Game::Tick()
 	window.GetGraphics().ClearBuffer(0.1f,0.0f,0.0f);
 	for(auto &drawable : drawables)
 	{
+		if(window.keyboard.KeyIsPressed(VK_SPACE)) deltaTime = 0.f;
 		drawable->Tick(deltaTime);
 		drawable->Draw(window.GetGraphics());
 	}

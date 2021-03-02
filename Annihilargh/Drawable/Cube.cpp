@@ -32,11 +32,11 @@ Cube::Cube(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<floa
 		auto model = Geometry::Cube::Create<Vertex>();
 		AddStaticBindable(std::make_unique<VertexBuffer>(gfx,model.vertices));
 
-		auto pVertexShader = std::make_unique<VertexShader>(gfx,L"VertexShader.cso");
+		auto pVertexShader = std::make_unique<VertexShader>(gfx,L"ColourIndexVS.cso");
 		auto pVertexShaderBlob = pVertexShader->GetBlob();
 		AddStaticBindable(std::move(pVertexShader));
 
-		AddStaticBindable(std::make_unique<PixelShader>(gfx,L"PixelShader.cso"));
+		AddStaticBindable(std::make_unique<PixelShader>(gfx,L"ColourIndexPS.cso"));
 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx,model.indices));
 

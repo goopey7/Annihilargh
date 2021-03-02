@@ -1,5 +1,5 @@
-﻿#include "Melon.h"
-#include "../Geometry/Sphere.h"
+﻿#include "TexturedCube.h"
+#include "../Geometry/Cube.h"
 
 #include <DirectXMath.h>
 
@@ -13,8 +13,10 @@
 #include "../Bindable/InputLayout.h"
 #include "../Bindable/Topology.h"
 #include "../Bindable/TransformationConstantBuffer.h"
+#include "../Image.h"
+#include "../Bindable/Texture.h"
 
-Melon::Melon(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>& adist,
+TexturedCube::TexturedCube(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>& adist,
            std::uniform_real_distribution<float>& ddist, std::uniform_real_distribution<float>& odist,
            std::uniform_real_distribution<float>& rdist)
 		: offsetX(rdist(rng)),dPitch(ddist(rng)),dYaw(ddist(rng)),dRoll(ddist(rng)),
@@ -27,17 +29,22 @@ Melon::Melon(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<fl
 		struct Vertex
 		{
 			dx::XMFLOAT3 pos;
+
+			struct
+			{
+				float u,v;
+			} tex;
 		};
-
-		auto model = Geometry::Sphere::Create<Vertex>();
-		model.Transform(dx::XMMatrixScaling(1.f,1.f,1.5f));
+		
+		auto model = Geometry::Cube::CreateTextured<Vertex>();
+		model.Transform(dx::XMMatrixScaling(2.f,2.f,2.f));
 		AddStaticBindable(std::make_unique<VertexBuffer>(gfx,model.vertices));
-
-		auto pVertexShader = std::make_unique<VertexShader>(gfx,L"ColourIndexVS.cso");
+		AddStaticBindable(std::make_unique<Texture>(gfx,Image::FromFile("Images\\AlienX.png")));
+		auto pVertexShader = std::make_unique<VertexShader>(gfx,L"TextureVS.cso");
 		auto pVertexShaderBlob = pVertexShader->GetBlob();
 		AddStaticBindable(std::move(pVertexShader));
 
-		AddStaticBindable(std::make_unique<PixelShader>(gfx,L"ColourIndexPS.cso"));
+		AddStaticBindable(std::make_unique<PixelShader>(gfx,L"TexturePS.cso"));
 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx,model.indices));
 
@@ -46,20 +53,18 @@ Melon::Melon(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<fl
 			struct
 			{
 				float r,g,b,a;
-			}faceColours[8];
+			}faceColours[6];
 		};
 
 		const PixelCB pcb=
 		{
 			{
-				{ 1.0f,1.0f,1.0f },
-				{ 1.0f,0.0f,0.0f },
-				{ 0.0f,1.0f,0.0f },
-				{ 1.0f,1.0f,0.0f },
-				{ 0.0f,0.0f,1.0f },
-				{ 1.0f,0.0f,1.0f },
-				{ 0.0f,1.0f,1.0f },
-				{ 1.0f,0.5f,0.0f },
+				{1.f,0.f,1.f},
+				{1.f,0.f,0.f},
+				{0.f,1.f,0.f},
+				{0.f,0.f,1.f},
+				{1.f,1.f,0.f},
+				{0.f,1.f,1.f},
 				}
 		};
 		AddStaticBindable(std::make_unique<PixelConstantBuffer<PixelCB>>(gfx,pcb));
@@ -67,7 +72,8 @@ Melon::Melon(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<fl
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
 			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,
-                D3D11_INPUT_PER_VERTEX_DATA,0}
+                D3D11_INPUT_PER_VERTEX_DATA,0},
+			{"TexCoord",0,DXGI_FORMAT_R32G32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0}
 		};
 		AddStaticBindable(std::make_unique<InputLayout>(gfx,ied,pVertexShaderBlob));
 		AddStaticBindable(std::make_unique<Topology>(gfx,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
@@ -79,7 +85,7 @@ Melon::Melon(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<fl
 	AddBindable(std::make_unique<TransformationConstantBuffer>(gfx,*this));
 }
 
-void Melon::Tick(float deltaTime) noexcept
+void TexturedCube::Tick(float deltaTime) noexcept
 {
 	pitch+=dPitch*deltaTime;
 	yaw+=dYaw*deltaTime;
@@ -89,7 +95,7 @@ void Melon::Tick(float deltaTime) noexcept
 	chi+=dChi*deltaTime;
 }
 
-DirectX::XMMATRIX Melon::GetTransformXM() const noexcept
+DirectX::XMMATRIX TexturedCube::GetTransformXM() const noexcept
 {
 	return DirectX::XMMatrixRotationRollPitchYaw(pitch,yaw,roll)*
 		DirectX::XMMatrixTranslation(offsetX,0.f,0.f)*
