@@ -1,8 +1,10 @@
 ﻿#include "Game.h"
 #include <random>
-
+#include "Image.h"
+#include "GDIPlusManager.h"
 #include "Drawable/Melon.h"
 
+GDIPlusManager gdiPM;
 
 Game::Game(): window(800, 600, "Annihilargh")
 {
@@ -16,6 +18,7 @@ Game::Game(): window(800, 600, "Annihilargh")
 		drawables.push_back(std::make_unique<Melon>(window.GetGraphics(),rng,adist,ddist,odist,rdist));
 		drawables.push_back(std::make_unique<Cube>(window.GetGraphics(),rng,adist,ddist,odist,rdist));
 	}
+	const auto img = Image::FromFile("Images\\AlienX.png");
 	window.GetGraphics().SetProjection(DirectX::XMMatrixPerspectiveLH(1.f,3.f/4.f,0.5f,40.f));
 }
 

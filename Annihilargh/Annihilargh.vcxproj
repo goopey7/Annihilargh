@@ -184,6 +184,7 @@
     <ClCompile Include="Bindable\IndexBuffer.cpp" />
     <ClCompile Include="Bindable\InputLayout.cpp" />
     <ClCompile Include="Bindable\PixelShader.cpp" />
+    <ClCompile Include="Bindable\Texture.cpp" />
     <ClCompile Include="Bindable\Topology.cpp" />
     <ClCompile Include="Bindable\TransformationConstantBuffer.cpp" />
     <ClCompile Include="Bindable\VertexBuffer.cpp" />
@@ -261,9 +262,11 @@
     </ClCompile>
     <ClCompile Include="Drawable\Melon.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GDIPlusManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -274,6 +277,7 @@
     <ClInclude Include="Bindable\IndexBuffer.h" />
     <ClInclude Include="Bindable\InputLayout.h" />
     <ClInclude Include="Bindable\PixelShader.h" />
+    <ClInclude Include="Bindable\Texture.h" />
     <ClInclude Include="Bindable\Topology.h" />
     <ClInclude Include="Bindable\TransformationConstantBuffer.h" />
     <ClInclude Include="Bindable\VertexBuffer.h" />
@@ -283,6 +287,7 @@
     <ClInclude Include="Drawable\DrawableBase.h" />
     <ClInclude Include="Drawable\Melon.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="Geometry\Cube.h" />
     <ClInclude Include="Geometry\IndexedTriangleList.h" />
     <ClInclude Include="Geometry\Math.h" />
@@ -292,6 +297,7 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowAnomalyMacros.h" />
@@ -301,11 +307,9 @@
     <ResourceCompile Include="Annihilargh.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\Downloads\Annihilargh.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Annihilargh.ico" />
     <Content Include="devlog.txt" />
+    <Content Include="Images\AlienX.png" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
