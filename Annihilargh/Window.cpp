@@ -1,6 +1,7 @@
 ﻿#include "Window.h"
 #include "resource.h"
 #include <sstream>
+#include "imgui/imgui_impl_win32.h"
 
 // ************WindowClass************
 Window::WindowClass Window::WindowClass::wndClass;
@@ -67,6 +68,9 @@ Window::Window(int width, int height, const char* name)
 
 	ShowWindow(hWnd,SW_SHOWDEFAULT);
 
+	// initialise ImGui Win32
+	ImGui_ImplWin32_Init(hWnd);
+	
 	// create graphics object
 	pGraphics = std::make_unique<Graphics>(hWnd);
 }
@@ -74,6 +78,7 @@ Window::Window(int width, int height, const char* name)
 Window::~Window()
 {
 	DestroyWindow(hWnd);
+	ImGui_ImplWin32_Shutdown();
 }
 
 std::optional<int> Window::ProcessMessages() noexcept
@@ -131,8 +136,12 @@ LRESULT WINAPI Window::HandleMessageAfterCreation(HWND hWnd, UINT msg, WPARAM wP
 	return pWnd->HandleMessage(hWnd, msg, wParam, lParam);
 }
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
+	// if imgui is handling it then we don't need to do anything
+	if(ImGui_ImplWin32_WndProcHandler(hWnd,msg,wParam,lParam))
+		return true;
 	switch (msg)
 	{
 	case WM_CLOSE:

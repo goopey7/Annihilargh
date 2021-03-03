@@ -12,8 +12,9 @@
 #pragma once
 #include "imgui.h"      // IMGUI_IMPL_API
 
-struct ID3D11Device;
-struct ID3D11DeviceContext;
+#include "../WindowsWithoutTheCrap.h"
+#include "../Graphics.h"
+#include "imgui.h" // so when I include this I don't have to include imgui.h as well
 
 IMGUI_IMPL_API bool     ImGui_ImplDX11_Init(ID3D11Device* device, ID3D11DeviceContext* device_context);
 IMGUI_IMPL_API void     ImGui_ImplDX11_Shutdown();

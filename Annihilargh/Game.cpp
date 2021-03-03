@@ -4,6 +4,9 @@
 #include "GDIPlusManager.h"
 #include "Drawable/Melon.h"
 #include "Drawable/TexturedCube.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
 
 GDIPlusManager gdiPM;
 
@@ -46,5 +49,18 @@ void Game::Tick()
 		drawable->Tick(deltaTime);
 		drawable->Draw(window.GetGraphics());
 	}
+	// imgui
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	
+	ImGui::NewFrame();
+
+	if(window.keyboard.KeyIsPressed(VK_ESCAPE))
+		showDemoWindow=!showDemoWindow;
+	if(showDemoWindow)
+		ImGui::ShowDemoWindow(&showDemoWindow);
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	
 	window.GetGraphics().EndFrame();
 }

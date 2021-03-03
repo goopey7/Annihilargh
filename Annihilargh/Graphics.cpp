@@ -7,6 +7,7 @@
 #include <wrl/client.h>
 #include "GraphicsAnomalyMacros.h"
 #include "Window.h"
+#include "imgui/imgui_impl_dx11.h"
 
 // these namespaces will just make things look nicer
 namespace wrl = Microsoft::WRL;
@@ -153,6 +154,14 @@ Graphics::Graphics(HWND hWnd)
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
 	pDeviceContext->RSSetViewports(1u,&viewport);
+
+	// initialise imgui
+	ImGui_ImplDX11_Init(pDevice.Get(),pDeviceContext.Get());
+}
+
+Graphics::~Graphics()
+{
+	ImGui_ImplDX11_Shutdown();
 }
 
 void Graphics::EndFrame()
