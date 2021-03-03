@@ -41,26 +41,26 @@ int Game::BeginPlay()
 
 void Game::Tick()
 {
-	auto deltaTime = timer.Reset();
-	window.GetGraphics().ClearBuffer(0.1f,0.0f,0.0f);
+	auto deltaTime = timer.Reset() * simulationSpeedFactor;
+	window.GetGraphics().BeginFrame(0.1f,0.0f,0.0f);
 	for(auto &drawable : drawables)
 	{
 		if(window.keyboard.KeyIsPressed(VK_SPACE)) deltaTime = 0.f;
 		drawable->Tick(deltaTime);
 		drawable->Draw(window.GetGraphics());
 	}
-	// imgui
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	
-	ImGui::NewFrame();
-
 	if(window.keyboard.KeyIsPressed(VK_ESCAPE))
-		showDemoWindow=!showDemoWindow;
+		showDemoWindow=true;
 	if(showDemoWindow)
-		ImGui::ShowDemoWindow(&showDemoWindow);
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	{
+		if(ImGui::Begin("Simulation Speed"))
+		{
+			ImGui::SliderFloat("Simulation Speed Factor", &simulationSpeedFactor,0.f,4.f);
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.f/ImGui::GetIO().Framerate,
+				ImGui::GetIO().Framerate);
+		}
+		ImGui::End();
+	}
 	
 	window.GetGraphics().EndFrame();
 }

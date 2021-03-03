@@ -36,10 +36,13 @@ public:
 	Graphics& operator=(const Graphics&) = delete;
 	void EndFrame();
 
-	void ClearBuffer(float r, float g, float b) noexcept;
+	void BeginFrame(float r, float g, float b) noexcept;
 	void DrawIndexed(UINT count) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
 	void SetProjection(DirectX::FXMMATRIX projectionMat) noexcept;
+	void EnableImgui() noexcept;
+	void DisableImGui() noexcept;
+	bool IsImguiEnabled() const noexcept;
 
 private:
 	DirectX::XMMATRIX projection;
@@ -49,4 +52,5 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetView = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSView=nullptr;
+	bool bImguiEnabled=true;
 };

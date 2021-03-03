@@ -18,4 +18,5 @@ private:
 	Timer timer;
 	std::vector<std::unique_ptr<Drawable>> drawables;
 	bool showDemoWindow=true;
+	float simulationSpeedFactor = 1.f;
 };

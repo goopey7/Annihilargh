@@ -8,10 +8,11 @@
 #include "GraphicsAnomalyMacros.h"
 #include "Window.h"
 #include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
 
 // these namespaces will just make things look nicer
 namespace wrl = Microsoft::WRL;
-namespace dx=DirectX;
+namespace dx = DirectX;
 
 // this way you don't have to worry about configuring your project correctly.
 #pragma comment(lib,"d3d11.lib")
@@ -19,9 +20,9 @@ namespace dx=DirectX;
 
 // ERROR HANDLING - Similar to how window works
 Graphics::AnomalyHresult::AnomalyHresult(int line, const char* file, HRESULT hr) noexcept
-:
-Anomaly(line,file),
-hr(hr)
+	:
+	Anomaly(line, file),
+	hr(hr)
 {
 }
 
@@ -29,10 +30,10 @@ const char* Graphics::AnomalyHresult::what() const noexcept
 {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
-	<< "Error Code: 0x" << std::hex << std::uppercase << GetErrorCode() << std::dec
-	<< " (" << (unsigned long)GetErrorCode() << ")" << std::endl
-	<< "Error String: " << GetErrorString() << std::endl
-	<< GetOriginString();
+		<< "Error Code: 0x" << std::hex << std::uppercase << GetErrorCode() << std::dec
+		<< " (" << (unsigned long)GetErrorCode() << ")" << std::endl
+		<< "Error String: " << GetErrorString() << std::endl
+		<< GetOriginString();
 	whatBuffer = oss.str();
 	return whatBuffer.c_str();
 }
@@ -86,7 +87,7 @@ Graphics::Graphics(HWND hWnd)
 	HRESULT hr;
 	UINT swapFlags = 0u;
 #ifndef NDEBUG
-	swapFlags=D3D11_CREATE_DEVICE_DEBUG;
+	swapFlags = D3D11_CREATE_DEVICE_DEBUG;
 #endif
 	GFX_THROW_FAILED(D3D11CreateDeviceAndSwapChain(
 		nullptr, // choose default gfx card
@@ -120,30 +121,30 @@ Graphics::Graphics(HWND hWnd)
 	GFX_THROW_FAILED(pDevice->CreateDepthStencilState(&dsDesc,&pDSState));
 
 	// bind state
-	pDeviceContext->OMSetDepthStencilState(pDSState.Get(),1u);
+	pDeviceContext->OMSetDepthStencilState(pDSState.Get(), 1u);
 
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth = {};
-	descDepth.Width=800u;
-	descDepth.Height=600u;
-	descDepth.MipLevels=1u;
-	descDepth.ArraySize=1u;
-	descDepth.Format=DXGI_FORMAT_D32_FLOAT;
-	descDepth.SampleDesc.Count=1u;
-	descDepth.SampleDesc.Quality=0u;
-	descDepth.Usage=D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags=D3D11_BIND_DEPTH_STENCIL;
+	descDepth.Width = 800u;
+	descDepth.Height = 600u;
+	descDepth.MipLevels = 1u;
+	descDepth.ArraySize = 1u;
+	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descDepth.SampleDesc.Count = 1u;
+	descDepth.SampleDesc.Quality = 0u;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	GFX_THROW_FAILED(pDevice->CreateTexture2D(&descDepth,nullptr,&pDepthStencil));
 
 	// create view of depth stencil texture
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
-	descDSV.Format=DXGI_FORMAT_D32_FLOAT;
+	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	descDSV.Texture2D.MipSlice=0u;
+	descDSV.Texture2D.MipSlice = 0u;
 	GFX_THROW_FAILED(pDevice->CreateDepthStencilView(pDepthStencil.Get(),&descDSV,&pDSView));
 
 	// bind depth stencil view to the pipeline
-	pDeviceContext->OMSetRenderTargets(1u,pTargetView.GetAddressOf(),pDSView.Get());
+	pDeviceContext->OMSetRenderTargets(1u, pTargetView.GetAddressOf(), pDSView.Get());
 
 	// configure viewport
 	D3D11_VIEWPORT viewport;
@@ -153,10 +154,10 @@ Graphics::Graphics(HWND hWnd)
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
-	pDeviceContext->RSSetViewports(1u,&viewport);
+	pDeviceContext->RSSetViewports(1u, &viewport);
 
 	// initialise imgui
-	ImGui_ImplDX11_Init(pDevice.Get(),pDeviceContext.Get());
+	ImGui_ImplDX11_Init(pDevice.Get(), pDeviceContext.Get());
 }
 
 Graphics::~Graphics()
@@ -166,14 +167,21 @@ Graphics::~Graphics()
 
 void Graphics::EndFrame()
 {
+	// imgui
+	if (bImguiEnabled)
+	{
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
+
 	HRESULT hr;
 	// SyncInterval according to msdn:
 	// 0: Presentation occurs immediately. No synchronization
 	// 1-4: Synchronize presentation for at least n vertical blocks
-	if(FAILED(hr = pSwapChain->Present(1u, 0u)))
+	if (FAILED(hr = pSwapChain->Present(1u, 0u)))
 	{
 		// occurs usually due to some kind of gfx driver failure
-		if(hr == DXGI_ERROR_DEVICE_REMOVED)
+		if (hr == DXGI_ERROR_DEVICE_REMOVED)
 		{
 			throw GFX_DEVICE_REMOVED_ANOMALY(pDevice->GetDeviceRemovedReason());
 		}
@@ -181,16 +189,23 @@ void Graphics::EndFrame()
 	}
 }
 
-void Graphics::ClearBuffer(float r, float g, float b) noexcept
+void Graphics::BeginFrame(float r, float g, float b) noexcept
 {
+	// imgui
+	if (bImguiEnabled)
+	{
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+	}
 	const float colour[] = {r, g, b, 1.f};
 	pDeviceContext->ClearRenderTargetView(pTargetView.Get(), colour);
-	pDeviceContext->ClearDepthStencilView(pDSView.Get(),D3D11_CLEAR_DEPTH,1.f,0u);
+	pDeviceContext->ClearDepthStencilView(pDSView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 }
 
 void Graphics::DrawIndexed(UINT count) noexcept
 {
-	pDeviceContext->DrawIndexed(count,0u,0u);
+	pDeviceContext->DrawIndexed(count, 0u, 0u);
 }
 
 DirectX::XMMATRIX Graphics::GetProjection() const noexcept
@@ -201,4 +216,19 @@ DirectX::XMMATRIX Graphics::GetProjection() const noexcept
 void Graphics::SetProjection(DirectX::FXMMATRIX projectionMat) noexcept
 {
 	projection = projectionMat;
+}
+
+void Graphics::EnableImgui() noexcept
+{
+	bImguiEnabled=true;
+}
+
+void Graphics::DisableImGui() noexcept
+{
+	bImguiEnabled=false;
+}
+
+bool Graphics::IsImguiEnabled() const noexcept
+{
+	return bImguiEnabled;
 }
