@@ -40,12 +40,15 @@ public:
 	void DrawIndexed(UINT count) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
 	void SetProjection(DirectX::FXMMATRIX projectionMat) noexcept;
+	void SetCamera(DirectX::FXMMATRIX cam) noexcept;
+	DirectX::XMMATRIX GetCamera() const noexcept;
 	void EnableImgui() noexcept;
 	void DisableImGui() noexcept;
 	bool IsImguiEnabled() const noexcept;
 
 private:
 	DirectX::XMMATRIX projection;
+	DirectX::XMMATRIX camera;
 	// smart ptrs that already know the COM interface. Good stuff
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pDeviceContext = nullptr;

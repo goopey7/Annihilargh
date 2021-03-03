@@ -190,6 +190,7 @@
     <ClCompile Include="Bindable\TransformationConstantBuffer.cpp" />
     <ClCompile Include="Bindable\VertexBuffer.cpp" />
     <ClCompile Include="Bindable\VertexShader.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Drawable\Cube.cpp" />
     <ClCompile Include="Drawable\Drawable.cpp" />
     <ClCompile Include="Drawable\DrawableBase.cpp">
@@ -361,6 +362,7 @@
     <ClInclude Include="Bindable\TransformationConstantBuffer.h" />
     <ClInclude Include="Bindable\VertexBuffer.h" />
     <ClInclude Include="Bindable\VertexShader.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Drawable\Cube.h" />
     <ClInclude Include="Drawable\Drawable.h" />
     <ClInclude Include="Drawable\DrawableBase.h" />

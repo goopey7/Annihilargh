@@ -10,7 +10,7 @@ TransformationConstantBuffer::TransformationConstantBuffer(Graphics& gfx, const 
 void TransformationConstantBuffer::Bind(Graphics& gfx) noexcept
 {
 	pVertexConstantBuffer->Tick(gfx,
-		DirectX::XMMatrixTranspose(parent.GetTransformXM()*gfx.GetProjection()));
+		DirectX::XMMatrixTranspose(parent.GetTransformXM()*gfx.GetCamera()*gfx.GetProjection()));
 	pVertexConstantBuffer->Bind(gfx);
 }
 std::unique_ptr<VertexConstantBuffer<DirectX::XMMATRIX>> TransformationConstantBuffer::pVertexConstantBuffer;

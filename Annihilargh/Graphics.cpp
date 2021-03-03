@@ -218,6 +218,16 @@ void Graphics::SetProjection(DirectX::FXMMATRIX projectionMat) noexcept
 	projection = projectionMat;
 }
 
+void Graphics::SetCamera(DirectX::FXMMATRIX cam) noexcept
+{
+	camera = cam;
+}
+
+DirectX::XMMATRIX Graphics::GetCamera() const noexcept
+{
+	return camera;
+}
+
 void Graphics::EnableImgui() noexcept
 {
 	bImguiEnabled=true;
