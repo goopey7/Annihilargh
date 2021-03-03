@@ -53,11 +53,13 @@ void Game::Tick()
 		showDemoWindow=true;
 	if(showDemoWindow)
 	{
+		static char buffer[1024];
 		if(ImGui::Begin("Simulation Speed"))
 		{
 			ImGui::SliderFloat("Simulation Speed Factor", &simulationSpeedFactor,0.f,4.f);
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.f/ImGui::GetIO().Framerate,
 				ImGui::GetIO().Framerate);
+			ImGui::InputText("Type useless stuff in here",buffer,sizeof(buffer));
 		}
 		ImGui::End();
 	}
