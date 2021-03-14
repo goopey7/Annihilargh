@@ -150,9 +150,3 @@ void Image::Copy(const Image& src) noexcept
 Image::Image(unsigned width, unsigned height, std::unique_ptr<Colour[]> pBufferParam) noexcept
 : width(width),height(height),pBuffer(std::move(pBufferParam))
 {}
-
-
-
-
-
-
