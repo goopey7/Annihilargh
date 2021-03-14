@@ -210,4 +210,9 @@ rotation.
 Sunday (3/14/21)
 Yeah took a massive break whoops. Had a lot of things to do over the last week, and knowing that I can put in a lot of
 hours over spring break put me off working on it last week. Now I have much more uninterrupted time to spend with this
-project. So, today I'm going to try and implement some form of dynamic lighting.
+project. So, today I'm going to try and implement some form of dynamic lighting. We're going to be doing per-pixel
+lighting using point lights, and specular highlighting. This is like Phong shading, and we touched on this a little bit
+in the ray tracing project last year. Basically the pixels closer to the point light should be brighter than the pixels
+further from the point light. Angle also determines attenuation, 90 degrees, or pi/2 is going to be brightest. So, every
+pixel will calculate it's colour relative to the light sources, and the normals of these pixels are calculated by
+interpolating between two vertices.
