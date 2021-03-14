@@ -78,7 +78,7 @@ TexturedCube::TexturedCube(Graphics& gfx, std::mt19937& rng, std::uniform_real_d
 		AddStaticBindable(std::make_unique<InputLayout>(gfx,ied,pVertexShaderBlob));
 		AddStaticBindable(std::make_unique<Topology>(gfx,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 	}
-	// if we aren't the first cube to be created, we still need to fill our index buffer pointer
+	// if we aren't the first textured cube to be created, we still need to fill our index buffer pointer
 	else SetIndexFromStatic();
 	
 	//obviously we want our instances to have varying positions and rotations, so no static here.

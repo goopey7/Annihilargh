@@ -206,3 +206,8 @@ because life is too short.
 Got imgui integrated into my code. Everything is looking pretty good.
 Also can now control the camera using a camera class and we have a GUI for controlling the camera's location and 
 rotation.
+
+Sunday (3/14/21)
+Yeah took a massive break whoops. Had a lot of things to do over the last week, and knowing that I can put in a lot of
+hours over spring break put me off working on it last week. Now I have much more uninterrupted time to spend with this
+project. So, today I'm going to try and implement some form of dynamic lighting.
