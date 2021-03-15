@@ -4,8 +4,6 @@
 #include "Timer.h"
 #include "Window.h"
 #include "Drawable/Cube.h"
-#include "Drawable/Melon.h"
-
 
 class Game
 {
@@ -19,7 +17,7 @@ private:
 	Timer timer;
 	Camera camera;
 	std::vector<std::unique_ptr<Drawable>> drawables;
-	bool showDemoWindow=true;
+	bool showDemoWindow = true;
 	float simulationSpeedFactor = 1.f;
-	static constexpr size_t numDrawables = 256;
+	static constexpr size_t numDrawables = 180;
 };

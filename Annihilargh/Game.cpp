@@ -5,8 +5,6 @@
 #include "Drawable/Melon.h"
 #include "Drawable/TexturedCube.h"
 #include "imgui/imgui.h"
-#include "imgui/imgui_impl_dx11.h"
-#include "imgui/imgui_impl_win32.h"
 #include "Geometry/Math.h"
 
 GDIPlusManager gdiPM;
@@ -19,11 +17,12 @@ Game::Game(): window(800, 600, "Annihilargh")
 		Factory(Graphics& gfx)
 			:
 			gfx(gfx)
-		{}
+		{
+		}
 
 		std::unique_ptr<Drawable> operator()()
 		{
-			return std::make_unique<TexturedCube>(
+			return std::make_unique<Cube>(
 				gfx, rng, adist, ddist,
 				odist, rdist
 			);
@@ -44,10 +43,10 @@ Game::Game(): window(800, 600, "Annihilargh")
 
 int Game::BeginPlay()
 {
-	while (true)
+	while(true)
 	{
 		// process any pending messages
-		if (const auto exitCode = Window::ProcessMessages())
+		if(const auto exitCode = Window::ProcessMessages())
 		{
 			// if the optional returned has an int value, we are exiting.
 			return *exitCode;
@@ -61,18 +60,18 @@ void Game::Tick()
 	auto deltaTime = timer.Reset() * simulationSpeedFactor;
 	window.GetGraphics().BeginFrame(0.1f, 0.0f, 0.0f);
 	window.GetGraphics().SetCamera(camera.GetMatrix());
-	for (auto& drawable : drawables)
+	for(auto& drawable : drawables)
 	{
-		if (window.keyboard.KeyIsPressed(VK_SPACE)) deltaTime = 0.f;
+		if(window.keyboard.KeyIsPressed(VK_SPACE)) deltaTime = 0.f;
 		drawable->Tick(deltaTime);
 		drawable->Draw(window.GetGraphics());
 	}
-	if (window.keyboard.KeyIsPressed(VK_ESCAPE))
+	if(window.keyboard.KeyIsPressed(VK_ESCAPE))
 		showDemoWindow = true;
-	if (showDemoWindow)
+	if(showDemoWindow)
 	{
 		static char buffer[1024];
-		if (ImGui::Begin("Simulation Speed"))
+		if(ImGui::Begin("Simulation Speed"))
 		{
 			ImGui::SliderFloat("Simulation Speed Factor", &simulationSpeedFactor, 0.f, 4.f);
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.f / ImGui::GetIO().Framerate,
