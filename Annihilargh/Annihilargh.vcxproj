@@ -186,13 +186,84 @@
     <ClCompile Include="Bindable\Sampler.cpp" />
     <ClCompile Include="Bindable\Texture.cpp" />
     <ClCompile Include="Bindable\Topology.cpp" />
-    <ClCompile Include="Bindable\TransformationConstantBuffer.cpp" />
+    <ClCompile Include="Bindable\TransformationCB.cpp" />
     <ClCompile Include="Bindable\VertexBuffer.cpp" />
     <ClCompile Include="Bindable\VertexShader.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Drawable\Cube.cpp" />
     <ClCompile Include="Drawable\Drawable.cpp" />
+    <ClCompile Include="Drawable\LitCube.cpp">
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>Debug\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>Debug\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>Debug\</ModuleDependenciesFile>
+      <ModuleOutputFile>Debug\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>Debug\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>Debug\vc142.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>Debug\Annihilargh.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>Debug\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>Debug\Annihilargh.tlog\</TrackerLogDirectory>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>Debug\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <PreprocessorDefinitions>_MBCS;;_MBCS</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <OmitFramePointers>false</OmitFramePointers>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LinkCompiled>true</LinkCompiled>
+    </ClCompile>
     <ClCompile Include="Drawable\Melon.cpp" />
+    <ClCompile Include="Drawable\SolidSphere.cpp" />
     <ClCompile Include="Drawable\TexturedCube.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -276,6 +347,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -289,7 +361,7 @@
     <ClInclude Include="Bindable\Sampler.h" />
     <ClInclude Include="Bindable\Texture.h" />
     <ClInclude Include="Bindable\Topology.h" />
-    <ClInclude Include="Bindable\TransformationConstantBuffer.h" />
+    <ClInclude Include="Bindable\TransformationCB.h" />
     <ClInclude Include="Bindable\VertexBuffer.h" />
     <ClInclude Include="Bindable\VertexShader.h" />
     <ClInclude Include="Camera.h" />
@@ -297,6 +369,7 @@
     <ClInclude Include="Drawable\Drawable.h" />
     <ClInclude Include="Drawable\DrawableBase.h" />
     <ClInclude Include="Drawable\Melon.h" />
+    <ClInclude Include="Drawable\SolidSphere.h" />
     <ClInclude Include="Drawable\TexturedCube.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GDIPlusManager.h" />
@@ -317,6 +390,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Timer.h" />
@@ -392,6 +466,28 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Shaders\SolidPS.hlsl">
+      <ObjectFileOutput>C:\Users\Sam\RiderProjects\Annihilargh\Annihilargh\SolidPS.cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\Annihilargh.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ShaderType>Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shaders\SolidVS.hlsl">
+      <ObjectFileOutput>C:\Users\Sam\RiderProjects\Annihilargh\Annihilargh\SolidVS.cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\Annihilargh.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ShaderType>Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="Shaders\TexturePS.hlsl">
       <ObjectFileOutput>C:\Users\Sam\RiderProjects\Annihilargh\Debug\PixelShader.cso</ObjectFileOutput>

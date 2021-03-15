@@ -5,7 +5,7 @@ class Camera
 {
 public:
 	DirectX::XMMATRIX GetMatrix() const noexcept;
-	void SpawnControlWindow() noexcept;
+	void DisplayControlGUI() noexcept;
 	void Reset() noexcept;
 private:
 

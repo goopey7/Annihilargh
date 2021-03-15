@@ -2,6 +2,7 @@
 #include <random>
 #include "Image.h"
 #include "GDIPlusManager.h"
+#include "Drawable/Cube.h"
 #include "Drawable/Melon.h"
 #include "Drawable/TexturedCube.h"
 #include "imgui/imgui.h"
@@ -9,12 +10,12 @@
 
 GDIPlusManager gdiPM;
 
-Game::Game(): window(800, 600, "Annihilargh")
+Game::Game(): window(800, 600, "Annihilargh"), light(window.GetGraphics(),0.5f)
 {
 	class Factory
 	{
 	public:
-		Factory(Graphics& gfx)
+		Factory(Graphics &gfx)
 			:
 			gfx(gfx)
 		{
@@ -22,14 +23,14 @@ Game::Game(): window(800, 600, "Annihilargh")
 
 		std::unique_ptr<Drawable> operator()()
 		{
-			return std::make_unique<Cube>(
+			return std::make_unique<LitCube>(
 				gfx, rng, adist, ddist,
 				odist, rdist
 			);
 		}
 
 	private:
-		Graphics& gfx;
+		Graphics &gfx;
 		std::mt19937 rng{std::random_device{}()};
 		std::uniform_real_distribution<float> adist{0.0f, PI * 2.0f};
 		std::uniform_real_distribution<float> ddist{0.0f, PI * 0.5f};
@@ -60,12 +61,14 @@ void Game::Tick()
 	auto deltaTime = timer.Reset() * simulationSpeedFactor;
 	window.GetGraphics().BeginFrame(0.1f, 0.0f, 0.0f);
 	window.GetGraphics().SetCamera(camera.GetMatrix());
-	for(auto& drawable : drawables)
+	light.Bind(window.GetGraphics());
+	for(auto &drawable : drawables)
 	{
 		if(window.keyboard.KeyIsPressed(VK_SPACE)) deltaTime = 0.f;
 		drawable->Tick(deltaTime);
 		drawable->Draw(window.GetGraphics());
 	}
+	light.Draw(window.GetGraphics());
 	if(window.keyboard.KeyIsPressed(VK_ESCAPE))
 		showDemoWindow = true;
 	if(showDemoWindow)
@@ -79,8 +82,9 @@ void Game::Tick()
 		}
 		ImGui::End();
 
-		// spawns imgui window for camera ctrls
-		camera.SpawnControlWindow();
+		// spawns imgui windows
+		camera.DisplayControlGUI();
+		light.DisplayControlGUI();
 	}
 
 	window.GetGraphics().EndFrame();

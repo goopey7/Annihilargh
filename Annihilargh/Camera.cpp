@@ -18,7 +18,7 @@ DirectX::XMMATRIX Camera::GetMatrix() const noexcept
 		dx::XMVectorSet(0.f,1.f,0.f,0.f))*rotation;
 }
 
-void Camera::SpawnControlWindow() noexcept
+void Camera::DisplayControlGUI() noexcept
 {
 	if (ImGui::Begin("Camera Control"))
 	{

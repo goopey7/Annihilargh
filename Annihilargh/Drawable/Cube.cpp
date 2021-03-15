@@ -12,7 +12,7 @@
 #include "../Bindable/IndexBuffer.h"
 #include "../Bindable/InputLayout.h"
 #include "../Bindable/Topology.h"
-#include "../Bindable/TransformationConstantBuffer.h"
+#include "../Bindable/TransformationCB.h"
 
 Cube::Cube(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>& adist,
            std::uniform_real_distribution<float>& ddist, std::uniform_real_distribution<float>& odist,
@@ -46,6 +46,7 @@ Cube::Cube(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<floa
 			{
 				float r,g,b,a;
 			}faceColours[6];
+			float padding[8]; // debugger was expecting 128 bytes idk why
 		};
 
 		const PixelCB pcb=
@@ -73,7 +74,7 @@ Cube::Cube(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<floa
 	else SetIndexFromStatic();
 	
 	//obviously we want our instances to have varying positions and rotations, so no static here.
-	AddBindable(std::make_unique<TransformationConstantBuffer>(gfx,*this));
+	AddBindable(std::make_unique<TransformationCB>(gfx,*this));
 }
 
 void Cube::Tick(float deltaTime) noexcept

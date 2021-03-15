@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{fd1c9a38-1dfa-4551-b8cf-28965c4b045b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Annihilargh.cpp">
@@ -76,9 +73,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Drawable\Drawable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Drawable\DrawableBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Drawable\Melon.cpp">
@@ -264,5 +258,11 @@
     <FxCompile Include="Shaders\TextureVS.hlsl" />
     <FxCompile Include="Shaders\PhongPS.hlsl" />
     <FxCompile Include="Shaders\PhongVS.hlsl" />
+    <FxCompile Include="SolidVS.hlsl">
+      <Filter>Source Files</Filter>
+    </FxCompile>
+    <FxCompile Include="SolidPS.hlsl">
+      <Filter>Source Files</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

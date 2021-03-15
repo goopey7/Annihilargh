@@ -12,7 +12,7 @@
 #include "../Bindable/IndexBuffer.h"
 #include "../Bindable/InputLayout.h"
 #include "../Bindable/Topology.h"
-#include "../Bindable/TransformationConstantBuffer.h"
+#include "../Bindable/TransformationCB.h"
 #include "../Image.h"
 #include "../Bindable/Texture.h"
 
@@ -82,7 +82,7 @@ TexturedCube::TexturedCube(Graphics& gfx, std::mt19937& rng, std::uniform_real_d
 	else SetIndexFromStatic();
 	
 	//obviously we want our instances to have varying positions and rotations, so no static here.
-	AddBindable(std::make_unique<TransformationConstantBuffer>(gfx,*this));
+	AddBindable(std::make_unique<TransformationCB>(gfx,*this));
 }
 
 void TexturedCube::Tick(float deltaTime) noexcept

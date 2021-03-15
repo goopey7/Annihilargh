@@ -3,7 +3,8 @@
 #include "ImguiManager.h"
 #include "Timer.h"
 #include "Window.h"
-#include "Drawable/Cube.h"
+#include "Drawable/LitCube.h"
+#include "PointLight.h"
 
 class Game
 {
@@ -16,6 +17,7 @@ private:
 	Window window;
 	Timer timer;
 	Camera camera;
+	PointLight light;
 	std::vector<std::unique_ptr<Drawable>> drawables;
 	bool showDemoWindow = true;
 	float simulationSpeedFactor = 1.f;
