@@ -23,7 +23,6 @@
     <ProjectGuid>{A307CA15-0389-42BE-8834-6A17488D097C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Annihilargh</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup>

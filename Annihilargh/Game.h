@@ -21,4 +21,5 @@ private:
 	std::vector<std::unique_ptr<Drawable>> drawables;
 	bool showDemoWindow=true;
 	float simulationSpeedFactor = 1.f;
+	static constexpr size_t numDrawables = 256;
 };
