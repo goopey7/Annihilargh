@@ -260,4 +260,22 @@ each taking 12 bytes, and so the pixel shader was not reading the float3's corre
 float3 in the data structure in PointLight, but there is a cooler way. I can use alignas(16) on the left side of my
 float3's and the compiler will do the padding for me. How nice! 
 
+So now that the light constants have been moved into the constant buffer, we can now change them every frame. So I'll
+quickly add some customisation for every constant in the ImGui panel for the PointLight. Ok that now works and looks
+good.
 
+Next step is to fix the fact that the material colour is being stored in the PointLight, when really it should be a
+property of the drawable object. So we'll need to add another constant buffer to the phong pixel shader, which means
+that we also need to change the ConstantBuffer class so that it can deal with slots, because right now it defaults to
+slot 0. But our object material constant buffer has to be bound to slot 1.
+
+Implemented that with no issues, and to test our new constant buffer, I randomly assigned a colour to each cube.
+And indeed they all are dynamically lit with different colours.
+
+Now that our drawable objects can have their own colour. Let's add to these material properties and add data for
+specular highlights.
+
+Got specular highlights working. The scene is looking quite nice right now.
+
+In anticipation of adding more drawable objects than just our Cube, I'm going to add another layer of inheritance which
+will deal with all the basic things future objects will likely have such as position, rotation, and scale.
