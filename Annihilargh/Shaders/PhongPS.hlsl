@@ -1,18 +1,16 @@
 // can change position of point light every frame
+// can now also change all aspects of light
 cbuffer LightConstBuffer
 {
 	float3 lightPos;
+	float3 materialColour;
+	float3 diffuseColour;
+	float diffuseIntensity;
+	float3 ambient;
+	float attenuationConstant;
+	float attenuationLinear;
+	float attenuationQuadratic;
 }
-
-// for now these are not going to change during runtime, so they're static.
-// later we can make these dynamic using a constant buffer
-static const float3 materialColour = {.9f,.9f,.9f};
-static const float3 diffuseColour = {1.f,1.f,1.f};
-static const float diffuseIntensity = 1.f;
-static const float3 ambient = {.0f,.0f,.0f};
-static const float attenuationConstant = 1.f;
-static const float attenuationLinear = 0.027f;
-static const float attenuationQuadratic = 0.0028f;
 
 // takes in the pixel's position relative to the world and the normal of the pixel
 float4 main(float3 worldPos : Position, float3 norm : Normal) : SV_TARGET

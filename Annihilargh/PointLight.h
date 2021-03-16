@@ -8,17 +8,23 @@ class PointLight
 public:
 	PointLight(Graphics &gfx, float radius = 0.5f);
 	void DisplayControlGUI() noexcept;
-	void ResetLocation() noexcept;
+	void Reset() noexcept;
 	void Draw(Graphics &gfx) const noexcept;
 	void Bind(Graphics &gfx) const noexcept;
 private:
 	struct PointLightCB
 	{
-		DirectX::XMFLOAT3 pos;
-		float padding; // Gotta add up to 16 bytes
+		alignas(16)DirectX::XMFLOAT3 pos;
+		alignas(16)DirectX::XMFLOAT3 materialColour;
+		alignas(16)DirectX::XMFLOAT3 diffuseColour;
+		float diffuseIntensity;
+		alignas(16)DirectX::XMFLOAT3 ambient;
+		float attenuationConstant;
+		float attenuationLinear;
+		float attenuationQuadratic;
 	};
 
-	DirectX::XMFLOAT3 pos = {0.f,0.f,0.f};
+	PointLightCB cbData;
 	mutable SolidSphere mesh;
 	mutable PixelConstantBuffer<PointLightCB> cb;
 };
