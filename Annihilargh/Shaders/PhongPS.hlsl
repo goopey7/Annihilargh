@@ -36,7 +36,7 @@ float4 main(float3 camPos : Position, float3 norm : Normal) : SV_TARGET
 	const float3 w = norm * dot(vertexToLight,norm);
 	const float3 reflected = w * 2.f - vertexToLight;
 	// calculate specular intensity using angle between camera view and reflected light
-	const float3 specular = diffuseColour*diffuseIntensity*specularIntensity*
+	const float3 specular = attenuation*diffuseColour*diffuseIntensity*specularIntensity*
 		pow(max(.0f,dot(normalize(-reflected),normalize(camPos))),specularPower);
 	// calculate final colour
 	// saturate() takes in a scaler, vector, or matrix, and clamps it between 0 and 1
