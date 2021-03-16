@@ -65,6 +65,9 @@ LitCube::LitCube(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distributio
 	struct PSMatCB
 	{
 		alignas(16)dx::XMFLOAT3 colour;
+		float specularPower = 30.f;
+		float specularIntensity = 6.f;
+		float padding[2];
 	} colourCB;
 	colourCB.colour = material;
 	AddBindable(std::make_unique<PixelConstantBuffer<PSMatCB>>(gfx, colourCB, 1u));

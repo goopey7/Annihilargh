@@ -11,11 +11,11 @@ TransformationCB::TransformationCB(Graphics &gfx, const Drawable &parent, UINT s
 
 void TransformationCB::Bind(Graphics &gfx) noexcept
 {
-	const auto model = parent.GetTransformXM();
+	const auto modelView = parent.GetTransformXM()*gfx.GetCamera();
 	const Transforms transforms =
 	{
-		DirectX::XMMatrixTranspose(model),
-		DirectX::XMMatrixTranspose(model * gfx.GetCamera() * gfx.GetProjection())
+		DirectX::XMMatrixTranspose(modelView),
+		DirectX::XMMatrixTranspose(modelView * gfx.GetProjection())
 	};
 	pVertexConstantBuffer->Tick(gfx, transforms);
 	pVertexConstantBuffer->Bind(gfx);

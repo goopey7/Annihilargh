@@ -63,7 +63,7 @@ void Game::Tick()
 	auto deltaTime = timer.Reset() * simulationSpeedFactor;
 	window.GetGraphics().BeginFrame(0.01f, 0.0f, 0.05f);
 	window.GetGraphics().SetCamera(camera.GetMatrix());
-	light.Bind(window.GetGraphics());
+	light.Bind(window.GetGraphics(),camera.GetMatrix());
 	for(auto &drawable : drawables)
 	{
 		if(window.keyboard.KeyIsPressed(VK_SPACE)) deltaTime = 0.f;

@@ -15,13 +15,14 @@ cbuffer LightCB
 cbuffer DrawableCB
 {
 	float3 materialColour;
+	float specularPower,specularIntensity;
 }
 
-// takes in the pixel's position relative to the world and the normal of the pixel
-float4 main(float3 worldPos : Position, float3 norm : Normal) : SV_TARGET
+// takes in the pixel's position relative to the camera and the normal of the pixel relative to the camera
+float4 main(float3 camPos : Position, float3 norm : Normal) : SV_TARGET
 {
 	// acquire light vector information
-	const float3 vertexToLight = lightPos - worldPos;
+	const float3 vertexToLight = lightPos - camPos;
 	const float distToLight = length(vertexToLight);
 	const float3 normalizedVertexToLight = vertexToLight/distToLight;
 	// diffuse attenuation
@@ -31,7 +32,13 @@ float4 main(float3 worldPos : Position, float3 norm : Normal) : SV_TARGET
 	// using * between two vectors in hlsl gets the hadamard product (multiply each element)
 	// So to get dot product you use dot()
 	const float3 diffuse = diffuseColour * diffuseIntensity * attenuation * max(0.f,dot(normalizedVertexToLight,norm));
+	// calculate reflected light vector
+	const float3 w = norm * dot(vertexToLight,norm);
+	const float3 reflected = w * 2.f - vertexToLight;
+	// calculate specular intensity using angle between camera view and reflected light
+	const float3 specular = diffuseColour*diffuseIntensity*specularIntensity*
+		pow(max(.0f,dot(normalize(-reflected),normalize(camPos))),specularPower);
 	// calculate final colour
 	// saturate() takes in a scaler, vector, or matrix, and clamps it between 0 and 1
-	return float4(saturate(diffuse+ambient)*materialColour,1.f);
+	return float4(saturate(diffuse+ambient+specular)*materialColour,1.f);
 }
