@@ -244,8 +244,20 @@ Got rid of that, and still the problem isn't solved. Now the constant buffer con
 Tuesday (3/16/21)
 Now the debugger is saying that the constant buffer was set by a previous frame. Which must mean that now the constant
 buffer is only being bound at the start, and not getting updated every frame. Also not sure why the data is 1,1,1.
-Ahhhh for some reason the colour of the solid sphere is getting bound to the phong shader. Meaning that we take in the
-colour white, and say that's where the light is. Because the solid sphere, the physical embodiment of the point light,
-is white. For some reason that constant buffer is getting bound, and the light position buffer is not getting bound at
-all. And sure enough, after calling bind on our constant buffer in the Bind function in PointLight. The lighting now
-does dynamically change when moving the point light. Hooray!
+Ahhhh for some reason the colour of the solid sphere is getting bound to the phong pixel shader. Meaning that we take
+in the colour white, and say that's where the light is. Because the solid sphere, the physical embodiment of the point
+light, is white. For some reason that constant buffer is getting bound, and the light position buffer is not getting
+bound at all. And sure enough, after calling bind on our constant buffer in the Bind function in PointLight. The
+lighting now does dynamically change when moving the point light. Hooray!
+
+Now I'm going to get rid of all of the static constants declared in the pixel shader, and put them in the constant
+buffer so the data can be stored CPU side in the PointLight class. Ran into a funny issue after doing this though.
+All of my cubes turned neon green. Got no errors, the program ran fine. However, when I checked the debugger output,
+I was getting loads of warnings saying that the size of the constant buffer being passed to the pixel shader was too
+small. Fortunately I've dealt with this problem before. It's because the shader is expecting padding so that the float3
+values are aligned in 16 byte chunks. However I wasn't doing that, so the shader was getting float3's lodged together
+each taking 12 bytes, and so the pixel shader was not reading the float3's correctly. I could insert a float after every
+float3 in the data structure in PointLight, but there is a cooler way. I can use alignas(16) on the left side of my
+float3's and the compiler will do the padding for me. How nice! 
+
+
