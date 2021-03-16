@@ -35,4 +35,5 @@ void PointLight::Draw(Graphics &gfx) const noexcept
 void PointLight::Bind(Graphics &gfx) const noexcept
 {
 	cb.Tick(gfx,PointLightCB{pos});
+	cb.Bind(gfx);
 }

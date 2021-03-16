@@ -368,6 +368,7 @@
     <ClInclude Include="Drawable\Cube.h" />
     <ClInclude Include="Drawable\Drawable.h" />
     <ClInclude Include="Drawable\DrawableBase.h" />
+    <ClInclude Include="Drawable\LitCube.h" />
     <ClInclude Include="Drawable\Melon.h" />
     <ClInclude Include="Drawable\SolidSphere.h" />
     <ClInclude Include="Drawable\TexturedCube.h" />

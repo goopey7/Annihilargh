@@ -41,12 +41,6 @@ LitCube::LitCube(Graphics& gfx, std::mt19937& rng, std::uniform_real_distributio
 		AddStaticBindable(std::make_unique<PixelShader>(gfx,L"PhongPS.cso"));
 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx,model.indices));
-
-		struct PSLightCB
-		{
-			dx::XMVECTOR pos;
-		};
-		AddStaticBindable(std::make_unique<PixelConstantBuffer<PSLightCB>>(gfx));
 		
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
