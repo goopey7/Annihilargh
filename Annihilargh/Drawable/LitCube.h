@@ -1,22 +1,12 @@
 ﻿#pragma once
-#include <random>
+#include "Object.h"
 
-#include "../Graphics.h"
-#include "DrawableBase.h"
-
-class LitCube : public DrawableBase<LitCube>
+class LitCube : public Object<LitCube>
 {
 public:
-	LitCube(Graphics &gfx, std::mt19937& rng, std::uniform_real_distribution<float>& adist,
-		std::uniform_real_distribution<float>& ddist,
-		std::uniform_real_distribution<float>& odist,
-		std::uniform_real_distribution<float>& rdist,
-		DirectX::XMFLOAT3 material);
-	void Tick(float deltaTime) noexcept override;
-	DirectX::XMMATRIX GetTransformXM() const noexcept override;
-private:
-	// position
-	float offsetX,pitch,yaw,roll,theta,phi,chi;
-	// speed
-	float dPitch,dYaw,dRoll,dTheta,dPhi,dChi;
+	LitCube(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distribution<float> &adist,
+	        std::uniform_real_distribution<float> &ddist,
+	        std::uniform_real_distribution<float> &odist,
+	        std::uniform_real_distribution<float> &rdist,
+	        DirectX::XMFLOAT3 material);
 };

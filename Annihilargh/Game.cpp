@@ -2,9 +2,6 @@
 #include <random>
 #include "Image.h"
 #include "GDIPlusManager.h"
-#include "Drawable/Cube.h"
-#include "Drawable/Melon.h"
-#include "Drawable/TexturedCube.h"
 #include "imgui/imgui.h"
 #include "Geometry/Math.h"
 

@@ -14,12 +14,11 @@
 #include "../Bindable/TransformationCB.h"
 
 LitCube::LitCube(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distribution<float> &adist,
-                 std::uniform_real_distribution<float> &ddist, std::uniform_real_distribution<float> &odist,
+                 std::uniform_real_distribution<float> &ddist,
+                 std::uniform_real_distribution<float> &odist,
                  std::uniform_real_distribution<float> &rdist,
                  DirectX::XMFLOAT3 material)
-	: offsetX(rdist(rng)), dPitch(ddist(rng)), dYaw(ddist(rng)), dRoll(ddist(rng)),
-	  theta(adist(rng)), phi(adist(rng)), chi(adist(rng)),
-	  dTheta(odist(rng)), dPhi(odist(rng)), dChi(odist(rng))
+	                 : Object(gfx,rng,adist,ddist,odist,rdist)
 {
 	namespace dx = DirectX;
 	if(!IsStaticDataInitialised())
@@ -65,27 +64,10 @@ LitCube::LitCube(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distributio
 	struct PSMatCB
 	{
 		alignas(16)dx::XMFLOAT3 colour;
-		float specularPower = 30.f;
+		float specularPower = 60.f;
 		float specularIntensity = 6.f;
 		float padding[2];
 	} colourCB;
 	colourCB.colour = material;
 	AddBindable(std::make_unique<PixelConstantBuffer<PSMatCB>>(gfx, colourCB, 1u));
-}
-
-void LitCube::Tick(float deltaTime) noexcept
-{
-	pitch += dPitch * deltaTime;
-	yaw += dYaw * deltaTime;
-	roll += dRoll * deltaTime;
-	theta += dTheta * deltaTime;
-	phi += dPhi * deltaTime;
-	chi += dChi * deltaTime;
-}
-
-DirectX::XMMATRIX LitCube::GetTransformXM() const noexcept
-{
-	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-		DirectX::XMMatrixTranslation(offsetX, 0.f, 0.f) *
-		DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi);
 }
