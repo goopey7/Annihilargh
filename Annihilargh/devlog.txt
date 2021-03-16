@@ -216,3 +216,36 @@ in the ray tracing project last year. Basically the pixels closer to the point l
 further from the point light. Angle also determines attenuation, 90 degrees, or pi/2 is going to be brightest. So, every
 pixel will calculate it's colour relative to the light sources, and the normals of these pixels are calculated by
 interpolating between two vertices.
+
+Monday (3/15/21)
+So I got some kind of lighting, but it's ugly and super unrealistic. Basically the triangles that are lit
+turn white, while the unlit triangles remain a dark grey colour. It's a great step in the right direction but it needs
+more work. Also as I move the point light around, it doesn't seem to have any effect on the lighting of the cubes.
+Interesting. The culprit is most likely the pixel shader since that's where the colour of the pixels are determined.
+So it's time to bring out Visual Studio's graphics debugger. It's really cool. It attaches to the program, and allows me
+to capture frames. I can then exit the program, and open up a captured frame. Then if I click on a pixel, I can see
+everything that went into determining the pixel's colour. I can then run a debugger on either the vertex shader or the
+pixel shader for the pixel I selected, and see what's going on. So cool.
+
+So turns out the issue was a physics error. No wonder the light was always blown out. As you get further and further
+from the light, the light on the surface should be dimmer. So instead of just multiplying by attenuation I should be
+dividing. As the relationship is inverse. I also was just getting the length of the wrong vector resulting in everything
+being off. Now that I have fixed both those problems, I don't seem to be getting much lighting at all. When I check the
+debugger, my diffuse colours are less than 0.02 in all channels. That's not very good either. That just means that the
+attenuation is too high. Right now the coefficients are all set to 1. They should be smaller.
+This website gives some coefficients for different luminosity http://wiki.ogre3d.org/-Point+Light+Attenuation
+So I just picked the coefficients for 50 since I want a dim light to really see this working. I also made the background
+and ambient colour for the pixel shader much darker. Sure enough this works. I've messed around with the luminosity and
+stuck with 160. However, when I move the point light, the lighting on the cubes still does not change.
+Looks like the constant buffer in the pixel shader that contains the light position doesn't change when the light
+changes location. Ah ha, and the constant buffer is being bound by the lit cubes instead of the global point light.
+Got rid of that, and still the problem isn't solved. Now the constant buffer contains 1,1,1, and a garbage value.
+
+Tuesday (3/16/21)
+Now the debugger is saying that the constant buffer was set by a previous frame. Which must mean that now the constant
+buffer is only being bound at the start, and not getting updated every frame. Also not sure why the data is 1,1,1.
+Ahhhh for some reason the colour of the solid sphere is getting bound to the phong shader. Meaning that we take in the
+colour white, and say that's where the light is. Because the solid sphere, the physical embodiment of the point light,
+is white. For some reason that constant buffer is getting bound, and the light position buffer is not getting bound at
+all. And sure enough, after calling bind on our constant buffer in the Bind function in PointLight. The lighting now
+does dynamically change when moving the point light. Hooray!
