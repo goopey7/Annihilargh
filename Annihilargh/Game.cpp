@@ -59,7 +59,7 @@ int Game::BeginPlay()
 void Game::Tick()
 {
 	auto deltaTime = timer.Reset() * simulationSpeedFactor;
-	window.GetGraphics().BeginFrame(0.1f, 0.0f, 0.0f);
+	window.GetGraphics().BeginFrame(0.01f, 0.0f, 0.05f);
 	window.GetGraphics().SetCamera(camera.GetMatrix());
 	light.Bind(window.GetGraphics());
 	for(auto &drawable : drawables)
