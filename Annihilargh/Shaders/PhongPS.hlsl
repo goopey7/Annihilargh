@@ -1,15 +1,20 @@
 // can change position of point light every frame
 // can now also change all aspects of light
-cbuffer LightConstBuffer
+cbuffer LightCB
 {
 	float3 lightPos;
-	float3 materialColour;
 	float3 diffuseColour;
 	float diffuseIntensity;
 	float3 ambient;
 	float attenuationConstant;
 	float attenuationLinear;
 	float attenuationQuadratic;
+}
+
+// the colour of the object is a property of the object, not the light.
+cbuffer DrawableCB
+{
+	float3 materialColour;
 }
 
 // takes in the pixel's position relative to the world and the normal of the pixel

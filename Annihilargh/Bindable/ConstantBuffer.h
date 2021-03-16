@@ -8,7 +8,7 @@ template<typename C>
 class ConstantBuffer : public Bindable
 {
 public:
-	ConstantBuffer(Graphics &gfx)
+	ConstantBuffer(Graphics &gfx, UINT slot = 0u) : slot(slot)
 	{
 		HRESULT hr;
 		D3D11_BUFFER_DESC cbd = {};
@@ -20,7 +20,7 @@ public:
 		cbd.StructureByteStride = 0u;
 		GFX_THROW_FAILED(GetDevice(gfx)->CreateBuffer(&cbd, nullptr, &pConstantBuffer));
 	};
-	ConstantBuffer(Graphics &gfx, const C &constants)
+	ConstantBuffer(Graphics &gfx, const C &constants, UINT slot = 0u) : slot(slot)
 	{
 		HRESULT hr;
 		D3D11_BUFFER_DESC cbd = {};
@@ -55,18 +55,20 @@ public:
 	}
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
+	UINT slot;
 };
 
 template<typename C>
 class VertexConstantBuffer : public ConstantBuffer<C>
 {
 	using ConstantBuffer<C>::pConstantBuffer;
+	using ConstantBuffer<C>::slot;
 public:
 	using ConstantBuffer<C>::ConstantBuffer;
 	void Bind(Graphics& gfx) noexcept override
 	{
 		// bind to vertex shader
-		Bindable::GetContext(gfx)->VSSetConstantBuffers(0u,1u,
+		Bindable::GetContext(gfx)->VSSetConstantBuffers(slot,1u,
 			ConstantBuffer<C>::pConstantBuffer.GetAddressOf());
 	}
 };
@@ -77,10 +79,11 @@ class PixelConstantBuffer : public ConstantBuffer<C>
 	using ConstantBuffer<C>::pConstantBuffer;
 public:
 	using ConstantBuffer<C>::ConstantBuffer;
+	using ConstantBuffer<C>::slot;
 	void Bind(Graphics &gfx) noexcept override
 	{
 		// bind to pixel shader
-		Bindable::GetContext(gfx)->PSSetConstantBuffers(0u,1u,
+		Bindable::GetContext(gfx)->PSSetConstantBuffers(slot,1u,
 			ConstantBuffer<C>::pConstantBuffer.GetAddressOf());
 	}
 };

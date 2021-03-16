@@ -23,9 +23,10 @@ Game::Game(): window(800, 600, "Annihilargh"), light(window.GetGraphics(),0.5f)
 
 		std::unique_ptr<Drawable> operator()()
 		{
+			const DirectX::XMFLOAT3 material = {matDist(rng),matDist(rng),matDist(rng)};
 			return std::make_unique<LitCube>(
 				gfx, rng, adist, ddist,
-				odist, rdist
+				odist, rdist, material
 			);
 		}
 
@@ -36,6 +37,7 @@ Game::Game(): window(800, 600, "Annihilargh"), light(window.GetGraphics(),0.5f)
 		std::uniform_real_distribution<float> ddist{0.0f, PI * 0.5f};
 		std::uniform_real_distribution<float> odist{0.0f, PI * 0.08f};
 		std::uniform_real_distribution<float> rdist{6.0f, 20.0f};
+		std::uniform_real_distribution<float> matDist{0.0f, 1.0f};
 	};
 	drawables.reserve(numDrawables);
 	std::generate_n(std::back_inserter(drawables), numDrawables, Factory{window.GetGraphics()});

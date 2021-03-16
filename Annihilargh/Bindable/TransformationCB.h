@@ -6,7 +6,7 @@
 class TransformationCB : public Bindable
 {
 public:
-	TransformationCB(Graphics &gfx, const Drawable &parent);
+	TransformationCB(Graphics &gfx, const Drawable &parent, UINT slot=0u);
 	void Bind(Graphics& gfx) noexcept override;
 private:
 	struct Transforms

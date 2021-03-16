@@ -16,9 +16,8 @@ void PointLight::DisplayControlGUI() noexcept
 		ImGui::SliderFloat("Y", &cbData.pos.y, -60.f, 60.f, "%.1f");
 		ImGui::SliderFloat("Z", &cbData.pos.z, -60.f, 60.f, "%.1f");
 		ImGui::Text("Colour");
-		ImGui::ColorEdit3("Material", &cbData.materialColour.x);
-		ImGui::ColorEdit3("Ambient", &cbData.ambient.x);
 		ImGui::ColorEdit3("Diffuse", &cbData.diffuseColour.x);
+		ImGui::ColorEdit3("Ambient", &cbData.ambient.x);
 		ImGui::Text("Intesnity");
 		ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, .01f, 2.f, "%.2f");
 		ImGui::Text("Falloff");
@@ -36,7 +35,6 @@ void PointLight::DisplayControlGUI() noexcept
 void PointLight::Reset() noexcept
 {
 	cbData.pos = {0.f, 0.f, 0.f};
-	cbData.materialColour = {0.7f, 0.7f, 0.9f};
 	cbData.diffuseColour = {1.f, 1.f, 1.f};
 	cbData.diffuseIntensity = 1.f;
 	cbData.ambient = {.0f, .0f, .0f};
