@@ -18,7 +18,7 @@ LitCube::LitCube(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distributio
                  std::uniform_real_distribution<float> &odist,
                  std::uniform_real_distribution<float> &rdist,
                  DirectX::XMFLOAT3 material)
-	                 : Object(gfx,rng,adist,ddist,odist,rdist)
+	                 : Object(rng,adist,ddist,odist,rdist)
 {
 	namespace dx = DirectX;
 	if(!IsStaticDataInitialised())
