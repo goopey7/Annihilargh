@@ -4,6 +4,10 @@
 #include "GDIPlusManager.h"
 #include "imgui/imgui.h"
 #include "Geometry/Math.h"
+#include "Drawable/IronMan.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 GDIPlusManager gdiPM;
 
@@ -21,9 +25,9 @@ Game::Game(): window(800, 600, "Annihilargh"), light(window.GetGraphics(),0.5f)
 		std::unique_ptr<Drawable> operator()()
 		{
 			const DirectX::XMFLOAT3 material = {matDist(rng),matDist(rng),matDist(rng)};
-			return std::make_unique<LitCube>(
+			return std::make_unique<IronMan>(
 				gfx, rng, adist, ddist,
-				odist, rdist, material
+				odist, rdist, material,0.5f
 			);
 		}
 

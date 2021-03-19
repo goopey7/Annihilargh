@@ -58,8 +58,7 @@ artifacts/
 *.ilk
 *.meta
 *.obj
-!hw3d/Models/**/*.obj
-!hw3d/assimp/bin/*
+!Annihilargh/3DAssets/*.obj
 *.pch
 *.pdb
 *.pgc

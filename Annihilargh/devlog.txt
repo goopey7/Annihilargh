@@ -279,3 +279,17 @@ Got specular highlights working. The scene is looking quite nice right now.
 
 In anticipation of adding more drawable objects than just our Cube, I'm going to add another layer of inheritance which
 will deal with all the basic things future objects will likely have such as position, rotation, and scale.
+
+Wednesday (3/17/21)
+Couldn't sleep last night for some strange reason. Just lied awake until I decided to get on with it at 7AM.
+I'm on some random timezone now. Lovely. Let's see how much progress I can make before the adenosine hits the brain.
+Next order of business is to load in 3D meshes from files because doing all of this geometry is exhausting, and it will
+allow us to use complex 3D models. To load in models I'm going to make use of this library:
+https://github.com/assimp/assimp
+It supports many different file formats, and it's popular. So it looks good. Also seems very easy to load models into
+Direct3D. Basically just going to be breaking the model into triangles. So any polygons with more than 3 sides are
+turned into triangles. Then loop through all the triangles and add them to the vertex buffer.
+
+Friday (3/19/21)
+I have built assimp and added it into the project. I have also dropped support for x86 architectures because it is going
+to be pretty inconvenient to generate binaries for both 64 bit and 32 bit versions. 

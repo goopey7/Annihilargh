@@ -3,7 +3,6 @@
 #include "Game.h"
 #include "Window.h"
 #include "WindowsWithoutTheCrap.h"
-
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
