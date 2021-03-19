@@ -60,25 +60,13 @@
     <ClCompile Include="Bindable\Topology.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Bindable\TransformationConstantBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Bindable\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Bindable\VertexShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Drawable\Cube.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Drawable\Drawable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Drawable\Melon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Drawable\TexturedCube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GDIPlusManager.cpp">
@@ -112,6 +100,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bindable\TransformationCB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Drawable\LitCube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Drawable\SolidSphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,28 +167,16 @@
     <ClInclude Include="Bindable\Topology.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Bindable\TransformationConstantBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Bindable\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Bindable\VertexShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Drawable\Cube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Drawable\Drawable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Drawable\DrawableBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Drawable\Melon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Drawable\TexturedCube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GDIPlusManager.h">
@@ -245,6 +233,21 @@
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Bindable\TransformationCB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawable\LitCube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawable\Object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawable\SolidSphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Annihilargh.rc">
@@ -258,11 +261,7 @@
     <FxCompile Include="Shaders\TextureVS.hlsl" />
     <FxCompile Include="Shaders\PhongPS.hlsl" />
     <FxCompile Include="Shaders\PhongVS.hlsl" />
-    <FxCompile Include="SolidVS.hlsl">
-      <Filter>Source Files</Filter>
-    </FxCompile>
-    <FxCompile Include="SolidPS.hlsl">
-      <Filter>Source Files</Filter>
-    </FxCompile>
+    <FxCompile Include="Shaders\SolidPS.hlsl" />
+    <FxCompile Include="Shaders\SolidVS.hlsl" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <random>
-#include "../Graphics.h"
 #include "DrawableBase.h"
 
 template <class T>

@@ -1,6 +1,5 @@
 #include <string>
 #include <sstream>
-
 #include "Game.h"
 #include "Window.h"
 #include "WindowsWithoutTheCrap.h"
