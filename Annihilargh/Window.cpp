@@ -91,7 +91,7 @@ std::optional<int> Window::ProcessMessages() noexcept
 	{
 		// check for quit since PeekMessage returns whether or not it has a message, not if it is a quit.
 		if (msg.message == WM_QUIT)
-			return msg.wParam; // arg to PostQuitMessage is in wParam, so we return it.
+			return (int)msg.wParam; // arg to PostQuitMessage is in wParam, so we return it.
 
 		TranslateMessage(&msg); // Posts WM_CHAR messages from key messages
 		DispatchMessage(&msg);
