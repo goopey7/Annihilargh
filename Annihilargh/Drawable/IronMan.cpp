@@ -11,6 +11,7 @@
 #include "../Bindable/InputLayout.h"
 #include "../Bindable/Topology.h"
 #include "../Bindable/TransformationCB.h"
+#include "../VertexSystem.h"
 
 IronMan::IronMan(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distribution<float> &adist,
                  std::uniform_real_distribution<float> &ddist, std::uniform_real_distribution<float> &odist,
@@ -20,11 +21,9 @@ IronMan::IronMan(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distributio
 	namespace dx = DirectX;
 	if(!IsStaticDataInitialised())
 	{
-		struct Vertex
-		{
-			dx::XMFLOAT3 pos;
-			dx::XMFLOAT3 norm;
-		};
+		using alrg::VertexLayout;
+		alrg::VertexBuffer vb(std::move(VertexLayout{}.Append<VertexLayout::Location3D>()
+			.Append<VertexLayout::Normal>()));
 
 		Assimp::Importer imp;
 		auto pScene = imp.ReadFile("3DAssets\\IronMan.obj",
@@ -33,13 +32,12 @@ IronMan::IronMan(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distributio
 		const auto pMesh = pScene->mMeshes[0]; // we're loading a single mesh here, so all good to use 0
 
 		// we multiply each component by scale passed in from constructor
-		std::vector<Vertex> vertices;
+		
 		for(unsigned int i = 0; i < pMesh->mNumVertices; i++)
 		{
-			vertices.push_back(
-			{{pMesh->mVertices[i].x*scale,pMesh->mVertices[i].y*scale,pMesh->mVertices[i].z*scale},
-				*reinterpret_cast<dx::XMFLOAT3*>(&pMesh->mNormals[i])}
-			);
+			vb.EmplaceBack(dx::XMFLOAT3{pMesh->mVertices[i].x*scale,
+				pMesh->mVertices[i].y*scale,
+				pMesh->mVertices[i].z*scale},*reinterpret_cast<dx::XMFLOAT3*>(&pMesh->mNormals[i]));
 		}
 
 		// we are triangulating the model, so we know we are dealing with triangles only
@@ -53,7 +51,7 @@ IronMan::IronMan(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distributio
 			indices.push_back(face.mIndices[2]);
 		}
 		
-		AddStaticBindable(std::make_unique<VertexBuffer>(gfx,vertices));
+		AddStaticBindable(std::make_unique<VertexBuffer>(gfx,vb));
 
 		auto pVertexShader = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
 		auto pVertexShaderBlob = pVertexShader->GetBlob();

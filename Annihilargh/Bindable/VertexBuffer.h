@@ -4,6 +4,7 @@
 
 #include "Bindable.h"
 #include "../GraphicsAnomalyMacros.h"
+#include "../VertexSystem.h"
 
 class VertexBuffer : public Bindable
 {
@@ -11,8 +12,7 @@ public:
 	// template the constructor because we define the vertex structure
 	// we don't care about the actual struct but the data and size are what matter
 	// so template works just fine
-	template<class V>
-	VertexBuffer(Graphics &gfx,const std::vector<V>& vertices) : stride(sizeof(V))
+	VertexBuffer(Graphics &gfx, const alrg::VertexBuffer &vb) : stride((UINT)vb.GetLayout().Size())
 	{
 		HRESULT hr;
 		D3D11_BUFFER_DESC bufferDesc = {};
@@ -20,12 +20,13 @@ public:
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		bufferDesc.CPUAccessFlags = 0u;
 		bufferDesc.MiscFlags = 0u;
-		bufferDesc.ByteWidth = UINT( sizeof(V) * vertices.size() );
-		bufferDesc.StructureByteStride = sizeof(V);
+		bufferDesc.ByteWidth = UINT(vb.SizeBytes());
+		bufferDesc.StructureByteStride = stride;
 		D3D11_SUBRESOURCE_DATA subresourceData = {};
-		subresourceData.pSysMem = vertices.data();
+		subresourceData.pSysMem = vb.GetData();
 		GFX_THROW_FAILED(GetDevice(gfx)->CreateBuffer(&bufferDesc, &subresourceData, &pVertexBuffer));
 	}
+
 	void Bind(Graphics &gfx) noexcept override;
 protected:
 	UINT stride;

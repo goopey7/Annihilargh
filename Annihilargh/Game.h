@@ -3,7 +3,6 @@
 #include "ImguiManager.h"
 #include "Timer.h"
 #include "Window.h"
-#include "Drawable/LitCube.h"
 #include "PointLight.h"
 
 class Game

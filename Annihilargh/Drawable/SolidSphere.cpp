@@ -22,7 +22,7 @@ SolidSphere::SolidSphere(Graphics &gfx, float radius)
 		};
 		auto model = Geometry::Sphere::Create<Vertex>();
 		model.Transform(dx::XMMatrixScaling(radius,radius,radius));
-		AddStaticBindable(std::make_unique<VertexBuffer>(gfx,model.vertices));
+		//AddStaticBindable(std::make_unique<VertexBuffer>(gfx,model.vertices));
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx,model.indices));
 
 		auto pVertexShader = std::make_unique<VertexShader>(gfx,L"SolidVS.cso");

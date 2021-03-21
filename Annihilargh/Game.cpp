@@ -15,38 +15,8 @@ GDIPlusManager gdiPM;
 
 namespace dx = DirectX;
 
-// let's see if this actually compiles and works when stepping through in the debugger. It Does!
-void test()
-{
-	VertexBuffer vertexBuffer(std::move(
-		VertexLayout{}
-		.Append<VertexLayout::Location3D>()
-		.Append<VertexLayout::Normal>()
-		.Append<VertexLayout::TextureCoord2D>()
-	));
-	vertexBuffer.EmplaceBack(
-		dx::XMFLOAT3{1.0f, 2.0f, 3.0f},
-		dx::XMFLOAT3{3.0f, 2.0f, 1.0f},
-		dx::XMFLOAT2{1.0f, 6.0f}
-	);
-	vertexBuffer.EmplaceBack(
-		dx::XMFLOAT3{9.0f, 1.0f, 6.0f},
-		dx::XMFLOAT3{9.0f, 1.0f, 6.0f},
-		dx::XMFLOAT2{9.1f, 6.0f}
-	);
-	auto location = vertexBuffer[0].Retrieve<VertexLayout::Location3D>();
-	auto norm = vertexBuffer[0].Retrieve<VertexLayout::Normal>();
-	auto texture2d = vertexBuffer[1].Retrieve<VertexLayout::TextureCoord2D>();
-	vertexBuffer.Back().Retrieve<VertexLayout::Location3D>().z = 666.0f;
-	location = vertexBuffer.Back().Retrieve<VertexLayout::Location3D>();
-
-	const auto& cvb = vertexBuffer;
-	location = cvb[1].Retrieve<VertexLayout::Location3D>();
-}
-
 Game::Game(): window(800, 600, "Annihilargh"), light(window.GetGraphics(), 0.5f)
 {
-	test();
 	class Factory
 	{
 	public:
