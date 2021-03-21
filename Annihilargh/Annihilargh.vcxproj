@@ -249,6 +249,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="VertexSystem.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowAnomalyMacros.h" />
     <ClInclude Include="WindowsWithoutTheCrap.h" />
