@@ -29,61 +29,63 @@ namespace alrg
 		// It also made the Retrieve function in Vertex a lot cleaner and more slick
 		template <ElementType>
 		struct Map;
-		
+
 		template <>
 		struct Map<Location2D>
 		{
 			using SysType = DirectX::XMFLOAT2;
-			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
-			const char* semantic = "Position";
+			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
+			static constexpr const char* semantic = "Position";
+			// had to use static constexpr here so that these are done at compile-time, and I don't have to instantiate
+			// the structure before accessing these values, which would have been annoying.
 		};
 
 		template <>
 		struct Map<Location3D>
 		{
 			using SysType = DirectX::XMFLOAT3;
-			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
-			const char* semantic = "Position";
+			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+			static constexpr const char* semantic = "Position";
 		};
 
 		template <>
 		struct Map<TextureCoord2D>
 		{
 			using SysType = DirectX::XMFLOAT2;
-			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
-			const char* semantic = "Texcoord";
+			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
+			static constexpr const char* semantic = "Texcoord";
 		};
 
 		template <>
 		struct Map<Normal>
 		{
 			using SysType = DirectX::XMFLOAT3;
-			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
-			const char* semantic = "Normal";
+			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+			static constexpr const char* semantic = "Normal";
 		};
 
 		template <>
 		struct Map<Float3Colour>
 		{
 			using SysType = DirectX::XMFLOAT3;
-			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
-			const char* semantic = "Colour";
+			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+			static constexpr const char* semantic = "Colour";
 		};
 
 		template <>
 		struct Map<Float4Colour>
 		{
 			using SysType = DirectX::XMFLOAT4;
-			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
-			const char* semantic = "Colour";
+			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			static constexpr const char* semantic = "Colour";
 		};
 
 		template <>
 		struct Map<ARGBColour>
 		{
 			using SysType = alrg::ARGBColour;
-			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-			const char* semantic = "Colour";
+			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+			static constexpr const char* semantic = "Colour";
 		};
 
 		class Element
@@ -137,6 +139,41 @@ namespace alrg
 				return offset;
 			}
 
+			D3D11_INPUT_ELEMENT_DESC GetDesc() const noexcept
+			{
+				switch(type)
+				{
+				case Location2D:
+					return GenerateInputElementDesc<Location2D>(GetOffset());
+				case Location3D:
+					return GenerateInputElementDesc<Location3D>(GetOffset());
+				case TextureCoord2D:
+					return GenerateInputElementDesc<TextureCoord2D>(GetOffset());
+				case Normal:
+					return GenerateInputElementDesc<Normal>(GetOffset());
+				case Float3Colour:
+					return GenerateInputElementDesc<Float3Colour>(GetOffset());
+				case Float4Colour:
+					return GenerateInputElementDesc<Float4Colour>(GetOffset());
+				case ARGBColour:
+					return GenerateInputElementDesc<ARGBColour>(GetOffset());
+				}
+				assert("Unknown Element Type" && false);
+				return {"UNKNOWN",0u,DXGI_FORMAT_UNKNOWN,0u,0u,
+					D3D11_INPUT_PER_VERTEX_DATA,0u};
+			}
+
+		private:
+			template <ElementType T>
+			static constexpr D3D11_INPUT_ELEMENT_DESC GenerateInputElementDesc(size_t offset)
+			{
+				return
+				{
+					Map<T>::semantic,0u,Map<T>::dxgiFormat,0u,(UINT)offset,
+					D3D11_INPUT_PER_VERTEX_DATA,0u
+				};
+			}
+
 		private:
 			ElementType type;
 			size_t offset; // number of bytes away from the beginning of the Vertex struct
@@ -180,6 +217,17 @@ namespace alrg
 			return elements.size();
 		}
 
+		std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const noexcept
+		{
+			std::vector<D3D11_INPUT_ELEMENT_DESC> desc;
+			desc.reserve(NumElements());
+			for(const auto &e : elements)
+			{
+				desc.push_back(e.GetDesc());
+			}
+			return desc;
+		}
+	
 	private:
 		std::vector<Element> elements;
 	};
