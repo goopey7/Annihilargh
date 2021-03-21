@@ -309,3 +309,12 @@ information about how the VertexBuffer is structured. It knows the offsets of ev
 what each attribute is. The VertexBuffer contains all the Vertices and holds the raw byte buffer. The Vertex class
 represents a single Vertex within the VertexBuffer, and it has member functions to retrieve attributes, such as,
 location, normals, etc.
+
+I have now finished the system, and it is really really slick. Now I don't have to repeat myself when Binding stuff
+to the pipeline. In the constructor of IronMan I no longer need to define a Vertex struct, and then define the input
+layout for the shader. The new Vertex System handles all of that for me, so I only need to add specific attributes once
+and I no longer have to worry about what the D3D11_INPUT_ELEMENT_DESC is going to look like. That's already taken care
+of.
+
+There are some potential downsides to this system. First is that you can only have one of each attribute, may pose a
+problem. Also, we are doing quite a bit of Vertex stuff on the CPU at runtime, which may need to be optimised later on.
