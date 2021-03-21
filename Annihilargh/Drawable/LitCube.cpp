@@ -31,7 +31,7 @@ LitCube::LitCube(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distributio
 
 		auto model = Geometry::Cube::CreateIndependent<Vertex>();
 		model.SetNormalsIndependentFlat();
-		//AddStaticBindable(std::make_unique<VertexBuffer>(gfx, model.vertices));
+		AddStaticBindable(std::make_unique<VertexBuffer>(gfx, model.vertices));
 
 		auto pVertexShader = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
 		auto pVertexShaderBlob = pVertexShader->GetBlob();
