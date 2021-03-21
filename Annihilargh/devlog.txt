@@ -292,4 +292,20 @@ turned into triangles. Then loop through all the triangles and add them to the v
 
 Friday (3/19/21)
 I have built assimp and added it into the project. I have also dropped support for x86 architectures because it is going
-to be pretty inconvenient to generate binaries for both 64 bit and 32 bit versions. 
+to be pretty inconvenient to generate binaries for both 64 bit and 32 bit versions.
+
+I have successfully loaded and displayed an iron man model in my scene.
+I can now quite easily load 3D models from files.
+
+Right now, the 3D models are loaded in at runtime, while the Vertex structs are defined at compile time. I want to make
+the Vertex struct defined at runtime, because depending on the model getting loaded in, maybe it doesn't need normals or
+texture coordinates for example, and we won't know this until we get the mesh, which happens at runtime. 
+
+Sunday (3/21/21)
+I've learned a bit of template metaprogramming. This allows us to have some nicer more convenient syntax.
+And an emplace back function in the VertexBuffer (not the bindable one, the one in VertexLayout.h)
+I explain how it works in the comments. In VertexLayout.h you will find 3 classes. The VertexLayout class contains
+information about how the VertexBuffer is structured. It knows the offsets of every element in the buffer, and it knows
+what each attribute is. The VertexBuffer contains all the Vertices and holds the raw byte buffer. The Vertex class
+represents a single Vertex within the VertexBuffer, and it has member functions to retrieve attributes, such as,
+location, normals, etc.
