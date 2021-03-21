@@ -22,8 +22,8 @@ IronMan::IronMan(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distributio
 	if(!IsStaticDataInitialised())
 	{
 		using alrg::VertexLayout;
-		alrg::VertexBuffer vb(std::move(VertexLayout{}.Append<VertexLayout::Location3D>()
-			.Append<VertexLayout::Normal>()));
+		alrg::VertexBuffer vb(std::move(VertexLayout{}.Append(VertexLayout::Location3D)
+			.Append(VertexLayout::Normal)));
 
 		Assimp::Importer imp;
 		auto pScene = imp.ReadFile("3DAssets\\IronMan.obj",

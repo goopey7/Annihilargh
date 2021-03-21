@@ -24,6 +24,68 @@ namespace alrg
 			ARGBColour
 		};
 
+		// This will allow us to map type-names to a structure that contains compile-time data.
+		// This provides one single place for all this data to be defined, so it'll be much harder to create bugs.
+		// It also made the Retrieve function in Vertex a lot cleaner and more slick
+		template <ElementType>
+		struct Map;
+		
+		template <>
+		struct Map<Location2D>
+		{
+			using SysType = DirectX::XMFLOAT2;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
+			const char* semantic = "Position";
+		};
+
+		template <>
+		struct Map<Location3D>
+		{
+			using SysType = DirectX::XMFLOAT3;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+			const char* semantic = "Position";
+		};
+
+		template <>
+		struct Map<TextureCoord2D>
+		{
+			using SysType = DirectX::XMFLOAT2;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
+			const char* semantic = "Texcoord";
+		};
+
+		template <>
+		struct Map<Normal>
+		{
+			using SysType = DirectX::XMFLOAT3;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+			const char* semantic = "Normal";
+		};
+
+		template <>
+		struct Map<Float3Colour>
+		{
+			using SysType = DirectX::XMFLOAT3;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+			const char* semantic = "Colour";
+		};
+
+		template <>
+		struct Map<Float4Colour>
+		{
+			using SysType = DirectX::XMFLOAT4;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			const char* semantic = "Colour";
+		};
+
+		template <>
+		struct Map<ARGBColour>
+		{
+			using SysType = alrg::ARGBColour;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+			const char* semantic = "Colour";
+		};
+
 		class Element
 		{
 		public:
@@ -42,19 +104,19 @@ namespace alrg
 				switch(type)
 				{
 				case Location2D:
-					return sizeof(DirectX::XMFLOAT2);
+					return sizeof(Map<Location2D>::SysType);
 				case Location3D:
-					return sizeof(DirectX::XMFLOAT3);
+					return sizeof(Map<Location3D>::SysType);
 				case TextureCoord2D:
-					return sizeof(DirectX::XMFLOAT2);
+					return sizeof(Map<TextureCoord2D>::SysType);
 				case Normal:
-					return sizeof(DirectX::XMFLOAT3);
+					return sizeof(Map<Normal>::SysType);
 				case Float3Colour:
-					return sizeof(DirectX::XMFLOAT3);
+					return sizeof(Map<Float3Colour>::SysType);
 				case Float4Colour:
-					return sizeof(DirectX::XMFLOAT4);
+					return sizeof(Map<Float4Colour>::SysType);
 				case ARGBColour:
-					return sizeof(alrg::ARGBColour);
+					return sizeof(Map<ARGBColour>::SysType);
 				}
 				assert("Unknown Element Type" && false);
 				return 0u;
@@ -100,10 +162,9 @@ namespace alrg
 			return elements[index];
 		}
 
-		template <ElementType T>
-		VertexLayout& Append() noexcept
+		VertexLayout& Append(ElementType type) noexcept
 		{
-			elements.emplace_back(T, Size());
+			elements.emplace_back(type, Size());
 			return *this;
 		}
 
@@ -131,45 +192,8 @@ namespace alrg
 		template <VertexLayout::ElementType T>
 		auto& Retrieve() noexcept
 		{
-			namespace dx = DirectX;
-			const auto &element = layout.Get<T>();
-			auto pAttribute = pData + element.GetOffset();
-
-			// I want to use constexpr here so this is determined at compile time
-			// so no switch statement I'm afraid
-			if constexpr(T == VertexLayout::Location2D)
-			{
-				return *reinterpret_cast<dx::XMFLOAT2*>(pAttribute);
-			}
-			else if constexpr(T == VertexLayout::Location3D)
-			{
-				return *reinterpret_cast<dx::XMFLOAT3*>(pAttribute);
-			}
-			else if constexpr(T == VertexLayout::TextureCoord2D)
-			{
-				return *reinterpret_cast<dx::XMFLOAT2*>(pAttribute);
-			}
-			else if constexpr(T == VertexLayout::Normal)
-			{
-				return *reinterpret_cast<dx::XMFLOAT3*>(pAttribute);
-			}
-			else if constexpr(T == VertexLayout::Float3Colour)
-			{
-				return *reinterpret_cast<dx::XMFLOAT3*>(pAttribute);
-			}
-			else if constexpr(T == VertexLayout::Float4Colour)
-			{
-				return *reinterpret_cast<dx::XMFLOAT4*>(pAttribute);
-			}
-			else if constexpr(T == VertexLayout::ARGBColour)
-			{
-				return *reinterpret_cast<ARGBColour*>(pAttribute);
-			}
-			else
-			{
-				assert("Unknown Element Type" && false);
-				return *pAttribute;
-			}
+			auto pAttribute = pData + layout.Get<T>().GetOffset();
+			return *reinterpret_cast<typename VertexLayout::Map<T>::SysType*>(pAttribute);
 		}
 
 		template <typename T>
@@ -183,25 +207,25 @@ namespace alrg
 			switch(element.GetType())
 			{
 			case VertexLayout::Location2D:
-				SetAttribute<dx::XMFLOAT2>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::Location2D>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::Location3D:
-				SetAttribute<dx::XMFLOAT3>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::Location3D>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::TextureCoord2D:
-				SetAttribute<dx::XMFLOAT2>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::TextureCoord2D>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::Normal:
-				SetAttribute<dx::XMFLOAT3>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::Normal>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::Float3Colour:
-				SetAttribute<dx::XMFLOAT3>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::Float3Colour>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::Float4Colour:
-				SetAttribute<dx::XMFLOAT4>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::Float4Colour>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::ARGBColour:
-				SetAttribute<ARGBColour>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::ARGBColour>(pAttribute, std::forward<T>(val));
 				break;
 			default:
 				assert("Unknown Element Type" && false);
@@ -224,19 +248,20 @@ namespace alrg
 		void SetAttributeByIndex(size_t i, First &&first, Rest &&...rest) noexcept
 		{
 			SetAttributeByIndex(i, std::forward<First>(first)); // evaluates to the above public SetAttributeByIndex()
-			SetAttributeByIndex(i + 1, std::forward<Rest>(rest)...); // recurse, peels back first, recurses again.
+			SetAttributeByIndex(i + 1, std::forward<Rest>(rest)...); // recurse, peels back first parameter
 			// once rest contains only one parameter, this call will resolve to the above SetAttributeByIndex()
 			// so that's how the recursion will end.
 		}
 
 		// this function checks to see if the type we are attempting to cast to will actually work.
-		// it's called in the public SetAttributByIndex()
-		template <typename Dest, typename Src>
-		void SetAttribute(char* pAttribute, Src &&val) noexcept
+		// it's called in the public SetAttributeByIndex()
+		template <VertexLayout::ElementType DestLayout, typename SrcType>
+		void SetAttribute(char* pAttribute, SrcType &&val) noexcept
 		{
-			if constexpr(std::is_assignable<Dest, Src>::value)
+			using DestSysType = typename VertexLayout::Map<DestLayout>::SysType;
+			if constexpr(std::is_assignable<DestSysType, SrcType>::value)
 			{
-				*reinterpret_cast<Dest*>(pAttribute) = val;
+				*reinterpret_cast<DestSysType*>(pAttribute) = val;
 			}
 			else
 				assert("Fail to cast attribute type" && false);
@@ -272,10 +297,12 @@ namespace alrg
 		VertexBuffer(VertexLayout layout) noexcept : layout(std::move(layout))
 		{
 		}
+
 		const char* GetData() const noexcept
 		{
 			return buffer.data();
 		}
+
 		const VertexLayout& GetLayout() const noexcept
 		{
 			return layout;
@@ -290,7 +317,7 @@ namespace alrg
 		{
 			return buffer.size();
 		}
-		
+
 		Vertex Front() noexcept
 		{
 			assert(buffer.size()>=0u);
