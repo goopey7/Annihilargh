@@ -52,7 +52,7 @@ public:
 			case Float4Colour:
 				return sizeof(DirectX::XMFLOAT4);
 			case ARGBColour:
-				return sizeof(unsigned int);
+				return sizeof(::ARGBColour);
 			}
 			assert("Unknown Element Type" && false);
 			return 0u;
@@ -72,6 +72,7 @@ public:
 		{
 			return offset;
 		}
+
 	private:
 		ElementType type;
 		size_t offset; // number of bytes away from the beginning of the Vertex struct
@@ -205,22 +206,22 @@ public:
 		}
 	}
 
-private:
+protected:
 	Vertex(char* pData, const VertexLayout &layout) noexcept : pData(pData), layout(layout)
 	{
 		assert(pData != nullptr);
 	}
-
+private:
 	// We don't know how many parameters we're going to get
 	// so the ... represents a 'parameter pack' meaning it can represent any number of parameters
 	// you can't iterate on this pack, so we have to do recursion.
 	// A quick explanation is that this function will peel off the first parameter from the pack, and process it.
 	// Then we do recursion and keep doing that until we have processed every parameter.
-	template<typename First, typename ...Rest>
-	void SetAttributeByIndex(size_t i, First &&first,Rest &&...rest) noexcept
+	template <typename First, typename ...Rest>
+	void SetAttributeByIndex(size_t i, First &&first, Rest &&...rest) noexcept
 	{
-		SetAttributeByIndex(i,std::forward<First>(first)); // evaluates to the above public SetAttributeByIndex()
-		SetAttributeByIndex(i+1,std::forward<Rest>(rest)...); // recurse, peels back first, recurses again.
+		SetAttributeByIndex(i, std::forward<First>(first)); // evaluates to the above public SetAttributeByIndex()
+		SetAttributeByIndex(i + 1, std::forward<Rest>(rest)...); // recurse, peels back first, recurses again.
 		// once rest contains only one parameter, this call will resolve to the above SetAttributeByIndex()
 		// so that's how the recursion will end.
 	}
@@ -241,6 +242,24 @@ private:
 private:
 	char* pData = nullptr;
 	const VertexLayout &layout;
+};
+
+// Read-Only Vertex
+class ConstVertex
+{
+public:
+	ConstVertex(const Vertex &v) noexcept : vertex(v)
+	{
+	}
+
+	template <VertexLayout::ElementType T>
+	const auto& Retrieve() const noexcept
+	{
+		return const_cast<Vertex&>(vertex).Retrieve<T>();
+	}
+
+private:
+	Vertex vertex;
 };
 
 // represents the data
@@ -279,14 +298,30 @@ public:
 		return Vertex{buffer.data() + layout.Size() * i, layout};
 	}
 
+	ConstVertex Back() const noexcept
+	{
+		return const_cast<VertexBuffer*>(this)->Back();
+	}
+
+	ConstVertex Front() const noexcept
+	{
+		return const_cast<VertexBuffer*>(this)->Front();
+	}
+
+	ConstVertex operator[](size_t i) const noexcept
+	{
+		return const_cast<VertexBuffer&>(*this)[i];
+	}
+
 	// takes in a parameter pack and processes them. Refer to the private field of Vertex for more info
 	template <typename ...Params>
 	void EmplaceBack(Params &&... params) noexcept
 	{
 		// the number of parameters should match the amount of elements in the layout
-		assert(sizeof...(params) == layout.NumElements() && "Number of params doesn't match number of elements in layout");
+		assert(
+			sizeof...(params) == layout.NumElements() && "Number of params doesn't match number of elements in layout");
 		buffer.resize(buffer.size() + layout.Size());
-		Back().SetAttributeByIndex(0u,std::forward<Params>(params)...);
+		Back().SetAttributeByIndex(0u, std::forward<Params>(params)...);
 	}
 
 private:

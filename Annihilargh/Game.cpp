@@ -39,6 +39,9 @@ void test()
 	auto texture2d = vertexBuffer[1].Retrieve<VertexLayout::TextureCoord2D>();
 	vertexBuffer.Back().Retrieve<VertexLayout::Location3D>().z = 666.0f;
 	location = vertexBuffer.Back().Retrieve<VertexLayout::Location3D>();
+
+	const auto& cvb = vertexBuffer;
+	location = cvb[1].Retrieve<VertexLayout::Location3D>();
 }
 
 Game::Game(): window(800, 600, "Annihilargh"), light(window.GetGraphics(), 0.5f)
