@@ -1,14 +1,13 @@
 ﻿#pragma once
+#include <d3d11.h>
 #include <DirectXMath.h>
+#include <dxgiformat.h>
 #include <vector>
 
-namespace alrg
-{
-	struct ARGBColour
-	{
-		unsigned char a, r, g, b;
-	};
+#include "Colour.h"
 
+namespace dVS
+{
 	// describes how the dumb char buffer in VertexBuffer is structured
 	class VertexLayout
 	{
@@ -83,7 +82,7 @@ namespace alrg
 		template <>
 		struct Map<ARGBColour>
 		{
-			using SysType = alrg::ARGBColour;
+			using SysType = ::ARGBColour;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 			static constexpr const char* semantic = "Colour";
 		};
@@ -91,88 +90,17 @@ namespace alrg
 		class Element
 		{
 		public:
-			Element(ElementType type, size_t offset) : type(type), offset(offset)
-			{
-			}
-
-			size_t GetOffsetOfNextElement() const noexcept
-			{
-				return offset + Size();
-			}
-
+			Element(ElementType type, size_t offset);
+			size_t GetOffsetOfNextElement() const noexcept;
 			// constexpr so it won't take any runtime resources
-			static constexpr size_t SizeOf(ElementType type) noexcept
-			{
-				switch(type)
-				{
-				case Location2D:
-					return sizeof(Map<Location2D>::SysType);
-				case Location3D:
-					return sizeof(Map<Location3D>::SysType);
-				case TextureCoord2D:
-					return sizeof(Map<TextureCoord2D>::SysType);
-				case Normal:
-					return sizeof(Map<Normal>::SysType);
-				case Float3Colour:
-					return sizeof(Map<Float3Colour>::SysType);
-				case Float4Colour:
-					return sizeof(Map<Float4Colour>::SysType);
-				case ARGBColour:
-					return sizeof(Map<ARGBColour>::SysType);
-				}
-				assert("Unknown Element Type" && false);
-				return 0u;
-			}
-
-			size_t Size() const noexcept
-			{
-				return SizeOf(type);
-			}
-
-			ElementType GetType() const noexcept
-			{
-				return type;
-			}
-
-			size_t GetOffset() const noexcept
-			{
-				return offset;
-			}
-
-			D3D11_INPUT_ELEMENT_DESC GetDesc() const noexcept
-			{
-				switch(type)
-				{
-				case Location2D:
-					return GenerateInputElementDesc<Location2D>(GetOffset());
-				case Location3D:
-					return GenerateInputElementDesc<Location3D>(GetOffset());
-				case TextureCoord2D:
-					return GenerateInputElementDesc<TextureCoord2D>(GetOffset());
-				case Normal:
-					return GenerateInputElementDesc<Normal>(GetOffset());
-				case Float3Colour:
-					return GenerateInputElementDesc<Float3Colour>(GetOffset());
-				case Float4Colour:
-					return GenerateInputElementDesc<Float4Colour>(GetOffset());
-				case ARGBColour:
-					return GenerateInputElementDesc<ARGBColour>(GetOffset());
-				}
-				assert("Unknown Element Type" && false);
-				return {"UNKNOWN",0u,DXGI_FORMAT_UNKNOWN,0u,0u,
-					D3D11_INPUT_PER_VERTEX_DATA,0u};
-			}
-
+			static constexpr size_t SizeOf(ElementType type) noexcept;
+			size_t Size() const noexcept;
+			ElementType GetType() const noexcept;
+			size_t GetOffset() const noexcept;
+			D3D11_INPUT_ELEMENT_DESC GetDesc() const noexcept;
 		private:
 			template <ElementType T>
-			static constexpr D3D11_INPUT_ELEMENT_DESC GenerateInputElementDesc(size_t offset)
-			{
-				return
-				{
-					Map<T>::semantic,0u,Map<T>::dxgiFormat,0u,(UINT)offset,
-					D3D11_INPUT_PER_VERTEX_DATA,0u
-				};
-			}
+			static constexpr D3D11_INPUT_ELEMENT_DESC GenerateInputElementDesc(size_t offset);
 
 		private:
 			ElementType type;
@@ -181,68 +109,25 @@ namespace alrg
 
 		template <ElementType T>
 		// access element that matches the type. Returns constant reference to it.
-		const Element& Get() const noexcept
-		{
-			for(auto &e : elements)
-			{
-				if(e.GetType() == T)
-				{
-					return e;
-				}
-			}
-			assert("Could not find element type" && false);
-			return elements.back();
-		}
+		const Element& Get() const noexcept;
+		
+		const Element& Get(size_t index) const noexcept;
+		VertexLayout& Append(ElementType type) noexcept;
+		size_t Size() const noexcept;
+		size_t NumElements() const noexcept;
+		std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const noexcept;
 
-		const Element& Get(size_t index) const noexcept
-		{
-			return elements[index];
-		}
-
-		VertexLayout& Append(ElementType type) noexcept
-		{
-			elements.emplace_back(type, Size());
-			return *this;
-		}
-
-		size_t Size() const noexcept
-		{
-			// if vector is empty returns 0. Otherwise returns the size of the struct in bytes
-			// offset after last element is the size of the structure
-			return elements.empty() ? 0u : elements.back().GetOffsetOfNextElement();
-		}
-
-		size_t NumElements() const noexcept
-		{
-			return elements.size();
-		}
-
-		std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const noexcept
-		{
-			std::vector<D3D11_INPUT_ELEMENT_DESC> desc;
-			desc.reserve(NumElements());
-			for(const auto &e : elements)
-			{
-				desc.push_back(e.GetDesc());
-			}
-			return desc;
-		}
-	
 	private:
 		std::vector<Element> elements;
 	};
-
+	
 	// represents a vertex within the vertex buffer, and can retrieve attributes
 	class Vertex
 	{
 		friend class VertexBuffer;
 	public:
 		template <VertexLayout::ElementType T>
-		auto& Retrieve() noexcept
-		{
-			auto pAttribute = pData + layout.Get<T>().GetOffset();
-			return *reinterpret_cast<typename VertexLayout::Map<T>::SysType*>(pAttribute);
-		}
+		auto& Retrieve() noexcept;
 
 		template <typename T>
 		// the double && allows us to forward a parameter without loosing any information or modifiers
@@ -281,10 +166,7 @@ namespace alrg
 		}
 
 	protected:
-		Vertex(char* pData, const VertexLayout &layout) noexcept : pData(pData), layout(layout)
-		{
-			assert(pData != nullptr);
-		}
+		Vertex(char* pData, const VertexLayout &layout) noexcept;
 
 	private:
 		// We don't know how many parameters we're going to get
@@ -324,16 +206,10 @@ namespace alrg
 	class ConstVertex
 	{
 	public:
-		ConstVertex(const Vertex &v) noexcept : vertex(v)
-		{
-		}
+		ConstVertex(const Vertex &v) noexcept;
 
 		template <VertexLayout::ElementType T>
-		const auto& Retrieve() const noexcept
-		{
-			return const_cast<Vertex&>(vertex).Retrieve<T>();
-		}
-
+		const auto& Retrieve() const noexcept;
 	private:
 		Vertex vertex;
 	};
@@ -342,75 +218,30 @@ namespace alrg
 	class VertexBuffer
 	{
 	public:
-		VertexBuffer(VertexLayout layout) noexcept : layout(std::move(layout))
-		{
-		}
+		VertexBuffer(VertexLayout layout) noexcept;
+		const char* GetData() const noexcept;
+		const VertexLayout& GetLayout() const noexcept;
+		size_t Size() const noexcept; // Gets the number of vertices, not the size in bytes
+		size_t SizeBytes() const noexcept;
+		Vertex Front() noexcept;
+		Vertex Back() noexcept;
+		Vertex operator[](size_t i) noexcept;
+		ConstVertex Back() const noexcept;
+		ConstVertex Front() const noexcept;
+		ConstVertex operator[](size_t i) const noexcept;
 
-		const char* GetData() const noexcept
-		{
-			return buffer.data();
-		}
-
-		const VertexLayout& GetLayout() const noexcept
-		{
-			return layout;
-		}
-
-		size_t Size() const noexcept // Gets the number of vertices, not the size in bytes
-		{
-			return buffer.size() / layout.Size();
-		}
-
-		size_t SizeBytes() const noexcept
-		{
-			return buffer.size();
-		}
-
-		Vertex Front() noexcept
-		{
-			assert(buffer.size()>=0u);
-			return Vertex{buffer.data(), layout};
-		}
-
-		Vertex Back() noexcept
-		{
-			assert(buffer.size()>=0u);
-			return Vertex{buffer.data() + buffer.size() - layout.Size(), layout};
-		}
-
-		Vertex operator[](size_t i) noexcept
-		{
-			assert(i < Size());
-			return Vertex{buffer.data() + layout.Size() * i, layout};
-		}
-
-		ConstVertex Back() const noexcept
-		{
-			return const_cast<VertexBuffer*>(this)->Back();
-		}
-
-		ConstVertex Front() const noexcept
-		{
-			return const_cast<VertexBuffer*>(this)->Front();
-		}
-
-		ConstVertex operator[](size_t i) const noexcept
-		{
-			return const_cast<VertexBuffer&>(*this)[i];
-		}
-
-		// takes in a parameter pack and processes them. Refer to the private field of Vertex for more info
+		// takes in a parameter pack and processes them
+		// Refer to the private field and implementations in Vertex for more info
 		template <typename ...Params>
 		void EmplaceBack(Params &&... params) noexcept
 		{
 			// the number of parameters should match the amount of elements in the layout
 			assert(
-				sizeof...(params) == layout.NumElements() &&
-				"Number of params doesn't match number of elements in layout");
+                sizeof...(params) == layout.NumElements() &&
+                "Number of params doesn't match number of elements in layout");
 			buffer.resize(buffer.size() + layout.Size());
 			Back().SetAttributeByIndex(0u, std::forward<Params>(params)...);
 		}
-
 	private:
 		std::vector<char> buffer; // unstructured buffer of bytes
 		VertexLayout layout; // layout describing the structure

@@ -80,9 +80,9 @@ Model::Model(Graphics& gfx, const std::string fileName)
 std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh)
 {
 	namespace dx = DirectX;
-	using alrg::VertexLayout;
+	using dVS::VertexLayout;
 
-	alrg::VertexBuffer vb(std::move(VertexLayout{}.Append(VertexLayout::Location3D).Append(VertexLayout::Normal)));
+	dVS::VertexBuffer vb(std::move(VertexLayout{}.Append(VertexLayout::Location3D).Append(VertexLayout::Normal)));
 
 	for(unsigned int i = 0;i<mesh.mNumVertices; i++)
 	{

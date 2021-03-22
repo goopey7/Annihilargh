@@ -1,13 +1,7 @@
 ﻿#include "Game.h"
-#include <random>
-#include "Image.h"
 #include "GDIPlusManager.h"
 #include "imgui/imgui.h"
-#include "Geometry/Math.h"
 #include "Drawable/IronMan.h"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include "VertexSystem.h"
 
@@ -70,6 +64,11 @@ void Game::ShowModelWindow()
 		ImGui::SliderAngle("Pitch",&pos.pitch,-180.f,180.f);
 		ImGui::SliderAngle("Yaw",&pos.yaw,-180.f,180.f);
 		ImGui::SliderAngle("Roll",&pos.roll,-180.f,180.f);
+
+		if(ImGui::Button("Reset"))
+		{
+			pos={0.f,0.f,0.f,0.f,0.f,0.f};
+		}
 	}
 	ImGui::End();
 }

@@ -21,8 +21,8 @@ IronMan::IronMan(Graphics &gfx, std::mt19937 &rng, std::uniform_real_distributio
 	namespace dx = DirectX;
 	if(!IsStaticDataInitialised())
 	{
-		using alrg::VertexLayout;
-		alrg::VertexBuffer vb(std::move(VertexLayout{}.Append(VertexLayout::Location3D)
+		using dVS::VertexLayout;
+		dVS::VertexBuffer vb(std::move(VertexLayout{}.Append(VertexLayout::Location3D)
 			.Append(VertexLayout::Normal)));
 
 		Assimp::Importer imp;
