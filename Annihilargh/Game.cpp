@@ -34,43 +34,17 @@ void Game::Tick()
 	window.GetGraphics().BeginFrame(0.01f, 0.0f, 0.05f);
 	window.GetGraphics().SetCamera(camera.GetMatrix());
 	light.Bind(window.GetGraphics(), camera.GetMatrix());
-
-	// I have no idea why it's called Roll Pitch Yaw when params are pitch yaw roll. Mega confusing lol.
-	const auto transform = dx::XMMatrixRotationRollPitchYaw(pos.pitch,pos.yaw,pos.roll)
-	* dx::XMMatrixTranslation(pos.x,pos.y,pos.z);
 	
-	ironMan.Draw(window.GetGraphics(),transform);
+	ironMan.Draw(window.GetGraphics());
 	light.Draw(window.GetGraphics());
 	
 	
 	// spawns imgui windows
 	camera.DisplayControlGUI();
 	light.DisplayControlGUI();
-	ShowModelWindow();
+	ironMan.ShowWindow();
 	ShowPerformanceWindow();
 	window.GetGraphics().EndFrame();
-}
-
-void Game::ShowModelWindow()
-{
-	if(ImGui::Begin("Model"))
-	{
-		ImGui::Text("Location");
-		ImGui::SliderFloat("X",&pos.x,-20.f,20.f);
-		ImGui::SliderFloat("Y",&pos.y,-20.f,20.f);
-		ImGui::SliderFloat("Z",&pos.z,-20.f,20.f);
-
-		ImGui::Text("Rotation");
-		ImGui::SliderAngle("Pitch",&pos.pitch,-180.f,180.f);
-		ImGui::SliderAngle("Yaw",&pos.yaw,-180.f,180.f);
-		ImGui::SliderAngle("Roll",&pos.roll,-180.f,180.f);
-
-		if(ImGui::Button("Reset"))
-		{
-			pos={0.f,0.f,0.f,0.f,0.f,0.f};
-		}
-	}
-	ImGui::End();
 }
 
 void Game::ShowPerformanceWindow()

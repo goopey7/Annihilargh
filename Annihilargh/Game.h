@@ -13,17 +13,11 @@ public:
 	int BeginPlay();
 private:
 	void Tick();
-	void ShowModelWindow();
 	void ShowPerformanceWindow();
 	ImguiManager imgui;
 	Window window;
 	Timer timer;
 	Camera camera;
 	PointLight light;
-	Model ironMan{window.GetGraphics(),"3DAssets\\ironMan.obj"};
-
-	struct
-	{
-		float x=0.f,y=0.f,z=0.f,pitch=0.f,yaw=0.f,roll=0.f;
-	} pos;
+	Model ironMan{window.GetGraphics(),"3DAssets\\ironMan.fbx"};
 };

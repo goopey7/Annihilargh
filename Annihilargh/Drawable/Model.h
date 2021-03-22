@@ -1,8 +1,6 @@
 ﻿#pragma once
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
 #include <assimp/scene.h>
-#include <assimp/types.h>
+
 
 #include "DrawableBase.h"
 
@@ -22,13 +20,14 @@ class Node
 {
 	friend class Model;
 public:
-	Node(std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX &transform) noexcept;
-
+	Node(const std::string &name,std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX &transform) noexcept;
+	void RenderTree() const noexcept;
 	void Draw(Graphics &gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept;
 private:
 
 	void AddChild(std::unique_ptr<Node> pChild) noexcept;
 
+	std::string name;
 	std::vector<std::unique_ptr<Node>> children;
 	std::vector<Mesh*> meshes;
 	DirectX::XMFLOAT4X4 transform;
@@ -38,10 +37,13 @@ class Model
 {
 public:
 	Model(Graphics &gfx, const std::string fileName);
+	~Model() noexcept;
 	static std::unique_ptr<Mesh> ParseMesh(Graphics &gfx, const aiMesh &mesh);
-	std::unique_ptr<Node> ParseNode(const aiNode &node);
-	void Draw(Graphics &gfx, DirectX::FXMMATRIX startingTransform = DirectX::XMMatrixIdentity()) const;
+	std::unique_ptr<Node> ParseNode(const aiNode &node) noexcept;
+	void Draw(Graphics &gfx) const;
+	void ShowWindow(const char* windowName=nullptr) noexcept;
 private:
 	std::unique_ptr<Node> pRoot;
 	std::vector<std::unique_ptr<Mesh>> meshes;
+	std::unique_ptr<class ModelWindow> pWindow;
 };
