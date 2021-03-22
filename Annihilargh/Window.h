@@ -52,6 +52,8 @@ private:
 	static LRESULT WINAPI HandleMessageAfterCreation(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	LRESULT HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 
+	void TrapCursor();
+	void FreeCursor();
 	void HideCursor();
 	void ShowCursor();
 	void EnableImGuiMouse();

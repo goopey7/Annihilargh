@@ -112,6 +112,7 @@ void Window::EnableMousePointer()
 	bPointerEnabled=true;
 	ShowCursor();
 	EnableImGuiMouse();
+	FreeCursor();
 }
 
 void Window::DisableMousePointer()
@@ -119,6 +120,7 @@ void Window::DisableMousePointer()
 	bPointerEnabled=false;
 	HideCursor();
 	DisableImGuiMouse();
+	TrapCursor();
 }
 
 // messages come in here
@@ -230,6 +232,11 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_LBUTTONDOWN:
 		{
+			if(!bPointerEnabled)
+			{
+				TrapCursor();
+				HideCursor();
+			}
 			// if imgui wants to capture mouse, then we let it swallow up our inputs.
 			if(imio.WantCaptureMouse)
 				break;
@@ -299,8 +306,36 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// reset mouse states as well
 		mouse.Clear();
 		break;
+	case WM_ACTIVATE:
+		if(wParam & WA_ACTIVE || wParam & WA_CLICKACTIVE)
+		{
+			TrapCursor();
+			HideCursor();
+		}
+		else
+		{
+			FreeCursor();
+			ShowCursor();
+		}
+		break;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void Window::TrapCursor()
+{
+	RECT rect;
+	GetClientRect(hWnd, &rect);
+	// map from window-space to screen-space
+	MapWindowPoints(hWnd,nullptr,reinterpret_cast<POINT*>(&rect),2);
+	// rect is a structure of 2 points. Maps the two points to screen-space
+	ClipCursor(&rect); // clip cursor traps a cursor to a rectangular region
+	// so we create a rectangle the size of the window
+}
+
+void Window::FreeCursor()
+{
+	ClipCursor(nullptr);
 }
 
 void Window::HideCursor()
