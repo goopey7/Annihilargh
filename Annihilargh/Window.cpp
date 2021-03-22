@@ -107,6 +107,18 @@ Graphics& Window::GetGraphics()
 	return *pGraphics;
 }
 
+void Window::EnableMousePointer()
+{
+	bPointerEnabled=true;
+	ShowCursor();
+}
+
+void Window::DisableMousePointer()
+{
+	bPointerEnabled=false;
+	HideCursor();
+}
+
 // messages come in here
 LRESULT WINAPI Window::HandleMessageSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -287,6 +299,19 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void Window::HideCursor()
+{
+	// WINAPI keeps an internal counter. When it is above 0 the pointer is shown.
+	// so we will while loop here.
+	while(::ShowCursor(FALSE) >= 0);	
+}
+
+void Window::ShowCursor()
+{
+	// same for showing the pointer
+	while(::ShowCursor(TRUE) < 0);	
 }
 
 // Window Anomaly

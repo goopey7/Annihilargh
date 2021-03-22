@@ -11,6 +11,7 @@ namespace dx = DirectX;
 Game::Game(): window(1600, 900, "Annihilargh"), light(window.GetGraphics(), 0.5f)
 {
 	window.GetGraphics().SetProjection(DirectX::XMMatrixPerspectiveLH(1.f, 9.f / 16.f, 0.5f, 40.f));
+	window.DisableMousePointer();
 }
 
 int Game::BeginPlay()
@@ -30,7 +31,7 @@ int Game::BeginPlay()
 void Game::Tick()
 {
 	auto deltaTime = timer.Reset();
-	window.GetGraphics().BeginFrame(0.01f, 0.0f, 0.05f);
+	window.GetGraphics().BeginFrame(0.05f, 0.05f, 0.05f);
 	window.GetGraphics().SetCamera(camera.GetMatrix());
 	light.Bind(window.GetGraphics(), camera.GetMatrix());
 	

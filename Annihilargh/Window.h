@@ -45,13 +45,15 @@ public:
 	// goes wrong and what it is.
 	static std::optional<int> ProcessMessages() noexcept;
 	Graphics& GetGraphics();
+	void EnableMousePointer();
+	void DisableMousePointer();
 private:
 	static LRESULT WINAPI HandleMessageSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT WINAPI HandleMessageAfterCreation(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	LRESULT HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
-	int width;
-	int height;
-	HWND hWnd;
+
+	void HideCursor();
+	void ShowCursor();
 
 	// smart ptr so we don't have to worry about deleting it
 	std::unique_ptr<Graphics> pGraphics;
@@ -78,4 +80,9 @@ public:
 public:
 	Keyboard keyboard;
 	Mouse mouse;
+private:
+	int width;
+	int height;
+	HWND hWnd;
+	bool bPointerEnabled=false;
 };
