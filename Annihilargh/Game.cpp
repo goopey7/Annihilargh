@@ -1,7 +1,6 @@
 ﻿#include "Game.h"
 #include "GDIPlusManager.h"
 #include "imgui/imgui.h"
-#include "Drawable/IronMan.h"
 
 #include "VertexSystem.h"
 

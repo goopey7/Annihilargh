@@ -145,7 +145,7 @@ public:
 
 				if(ImGui::Button("Reset"))
 				{
-					modelTransform = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, .01f};
+					modelTransform = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f};
 				}
 			}
 		}
@@ -237,8 +237,8 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics &gfx, const aiMesh &mesh)
 	struct MaterialCB
 	{
 		dx::XMFLOAT3 colour = {.6f, .6f, .8f};
-		float specularIntensity = .6f;
 		float specularPower = 30.f;
+		float specularIntensity = .6f;
 		float padding[3];
 	} matCB;
 
