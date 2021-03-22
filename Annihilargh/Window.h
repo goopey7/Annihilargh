@@ -54,6 +54,8 @@ private:
 
 	void HideCursor();
 	void ShowCursor();
+	void EnableImGuiMouse();
+	void DisableImGuiMouse();
 
 	// smart ptr so we don't have to worry about deleting it
 	std::unique_ptr<Graphics> pGraphics;

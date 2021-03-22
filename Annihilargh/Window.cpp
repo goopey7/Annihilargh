@@ -111,12 +111,14 @@ void Window::EnableMousePointer()
 {
 	bPointerEnabled=true;
 	ShowCursor();
+	EnableImGuiMouse();
 }
 
 void Window::DisableMousePointer()
 {
 	bPointerEnabled=false;
 	HideCursor();
+	DisableImGuiMouse();
 }
 
 // messages come in here
@@ -312,6 +314,18 @@ void Window::ShowCursor()
 {
 	// same for showing the pointer
 	while(::ShowCursor(TRUE) < 0);	
+}
+
+void Window::EnableImGuiMouse()
+{
+	// clear the no mouse bit
+	ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+}
+
+void Window::DisableImGuiMouse()
+{
+	// set the no mouse bit
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
 }
 
 // Window Anomaly
