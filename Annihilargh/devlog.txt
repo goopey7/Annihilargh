@@ -336,3 +336,12 @@ Uh oh, I have school tomorrow. I do have work in other classes, but I really wan
 I have yet to find a 3D file that actually has a hierarchy. Meaning I can rotate the arms relative to the body etc.
 I've tested quite a few different models, and none seem to work. So perhaps there is something wrong with my code,
 or assimp. Ok I finally found a model that works with my program. It's the nanosuit from Crysis. So my code does work.
+
+I also had to fix some weird lighting bug with the specular. Basically I had specular power and intensity mixed up.
+Now the model looks great. Next thing I'm gonna do is implement the ability to manipulate the camera with the mouse
+instead of the GUI. It'll feel more like a good 3D editor that way.
+
+I have implemented showing and hiding the mouse pointer, and I can now trap the mouse inside of the client region.
+Something that Skyrim has failed to do properly. (At least there's a mod that fixes it)
+
+
