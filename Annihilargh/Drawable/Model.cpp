@@ -151,9 +151,8 @@ std::unique_ptr<Node> Model::ParseNode(const aiNode& node)
 	return pNode;
 }
 
-void Model::Draw(Graphics& gfx) const
+void Model::Draw(Graphics& gfx, DirectX::FXMMATRIX startingTransform) const
 {
-	// start the recursion down the tree at the root. Starts with the identity matrix and as we go down the tree,
-	// the transforms get applied
-	pRoot->Draw(gfx,DirectX::XMMatrixIdentity());
+	// start the recursion down the tree at the root
+	pRoot->Draw(gfx,startingTransform);
 }

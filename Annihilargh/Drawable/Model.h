@@ -40,7 +40,7 @@ public:
 	Model(Graphics &gfx, const std::string fileName);
 	static std::unique_ptr<Mesh> ParseMesh(Graphics &gfx, const aiMesh &mesh);
 	std::unique_ptr<Node> ParseNode(const aiNode &node);
-	void Draw(Graphics &gfx) const;
+	void Draw(Graphics &gfx, DirectX::FXMMATRIX startingTransform = DirectX::XMMatrixIdentity()) const;
 private:
 	std::unique_ptr<Node> pRoot;
 	std::vector<std::unique_ptr<Mesh>> meshes;
