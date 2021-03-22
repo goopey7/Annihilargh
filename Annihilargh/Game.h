@@ -19,5 +19,5 @@ private:
 	Timer timer;
 	Camera camera;
 	PointLight light;
-	Model ironMan{window.GetGraphics(),"3DAssets\\ironMan.fbx"};
+	Model nanosuit{window.GetGraphics(),"3DAssets\\nano.gltf"};
 };

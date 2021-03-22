@@ -35,14 +35,14 @@ void Game::Tick()
 	window.GetGraphics().SetCamera(camera.GetMatrix());
 	light.Bind(window.GetGraphics(), camera.GetMatrix());
 	
-	ironMan.Draw(window.GetGraphics());
+	nanosuit.Draw(window.GetGraphics());
 	light.Draw(window.GetGraphics());
 	
 	
 	// spawns imgui windows
 	camera.DisplayControlGUI();
 	light.DisplayControlGUI();
-	ironMan.ShowWindow();
+	nanosuit.ShowWindow();
 	ShowPerformanceWindow();
 	window.GetGraphics().EndFrame();
 }

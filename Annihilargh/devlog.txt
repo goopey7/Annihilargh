@@ -327,3 +327,12 @@ are all identical. We'll use a node/tree based system which will be similar to h
 You can add components to your scene, and you can child components to each other as you please. This will allow us to
 child the wheels to a car for example. And you could child stuff to the wheels if you wanted. Like maybe you'd child
 tires to the wheel, so any movement made to the wheel also gets applied to the tire.
+
+I have implemented it, and you can transform each individual node with the GUI. Assimp has built in functions for
+reading nodes. The nodes are within the 3D file.
+
+Monday (3/22/21)
+Uh oh, I have school tomorrow. I do have work in other classes, but I really want this project to get more developed.
+I have yet to find a 3D file that actually has a hierarchy. Meaning I can rotate the arms relative to the body etc.
+I've tested quite a few different models, and none seem to work. So perhaps there is something wrong with my code,
+or assimp. Ok I finally found a model that works with my program. It's the nanosuit from Crysis. So my code does work.
