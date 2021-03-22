@@ -30,7 +30,7 @@ public:
 	public:
 		const char* GetType() const noexcept override;
 	};
-	Graphics(HWND hWnd);
+	Graphics(HWND hWnd, int width, int height);
 	~Graphics();
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;

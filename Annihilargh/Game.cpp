@@ -9,9 +9,9 @@ GDIPlusManager gdiPM;
 
 namespace dx = DirectX;
 
-Game::Game(): window(800, 600, "Annihilargh"), light(window.GetGraphics(), 0.5f)
+Game::Game(): window(1600, 900, "Annihilargh"), light(window.GetGraphics(), 0.5f)
 {
-	window.GetGraphics().SetProjection(DirectX::XMMatrixPerspectiveLH(1.f, 3.f / 4.f, 0.5f, 40.f));
+	window.GetGraphics().SetProjection(DirectX::XMMatrixPerspectiveLH(1.f, 9.f / 16.f, 0.5f, 40.f));
 }
 
 int Game::BeginPlay()
