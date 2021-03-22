@@ -318,3 +318,12 @@ of.
 
 There are some potential downsides to this system. First is that you can only have one of each attribute, may pose a
 problem. Also, we are doing quite a bit of Vertex stuff on the CPU at runtime, which may need to be optimised later on.
+
+Now I want to create some kind of system that will allow multiple meshes to be combined into one entity. I did this all
+the time in Unreal Engine. Let's say I was making a tank, I'd want the turret on the top to be able to rotate around the
+tank, and I'd want the treks to be rotating as it moves. To achieve this I'd need to have separate meshes. This also 
+is less wasteful since I'd be able to create multiple instances of similar geometry. For Example the wheels of a car
+are all identical. We'll use a node/tree based system which will be similar to how you'd do it in the unreal editor.
+You can add components to your scene, and you can child components to each other as you please. This will allow us to
+child the wheels to a car for example. And you could child stuff to the wheels if you wanted. Like maybe you'd child
+tires to the wheel, so any movement made to the wheel also gets applied to the tire.
