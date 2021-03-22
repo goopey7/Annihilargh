@@ -187,6 +187,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Drawable\Model.cpp" />
     <ClCompile Include="Drawable\SolidSphere.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GDIPlusManager.cpp" />
@@ -224,6 +225,7 @@
     <ClInclude Include="Drawable\DrawableBase.h" />
     <ClInclude Include="Drawable\IronMan.h" />
     <ClInclude Include="Drawable\LitCube.h" />
+    <ClInclude Include="Drawable\Model.h" />
     <ClInclude Include="Drawable\Object.h" />
     <ClInclude Include="Drawable\SolidSphere.h" />
     <ClInclude Include="Game.h" />

@@ -4,6 +4,7 @@
 #include "Timer.h"
 #include "Window.h"
 #include "PointLight.h"
+#include "Drawable/Model.h"
 
 class Game
 {
@@ -17,8 +18,5 @@ private:
 	Timer timer;
 	Camera camera;
 	PointLight light;
-	std::vector<std::unique_ptr<Drawable>> drawables;
-	bool showDemoWindow = true;
-	float simulationSpeedFactor = 1.f;
-	static constexpr size_t numDrawables = 500;
+	Model ironMan{window.GetGraphics(),"3DAssets\\ironMan.obj"};
 };

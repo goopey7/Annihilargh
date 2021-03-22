@@ -17,35 +17,6 @@ namespace dx = DirectX;
 
 Game::Game(): window(800, 600, "Annihilargh"), light(window.GetGraphics(), 0.5f)
 {
-	class Factory
-	{
-	public:
-		Factory(Graphics &gfx)
-			:
-			gfx(gfx)
-		{
-		}
-
-		std::unique_ptr<Drawable> operator()()
-		{
-			const DirectX::XMFLOAT3 material = {matDist(rng), matDist(rng), matDist(rng)};
-			return std::make_unique<IronMan>(
-				gfx, rng, adist, ddist,
-				odist, rdist, material, 0.5f
-			);
-		}
-
-	private:
-		Graphics &gfx;
-		std::mt19937 rng{std::random_device{}()};
-		std::uniform_real_distribution<float> adist{0.0f, PI * 2.0f};
-		std::uniform_real_distribution<float> ddist{0.0f, PI * 0.5f};
-		std::uniform_real_distribution<float> odist{0.0f, PI * 0.08f};
-		std::uniform_real_distribution<float> rdist{6.0f, 20.0f};
-		std::uniform_real_distribution<float> matDist{0.0f, 1.0f};
-	};
-	drawables.reserve(numDrawables);
-	std::generate_n(std::back_inserter(drawables), numDrawables, Factory{window.GetGraphics()});
 	window.GetGraphics().SetProjection(DirectX::XMMatrixPerspectiveLH(1.f, 3.f / 4.f, 0.5f, 40.f));
 }
 
@@ -65,34 +36,21 @@ int Game::BeginPlay()
 
 void Game::Tick()
 {
-	auto deltaTime = timer.Reset() * simulationSpeedFactor;
+	auto deltaTime = timer.Reset();
 	window.GetGraphics().BeginFrame(0.01f, 0.0f, 0.05f);
 	window.GetGraphics().SetCamera(camera.GetMatrix());
 	light.Bind(window.GetGraphics(), camera.GetMatrix());
-	for(auto &drawable : drawables)
-	{
-		if(window.keyboard.KeyIsPressed(VK_SPACE)) deltaTime = 0.f;
-		drawable->Tick(deltaTime);
-		drawable->Draw(window.GetGraphics());
-	}
+	ironMan.Draw(window.GetGraphics());
 	light.Draw(window.GetGraphics());
-	if(window.keyboard.KeyIsPressed(VK_ESCAPE))
-		showDemoWindow = true;
-	if(showDemoWindow)
+	if(ImGui::Begin("Performance"))
 	{
-		static char buffer[1024];
-		if(ImGui::Begin("Simulation Speed"))
-		{
-			ImGui::SliderFloat("Simulation Speed Factor", &simulationSpeedFactor, 0.f, 4.f);
-			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.f / ImGui::GetIO().Framerate,
-			            ImGui::GetIO().Framerate);
-		}
-		ImGui::End();
-
-		// spawns imgui windows
-		camera.DisplayControlGUI();
-		light.DisplayControlGUI();
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.f / ImGui::GetIO().Framerate,
+		            ImGui::GetIO().Framerate);
 	}
-
+	ImGui::End();
+	
+	// spawns imgui windows
+	camera.DisplayControlGUI();
+	light.DisplayControlGUI();
 	window.GetGraphics().EndFrame();
 }
