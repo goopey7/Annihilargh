@@ -364,7 +364,7 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		mouse.Clear();
 		break;
 	case WM_ACTIVATE:
-		if(wParam & WA_ACTIVE || wParam & WA_CLICKACTIVE)
+		if(!bPointerEnabled)
 		{
 			TrapCursor();
 			HideCursor();
