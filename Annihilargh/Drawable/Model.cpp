@@ -51,12 +51,14 @@ Node::Node(int id, const std::string &name, std::vector<Mesh*> meshPtrs, const D
 	DirectX::XMStoreFloat4x4(&appliedTransform, DirectX::XMMatrixIdentity());
 }
 
-void Node::RenderTree(std::optional<int> &selectedIndex, Node* &pSelectedNode) const noexcept
+void Node::RenderTree(Node* &pSelectedNode) const noexcept
 {
+	// determine selectedId
+	const int selectedId = pSelectedNode == nullptr ? -1 : pSelectedNode->GetId();
 	// flags for current node
 	const auto flags = ImGuiTreeNodeFlags_OpenOnArrow |
 		// if there is no selected int in the optional, value_or will evaluate it to -1
-		(GetId() == selectedIndex.value_or(-1) ? ImGuiTreeNodeFlags_Selected : 0) |
+		(GetId() == selectedId ? ImGuiTreeNodeFlags_Selected : 0) |
 		(children.empty() ? ImGuiTreeNodeFlags_Leaf : 0);
 
 	// if tree node is expanded, recursively render the children
@@ -64,14 +66,13 @@ void Node::RenderTree(std::optional<int> &selectedIndex, Node* &pSelectedNode) c
 	const auto bIsExpanded = ImGui::TreeNodeEx((void*)(intptr_t)GetId(), flags, name.c_str());
 	if(ImGui::IsItemClicked())
 	{
-		selectedIndex = GetId();
 		pSelectedNode = const_cast<Node*>(this);
 	}
 	if(bIsExpanded)
 	{
 		for(const auto &pChild : children)
 		{
-			pChild->RenderTree(selectedIndex, pSelectedNode);
+			pChild->RenderTree(pSelectedNode);
 		}
 		ImGui::TreePop(); // we are done displaying tree node contents
 	}

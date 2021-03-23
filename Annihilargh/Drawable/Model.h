@@ -31,7 +31,7 @@ public:
 	void SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept;
 	int GetId() const noexcept;
 private:
-	void RenderTree(std::optional<int> &selectedIndex, Node* &pSelectedNode) const noexcept;
+	void RenderTree(Node* &pSelectedNode) const noexcept;
 	void AddChild(std::unique_ptr<Node> pChild) noexcept;
 	int id;
 	std::string name;
