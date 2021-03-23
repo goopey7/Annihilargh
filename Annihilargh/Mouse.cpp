@@ -69,6 +69,21 @@ void Mouse::Clear() noexcept
 	bIsInWindow=false;
 }
 
+void Mouse::EnableRawInput() noexcept
+{
+	bIsRawEnabled=true;
+}
+
+void Mouse::DisableRawInput() noexcept
+{
+	bIsRawEnabled=false;
+}
+
+bool Mouse::IsRawInputEnabled() const noexcept
+{
+	return bIsRawEnabled;
+}
+
 void Mouse::OnRawDelta(int dx, int dy) noexcept
 {
 	rawDeltaBuffer.push({dx,dy});

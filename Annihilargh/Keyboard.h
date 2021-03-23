@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <bitset>
+#include <optional>
 #include <queue>
 
 class Keyboard
@@ -67,12 +68,12 @@ public:
 	// KEY EVENTS
 	// pass a keycode, and it will determine if the key is being pressed
 	bool KeyIsPressed(unsigned char keyCode) const noexcept;
-	Event ReadKey() noexcept; // pulls event off of the event queue
+	std::optional<Event> ReadKey() noexcept; // pulls event off of the event queue
 	bool KeyIsEmpty() const noexcept; // checks to see if any keys are in the event queue
 	void ClearKey() noexcept; // clears event queue
 
 	// CHAR EVENTS
-	char ReadChar() noexcept;
+	std::optional<char> ReadChar() noexcept;
 	bool CharIsEmpty() const noexcept;
 	void ClearChar() noexcept;
 

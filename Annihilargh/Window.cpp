@@ -137,6 +137,11 @@ void Window::DisableMousePointer()
 	TrapCursor();
 }
 
+bool Window::IsPointerEnabled() const noexcept
+{
+	return bPointerEnabled;
+}
+
 // messages come in here
 LRESULT WINAPI Window::HandleMessageSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -318,6 +323,8 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// **** RAW MOUSE MESSAGES ****
 	case WM_INPUT:
 		{
+			if(!mouse.bIsRawEnabled)
+				break;
 			UINT size;
 			// First determine the size of the data in bytes
 			// if we pass in a nullptr to data, it will fill in the size pointer, with the size required
@@ -372,7 +379,7 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-void Window::TrapCursor()
+void Window::TrapCursor() noexcept
 {
 	RECT rect;
 	GetClientRect(hWnd, &rect);
@@ -384,31 +391,31 @@ void Window::TrapCursor()
 	// so we create a rectangle the size of the window
 }
 
-void Window::FreeCursor()
+void Window::FreeCursor() noexcept
 {
 	ClipCursor(nullptr);
 }
 
-void Window::HideCursor()
+void Window::HideCursor() noexcept
 {
 	// WINAPI keeps an internal counter. When it is above 0 the pointer is shown.
 	// so we will while loop here.
 	while(::ShowCursor(FALSE) >= 0);
 }
 
-void Window::ShowCursor()
+void Window::ShowCursor() noexcept
 {
 	// same for showing the pointer
 	while(::ShowCursor(TRUE) < 0);
 }
 
-void Window::EnableImGuiMouse()
+void Window::EnableImGuiMouse() noexcept
 {
 	// clear the no mouse bit
 	ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 }
 
-void Window::DisableImGuiMouse()
+void Window::DisableImGuiMouse() noexcept
 {
 	// set the no mouse bit
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;

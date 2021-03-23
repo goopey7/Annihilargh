@@ -47,17 +47,18 @@ public:
 	Graphics& GetGraphics();
 	void EnableMousePointer();
 	void DisableMousePointer();
+	bool IsPointerEnabled() const noexcept;
 private:
 	static LRESULT WINAPI HandleMessageSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT WINAPI HandleMessageAfterCreation(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	LRESULT HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 
-	void TrapCursor();
-	void FreeCursor();
-	void HideCursor();
-	void ShowCursor();
-	void EnableImGuiMouse();
-	void DisableImGuiMouse();
+	void TrapCursor() noexcept;
+	void FreeCursor() noexcept;
+	void HideCursor() noexcept;
+	void ShowCursor() noexcept;
+	void EnableImGuiMouse() noexcept;
+	void DisableImGuiMouse() noexcept;
 
 	// smart ptr so we don't have to worry about deleting it
 	std::unique_ptr<Graphics> pGraphics;
@@ -88,6 +89,6 @@ private:
 	int width;
 	int height;
 	HWND hWnd;
-	bool bPointerEnabled=false;
+	bool bPointerEnabled=true;
 	std::vector<char> rawBuffer;
 };

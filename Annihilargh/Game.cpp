@@ -10,8 +10,9 @@ namespace dx = DirectX;
 
 Game::Game(): window(1600, 900, "Annihilargh"), light(window.GetGraphics(), 0.5f)
 {
+	window.EnableMousePointer();
+	window.mouse.DisableRawInput();
 	window.GetGraphics().SetProjection(DirectX::XMMatrixPerspectiveLH(1.f, 9.f / 16.f, 0.5f, 40.f));
-	window.DisableMousePointer();
 }
 
 int Game::BeginPlay()
@@ -37,7 +38,23 @@ void Game::Tick()
 	
 	nanosuit.Draw(window.GetGraphics());
 	light.Draw(window.GetGraphics());
-	
+
+	while(const auto event = window.keyboard.ReadKey())
+	{
+		if(event->IsPress() && event->GetCode() == VK_ESCAPE)
+		{
+			if(window.IsPointerEnabled())
+			{
+				window.DisableMousePointer();
+				window.mouse.EnableRawInput();
+			}
+			else
+			{
+				window.EnableMousePointer();
+				window.mouse.DisableRawInput();
+			}
+		}
+	}
 	
 	// spawns imgui windows
 	camera.DisplayControlGUI();
