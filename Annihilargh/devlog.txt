@@ -344,4 +344,11 @@ instead of the GUI. It'll feel more like a good 3D editor that way.
 I have implemented showing and hiding the mouse pointer, and I can now trap the mouse inside of the client region.
 Something that Skyrim has failed to do properly. (At least there's a mod that fixes it)
 
-
+Now I'm going to be looking into getting raw mouse input. I need some way to calculate the change in mouse position,
+so I can for example rotate a first person camera. The mouse pointer is confined to the region, so I can't just take
+the location of the last frame and compare it to the location of the current frame. Some games do a dirty trick where
+they move the pointer back to the centre of the screen after a processing mouse movement. I could do that, but there is
+another way which will provide finer higher resolution input, and it could even allow me to differentiate between
+multiple mice which is cool. When you connect multiple mice to a windows PC they all control the same pointer. However,
+with raw input, you can separate the mice. So you can have a two player game where each player has their own mouse.
+Pretty cool. 
