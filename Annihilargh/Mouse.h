@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <optional>
 #include <queue>
 
 // This is just another extension of Window like the Keyboard. Refer to Keyboard.h for comments on the ideas and
@@ -7,6 +8,10 @@ class Mouse
 {
 	friend class Window;
 public:
+	struct RawDelta
+	{
+		int x,y;
+	};
 	class Event
 	{
 	public:
@@ -110,6 +115,7 @@ public:
 	Mouse() = default;
 	Mouse(const Mouse&) = delete;
 	Mouse& operator=(const Mouse&) = delete;
+	std::optional<RawDelta> ReadRawDelta() noexcept;
 	std::pair<int, int> GetPos() const noexcept;
 	int GetXPos() const noexcept;
 	int GetYPos() const noexcept;
@@ -126,6 +132,7 @@ public:
 	void Clear() noexcept; // clear/flush queue
 private:
 	// these functions will register our events and get called by Window in the message handler
+	void OnRawDelta(int dx, int dy) noexcept;
 	void OnMouseMove(int x, int y) noexcept;
 	void OnMouseLeave() noexcept;
 	void OnMouseEnter() noexcept;
@@ -139,6 +146,7 @@ private:
 	void OnWheelDown(int x, int y) noexcept;
 	void OnWheelDelta(int x, int y, int delta) noexcept;
 	void TrimBuffer() noexcept;
+	void TrimRawInputBuffer() noexcept;
 private:
 	static constexpr unsigned int bufferSize = 16u;
 	int x, y;
@@ -148,4 +156,5 @@ private:
 	bool bIsInWindow = false;
 	int wheelDeltaAccumulator = 0;
 	std::queue<Event> buffer;
+	std::queue<RawDelta> rawDeltaBuffer;
 };

@@ -53,7 +53,7 @@ Window::Window(int width, int height, const char* name)
 	wr.top = 100;
 	wr.bottom = height + wr.top;
 	// Calculates Window Size based on desired client region
-	if (!AdjustWindowRect(&wr,WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,FALSE))
+	if(!AdjustWindowRect(&wr,WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,FALSE))
 	{
 		throw WND_ANOMALY_LAST_ERROR();
 	}
@@ -63,16 +63,30 @@ Window::Window(int width, int height, const char* name)
 	                    CW_USEDEFAULT, CW_USEDEFAULT, wr.right-wr.left, wr.bottom-wr.top,
 	                    nullptr, nullptr, WindowClass::GetInstance(), this);
 
-	if (hWnd == nullptr)
+	if(hWnd == nullptr)
 		throw WND_ANOMALY_LAST_ERROR();
 
 	ShowWindow(hWnd,SW_SHOWDEFAULT);
 
 	// initialise ImGui Win32
 	ImGui_ImplWin32_Init(hWnd);
-	
+
 	// create graphics object
-	pGraphics = std::make_unique<Graphics>(hWnd,width,height);
+	pGraphics = std::make_unique<Graphics>(hWnd, width, height);
+
+	// register mouse device for raw input
+	RAWINPUTDEVICE rawInputDevice;
+
+	// the combination of these two values determines the device we are using
+	rawInputDevice.usUsagePage = 0x01; // mouse page
+	rawInputDevice.usUsage = 0x02; // mouse usage
+
+	rawInputDevice.dwFlags = 0;
+	rawInputDevice.hwndTarget = nullptr;
+	if(RegisterRawInputDevices(&rawInputDevice, 1, sizeof(rawInputDevice)) == FALSE)
+	{
+		throw WND_ANOMALY_LAST_ERROR();
+	}
 }
 
 Window::~Window()
@@ -87,10 +101,10 @@ std::optional<int> Window::ProcessMessages() noexcept
 	// while there are messages, remove them and process them
 	// but if there aren't any messages, keep going. We don't want the game to freeze because
 	// there aren't any messages
-	while (PeekMessage(&msg, nullptr, 0, 0,PM_REMOVE))
+	while(PeekMessage(&msg, nullptr, 0, 0,PM_REMOVE))
 	{
 		// check for quit since PeekMessage returns whether or not it has a message, not if it is a quit.
-		if (msg.message == WM_QUIT)
+		if(msg.message == WM_QUIT)
 			return (int)msg.wParam; // arg to PostQuitMessage is in wParam, so we return it.
 
 		TranslateMessage(&msg); // Posts WM_CHAR messages from key messages
@@ -109,7 +123,7 @@ Graphics& Window::GetGraphics()
 
 void Window::EnableMousePointer()
 {
-	bPointerEnabled=true;
+	bPointerEnabled = true;
 	ShowCursor();
 	EnableImGuiMouse();
 	FreeCursor();
@@ -117,7 +131,7 @@ void Window::EnableMousePointer()
 
 void Window::DisableMousePointer()
 {
-	bPointerEnabled=false;
+	bPointerEnabled = false;
 	HideCursor();
 	DisableImGuiMouse();
 	TrapCursor();
@@ -126,7 +140,7 @@ void Window::DisableMousePointer()
 // messages come in here
 LRESULT WINAPI Window::HandleMessageSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-	if (msg == WM_NCCREATE) // happens while window is being created
+	if(msg == WM_NCCREATE) // happens while window is being created
 	{
 		// lparam contains creation data we want
 		const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
@@ -153,13 +167,14 @@ LRESULT WINAPI Window::HandleMessageAfterCreation(HWND hWnd, UINT msg, WPARAM wP
 }
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	const auto &imio = ImGui::GetIO();
 	// if imgui is handling it then we don't need to do anything
-	if(ImGui_ImplWin32_WndProcHandler(hWnd,msg,wParam,lParam))
+	if(ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
 		return true;
-	switch (msg)
+	switch(msg)
 	{
 	case WM_CLOSE:
 		PostQuitMessage(0);
@@ -171,14 +186,14 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		if(imio.WantCaptureKeyboard)
 			break;
 		// filter auto repeat key events. Bit 30 is auto repeat
-		if (keyboard.IsAutoRepeat() || !(lParam & 0x40000000))
+		if(keyboard.IsAutoRepeat() || !(lParam & 0x40000000))
 			keyboard.OnKeyPressed(static_cast<unsigned char>(wParam));
 		break;
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
 		// if imgui wants to capture keyboard, then we let it swallow up our inputs.
-        if(imio.WantCaptureKeyboard)
-        	break;
+		if(imio.WantCaptureKeyboard)
+			break;
 		keyboard.OnKeyReleased(static_cast<unsigned char>(wParam));
 		break;
 	case WM_CHAR:
@@ -197,12 +212,12 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			const POINTS p = MAKEPOINTS(lParam);
 
 			// check if we are in the client region
-			if (p.x >= 0 && p.y >= 0 && p.x < width && p.y < height)
+			if(p.x >= 0 && p.y >= 0 && p.x < width && p.y < height)
 			{
 				mouse.OnMouseMove(p.x, p.y);
 
 				// if we previously were not in the client region
-				if (!mouse.IsInWindow())
+				if(!mouse.IsInWindow())
 				{
 					SetCapture(hWnd);
 					mouse.OnMouseEnter();
@@ -218,7 +233,7 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				 * So if I left the region holding middle mouse, but then hold left mb and released middle,
 				 * That stop capture..... maybe idk depends. Maybe I make this a setting in the engine.
 				 */
-				if (mouse.LeftIsPressed() || mouse.RightIsPressed() || mouse.MiddleIsPressed())
+				if(mouse.LeftIsPressed() || mouse.RightIsPressed() || mouse.MiddleIsPressed())
 				{
 					mouse.OnMouseMove(p.x, p.y);
 				}
@@ -300,6 +315,41 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 		// **** ----------------- ****
+		// **** RAW MOUSE MESSAGES ****
+	case WM_INPUT:
+		{
+			UINT size;
+			// First determine the size of the data in bytes
+			// if we pass in a nullptr to data, it will fill in the size pointer, with the size required
+			if(GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam),
+			                   RID_INPUT,
+			                   nullptr,
+			                   &size,
+			                   sizeof(RAWINPUTHEADER)) == -1)
+			{
+				// if something went wrong we shouldn't try and read input
+				break;
+			}
+			rawBuffer.resize(size);
+			// read input data
+			if(GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam),
+			                   RID_INPUT,
+			                   rawBuffer.data(),
+			                   &size,
+			                   sizeof(RAWINPUTHEADER)) != size)
+			{
+				// break out if anything goes wrong
+				break;
+			}
+			// process the data read in
+			auto &rawInput = reinterpret_cast<const RAWINPUT&>(*rawBuffer.data());
+			// we only want mouse messages. If mouse dx or dy were 0, then chances are it's a click
+			// and we don't care about clicks in raw input. Just movement
+			if(rawInput.header.dwType == RIM_TYPEMOUSE && (rawInput.data.mouse.lLastX != 0 ||
+				rawInput.data.mouse.lLastY != 0))
+					mouse.OnRawDelta(rawInput.data.mouse.lLastX, rawInput.data.mouse.lLastY);
+			break;
+		}
 	case WM_KILLFOCUS:
 		keyboard.ClearState(); // reset states to released when we loose focus
 		// so when a messagebox pops up all keys are released
@@ -327,8 +377,9 @@ void Window::TrapCursor()
 	RECT rect;
 	GetClientRect(hWnd, &rect);
 	// map from window-space to screen-space
-	MapWindowPoints(hWnd,nullptr,reinterpret_cast<POINT*>(&rect),2);
+	MapWindowPoints(hWnd, nullptr, reinterpret_cast<POINT*>(&rect), 2);
 	// rect is a structure of 2 points. Maps the two points to screen-space
+	rect.top+=1; // prevent pointer from accidentally exiting window
 	ClipCursor(&rect); // clip cursor traps a cursor to a rectangular region
 	// so we create a rectangle the size of the window
 }
@@ -342,13 +393,13 @@ void Window::HideCursor()
 {
 	// WINAPI keeps an internal counter. When it is above 0 the pointer is shown.
 	// so we will while loop here.
-	while(::ShowCursor(FALSE) >= 0);	
+	while(::ShowCursor(FALSE) >= 0);
 }
 
 void Window::ShowCursor()
 {
 	// same for showing the pointer
-	while(::ShowCursor(TRUE) < 0);	
+	while(::ShowCursor(TRUE) < 0);
 }
 
 void Window::EnableImGuiMouse()
@@ -394,7 +445,7 @@ std::string Window::Anomaly::TranslateErrorCode(HRESULT hr) noexcept
 	                              FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 	                              nullptr, hr,MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 	                              reinterpret_cast<LPSTR>(&pMsgBuf), 0, nullptr);
-	if (nMsgLen == 0) // if length is 0 something went wrong
+	if(nMsgLen == 0) // if length is 0 something went wrong
 		return "Unidentified Anomaly";
 	// otherwise we allocate it into a string and then free the buffer
 	std::string errorString = pMsgBuf;

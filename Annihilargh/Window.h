@@ -89,4 +89,5 @@ private:
 	int height;
 	HWND hWnd;
 	bool bPointerEnabled=false;
+	std::vector<char> rawBuffer;
 };

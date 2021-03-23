@@ -1,6 +1,17 @@
 ﻿#include "Mouse.h"
 #include "WindowsWithoutTheCrap.h"
 
+std::optional<Mouse::RawDelta> Mouse::ReadRawDelta() noexcept
+{
+	// if queue is empty, return null optional which means there is no data in the buffer
+	if(rawDeltaBuffer.empty())
+		return std::nullopt;
+	// if there is stuff in the queue, get the front, and pop it.
+	const RawDelta rd = rawDeltaBuffer.front();
+	rawDeltaBuffer.pop();
+	return rd;
+}
+
 std::pair<int, int> Mouse::GetPos() const noexcept
 {
 	return {x, y};
@@ -56,6 +67,12 @@ void Mouse::Clear() noexcept
 	bRightIsPressed = false;
 	bMiddleIsPressed = false;
 	bIsInWindow=false;
+}
+
+void Mouse::OnRawDelta(int dx, int dy) noexcept
+{
+	rawDeltaBuffer.push({dx,dy});
+	TrimRawInputBuffer();
 }
 
 void Mouse::OnMouseMove(int x, int y) noexcept
@@ -159,4 +176,10 @@ void Mouse::TrimBuffer() noexcept
 	// our buffer is no more than our buffer size
 	while (buffer.size() > bufferSize)
 		buffer.pop();
+}
+
+void Mouse::TrimRawInputBuffer() noexcept
+{
+	while (rawDeltaBuffer.size() > bufferSize)
+		rawDeltaBuffer.pop();
 }
