@@ -55,13 +55,33 @@ void Game::Tick()
 			}
 		}
 	}
+	if(!window.IsPointerEnabled())
+	{
+		if(window.keyboard.KeyIsPressed('W'))
+			camera.Translate({0.f,0.f,deltaTime});
+		if(window.keyboard.KeyIsPressed('A'))
+			camera.Translate({-deltaTime,0.f,0.f});
+		if(window.keyboard.KeyIsPressed('S'))
+			camera.Translate({0.f,0.f,-deltaTime});
+		if(window.keyboard.KeyIsPressed('D'))
+			camera.Translate({deltaTime,0.f,0.f});
+		if(window.keyboard.KeyIsPressed('E'))
+			camera.Translate({0.f,deltaTime,0.f});
+		if(window.keyboard.KeyIsPressed('Q'))
+			camera.Translate({0.f,-deltaTime,0.f});
+	}
+
+	while(const auto delta = window.mouse.ReadRawDelta())
+	{
+		if(!window.IsPointerEnabled())
+			camera.Rotate(delta->x,delta->y);
+	}
 	
 	// spawns imgui windows
 	camera.DisplayControlGUI();
 	light.DisplayControlGUI();
 	nanosuit.ShowWindow();
 	ShowPerformanceWindow();
-	ShowRawInputWindow();
 	window.GetGraphics().EndFrame();
 }
 
@@ -71,20 +91,6 @@ void Game::ShowPerformanceWindow()
 	{
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.f / ImGui::GetIO().Framerate,
                     ImGui::GetIO().Framerate);
-	}
-	ImGui::End();
-}
-
-void Game::ShowRawInputWindow()
-{
-	while(const auto delta = window.mouse.ReadRawDelta())
-	{
-		x += delta->x;
-		y += delta->y;
-	}
-	if(ImGui::Begin("Raw Input"))
-	{
-		ImGui::Text("Accumulated (x,y): (%d,%d)",x,y);
 	}
 	ImGui::End();
 }

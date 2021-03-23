@@ -34,7 +34,7 @@ void PointLight::DisplayControlGUI() noexcept
 
 void PointLight::Reset() noexcept
 {
-	cbData.pos = {0.f, 0.f, 0.f};
+	cbData.pos = {-2.7f, 18.6f, 6.2f};
 	cbData.diffuseColour = {1.f, 1.f, 1.f};
 	cbData.diffuseIntensity = 1.f;
 	cbData.ambient = {.0f, .0f, .0f};
