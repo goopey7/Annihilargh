@@ -261,7 +261,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Annihilargh.ico" />
-    <Content Include="devlog.txt" />
     <Content Include="Images\AlienX.png" />
   </ItemGroup>
   <ItemGroup>

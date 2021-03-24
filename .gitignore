@@ -59,6 +59,7 @@ artifacts/
 *.meta
 *.obj
 !Annihilargh/3DAssets/*.obj
+!Annihilargh/3DAssets/*/*.obj
 *.pch
 *.pdb
 *.pgc
