@@ -352,3 +352,8 @@ another way which will provide finer higher resolution input, and it could even 
 multiple mice which is cool. When you connect multiple mice to a windows PC they all control the same pointer. However,
 with raw input, you can separate the mice. So you can have a two player game where each player has their own mouse.
 Pretty cool. 
+
+Tuesday (3/23/21)
+Well today is the day that I turn this project in. Last thing I want to squeeze in is loading diffuse and specular
+textures for our models. Ok great, it works. Now I need to just get some videos of what I've managed to accomplish
+and I should be good to go.
