@@ -20,5 +20,5 @@ private:
 	Timer timer;
 	Camera camera;
 	PointLight light;
-	Model nanosuit{window.GetGraphics(),"3DAssets\\nanoHierarchical.gltf"};
+	Model nanosuit{window.GetGraphics(),"3DAssets\\nanosuitTextures\\nanosuit.obj"};
 };

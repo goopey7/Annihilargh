@@ -16,6 +16,10 @@
 
 #include <unordered_map>
 
+
+#include "../Bindable/Sampler.h"
+#include "../Bindable/Texture.h"
+
 Mesh::Mesh(Graphics &gfx, std::vector<std::unique_ptr<Bindable>> bindables)
 {
 	if(!IsStaticDataInitialised())
@@ -188,28 +192,50 @@ Model::Model(Graphics &gfx, const std::string fileName) : pWindow(std::make_uniq
 	// load all the meshes
 	for(size_t i = 0; i < pScene->mNumMeshes; i++)
 	{
-		meshes.push_back(ParseMesh(gfx, *pScene->mMeshes[i]));
+		meshes.push_back(ParseMesh(gfx, *pScene->mMeshes[i], pScene->mMaterials));
 	}
 
-	int nextId=0;
-	pRoot = ParseNode(nextId,*pScene->mRootNode);
+	int nextId = 0;
+	pRoot = ParseNode(nextId, *pScene->mRootNode);
 }
 
 Model::~Model() noexcept
 {
 }
 
-std::unique_ptr<Mesh> Model::ParseMesh(Graphics &gfx, const aiMesh &mesh)
+std::unique_ptr<Mesh> Model::ParseMesh(Graphics &gfx, const aiMesh &mesh, const aiMaterial* const* pMaterials)
 {
 	namespace dx = DirectX;
 	using dVS::VertexLayout;
 
-	dVS::VertexBuffer vb(std::move(VertexLayout{}.Append(VertexLayout::Location3D).Append(VertexLayout::Normal)));
+	dVS::VertexBuffer vb(std::move(
+		VertexLayout{}
+		.Append(VertexLayout::Location3D)
+		.Append(VertexLayout::Normal)
+		.Append(VertexLayout::TextureCoord2D)
+	));
 
 	for(unsigned int i = 0; i < mesh.mNumVertices; i++)
 	{
 		vb.EmplaceBack(*reinterpret_cast<dx::XMFLOAT3*>(&mesh.mVertices[i]),
-		               *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mNormals[i]));
+		               *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mNormals[i]),
+		               *reinterpret_cast<dx::XMFLOAT2*>(&mesh.mTextureCoords[0][i]));
+		// there are 8 channels for texture coords
+		// we just want channel 0
+	}
+
+	std::vector<std::unique_ptr<Bindable>> bindables;
+	if(mesh.mMaterialIndex >= 0) // index will be negative if mesh doesn't have an index
+	{
+		using namespace std::string_literals;
+		auto &material = *pMaterials[mesh.mMaterialIndex];
+		aiString texFileName;
+		material.GetTexture(aiTextureType_DIFFUSE, 0u, &texFileName); // fills filename str with filename
+
+		std::string filePath = "3DAssets\\nanosuitTextures\\"s +
+			texFileName.C_Str();
+		bindables.push_back(std::make_unique<Texture>(gfx, Image::FromFile(filePath)));
+		bindables.push_back(std::make_unique<Sampler>(gfx));
 	}
 
 	std::vector<unsigned short> indices;
@@ -222,8 +248,6 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics &gfx, const aiMesh &mesh)
 		indices.push_back(face.mIndices[1]);
 		indices.push_back(face.mIndices[2]);
 	}
-
-	std::vector<std::unique_ptr<Bindable>> bindables;
 	bindables.push_back(std::make_unique<VertexBuffer>(gfx, vb));
 	bindables.push_back(std::make_unique<IndexBuffer>(gfx, indices));
 
@@ -236,10 +260,9 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics &gfx, const aiMesh &mesh)
 
 	struct MaterialCB
 	{
-		dx::XMFLOAT3 colour = {.6f, .6f, .8f};
 		float specularPower = 30.f;
 		float specularIntensity = .6f;
-		float padding[3];
+		float padding[2];
 	} matCB;
 
 	bindables.push_back(std::make_unique<PixelConstantBuffer<MaterialCB>>(gfx, matCB, 1u));
@@ -264,10 +287,10 @@ std::unique_ptr<Node> Model::ParseNode(int &nextId, const aiNode &node) noexcept
 	}
 
 	// load children recursively
-	auto pNode = std::make_unique<Node>(nextId++,node.mName.C_Str(), std::move(currentMeshes), transform);
+	auto pNode = std::make_unique<Node>(nextId++, node.mName.C_Str(), std::move(currentMeshes), transform);
 	for(size_t i = 0; i < node.mNumChildren; i++)
 	{
-		pNode->AddChild(ParseNode(nextId,*node.mChildren[i]));
+		pNode->AddChild(ParseNode(nextId, *node.mChildren[i]));
 	}
 
 	return pNode;

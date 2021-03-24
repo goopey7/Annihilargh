@@ -14,12 +14,15 @@ cbuffer LightCB
 // the colour of the object is a property of the object, not the light.
 cbuffer DrawableCB
 {
-	float3 materialColour;
 	float specularPower,specularIntensity;
+	float padding[2];
 }
 
+Texture2D tex;
+SamplerState smplr;
+
 // takes in the pixel's position relative to the camera and the normal of the pixel relative to the camera
-float4 main(float3 camPos : Position, float3 norm : Normal) : SV_TARGET
+float4 main(float3 camPos : Position, float3 norm : Normal, float2 texCoord : TextureCoord) : SV_TARGET
 {
 	// acquire light vector information
 	const float3 vertexToLight = lightPos - camPos;
@@ -40,5 +43,5 @@ float4 main(float3 camPos : Position, float3 norm : Normal) : SV_TARGET
 		pow(max(.0f,dot(normalize(-reflected),normalize(camPos))),specularPower);
 	// calculate final colour
 	// saturate() takes in a scaler, vector, or matrix, and clamps it between 0 and 1
-	return float4(saturate(diffuse+ambient+specular)*materialColour,1.f);
+	return float4(saturate(diffuse+ambient+specular),1.f)*tex.Sample(smplr,texCoord);
 }

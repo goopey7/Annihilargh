@@ -52,7 +52,7 @@ namespace dVS
 		{
 			using SysType = DirectX::XMFLOAT2;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
-			static constexpr const char* semantic = "Texcoord";
+			static constexpr const char* semantic = "TextureCoord";
 		};
 
 		template <>
@@ -235,6 +235,8 @@ namespace dVS
 		template <typename ...Params>
 		void EmplaceBack(Params &&... params) noexcept
 		{
+			int elements = layout.NumElements();
+			int numParams = sizeof...(params);
 			// the number of parameters should match the amount of elements in the layout
 			assert(
                 sizeof...(params) == layout.NumElements() &&
