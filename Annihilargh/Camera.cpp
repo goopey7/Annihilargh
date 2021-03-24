@@ -51,7 +51,7 @@ void Camera::DisplayControlGUI() noexcept
 
 void Camera::Reset() noexcept
 {
-	location = {0.f,11.5f,18.f};
+	location = {0.f,13.2f,10.3f};
 	pitch = 10.f*PI/180.f, yaw = PI;
 }
 
