@@ -3,7 +3,7 @@
 #include "../GraphicsAnomalyMacros.h"
 
 namespace wrl = Microsoft::WRL;
-Texture::Texture(Graphics& gfx, const Image& img)
+Texture::Texture(Graphics& gfx, const Image& img, unsigned int slot) : slot(slot)
 {
 	HRESULT hr;
 	D3D11_TEXTURE2D_DESC texDesc = {};
@@ -37,5 +37,5 @@ Texture::Texture(Graphics& gfx, const Image& img)
 
 void Texture::Bind(Graphics& gfx) noexcept
 {
-	GetContext(gfx)->PSSetShaderResources(0u,1u,pTextureView.GetAddressOf());
+	GetContext(gfx)->PSSetShaderResources(slot,1u,pTextureView.GetAddressOf());
 }

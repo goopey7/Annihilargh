@@ -43,5 +43,5 @@ float4 main(float3 camPos : Position, float3 norm : Normal, float2 texCoord : Te
 		pow(max(.0f,dot(normalize(-reflected),normalize(camPos))),specularPower);
 	// calculate final colour
 	// saturate() takes in a scaler, vector, or matrix, and clamps it between 0 and 1
-	return float4(saturate(diffuse+ambient+specular),1.f)*tex.Sample(smplr,texCoord);
+	return float4(saturate((diffuse+ambient)*tex.Sample(smplr,texCoord).rgb+specular),1.f);
 }

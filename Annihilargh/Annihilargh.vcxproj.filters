@@ -114,6 +114,12 @@
     <ClCompile Include="PointLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Drawable\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseAnomaly.h">
@@ -248,6 +254,15 @@
     <ClInclude Include="PointLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Colour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawable\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Annihilargh.rc">
@@ -255,13 +270,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\ColourIndexPS.hlsl" />
-    <FxCompile Include="Shaders\ColourIndexVS.hlsl" />
-    <FxCompile Include="Shaders\TexturePS.hlsl" />
-    <FxCompile Include="Shaders\TextureVS.hlsl" />
     <FxCompile Include="Shaders\PhongPS.hlsl" />
     <FxCompile Include="Shaders\PhongVS.hlsl" />
     <FxCompile Include="Shaders\SolidPS.hlsl" />
     <FxCompile Include="Shaders\SolidVS.hlsl" />
+    <FxCompile Include="Shaders\PhongPSSpecularMap.hlsl" />
   </ItemGroup>
 </Project>

@@ -225,16 +225,29 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics &gfx, const aiMesh &mesh, const 
 	}
 
 	std::vector<std::unique_ptr<Bindable>> bindables;
+
+	float shininess = 40.f;
+	bool bHasSpecularMap = false;
 	if(mesh.mMaterialIndex >= 0) // index will be negative if mesh doesn't have an index
 	{
 		using namespace std::string_literals;
 		auto &material = *pMaterials[mesh.mMaterialIndex];
 		aiString texFileName;
-		material.GetTexture(aiTextureType_DIFFUSE, 0u, &texFileName); // fills filename str with filename
+		const auto basePath = "3DAssets\\nanosuitTextures\\"s;
 
-		std::string filePath = "3DAssets\\nanosuitTextures\\"s +
-			texFileName.C_Str();
-		bindables.push_back(std::make_unique<Texture>(gfx, Image::FromFile(filePath)));
+		// Load Diffuse
+		material.GetTexture(aiTextureType_DIFFUSE, 0u, &texFileName); // fills filename str with filename
+		bindables.push_back(std::make_unique<Texture>(gfx, Image::FromFile(basePath+texFileName.C_Str())));
+
+		// Load Specular
+		// fills filename with specular file
+		// since not all materials will necessarily have a specular file, we should check before trying to use it
+		if(material.GetTexture(aiTextureType_SPECULAR,0u,&texFileName)==aiReturn_SUCCESS)
+		{
+			bindables.push_back(std::make_unique<Texture>(gfx,Image::FromFile(basePath+texFileName.C_Str()),1u));
+			bHasSpecularMap=true;
+		}
+		else material.Get(AI_MATKEY_SHININESS,shininess);
 		bindables.push_back(std::make_unique<Sampler>(gfx));
 	}
 
@@ -255,15 +268,22 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics &gfx, const aiMesh &mesh, const 
 	auto pBlob = pVertexShader->GetBlob();
 	bindables.push_back(std::move(pVertexShader));
 
-	bindables.push_back(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
+	if(bHasSpecularMap) // if we have a specular map, use the pixel shader that uses specular maps
+	{
+		bindables.push_back(std::make_unique<PixelShader>(gfx,L"PhongPSSpecularMap.cso"));
+	}
+	// otherwise don't
+	else bindables.push_back(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
+	
 	bindables.push_back(std::make_unique<InputLayout>(gfx, vb.GetLayout().GetD3DLayout(), pBlob));
 
 	struct MaterialCB
 	{
-		float specularPower = 30.f;
-		float specularIntensity = .6f;
+		float specularPower;
+		float specularIntensity = 1.6f;
 		float padding[2];
 	} matCB;
+	matCB.specularPower = shininess;
 
 	bindables.push_back(std::make_unique<PixelConstantBuffer<MaterialCB>>(gfx, matCB, 1u));
 

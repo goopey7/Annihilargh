@@ -37,10 +37,10 @@ void PointLight::Reset() noexcept
 	cbData.pos = {-2.7f, 18.6f, 6.2f};
 	cbData.diffuseColour = {1.f, 1.f, 1.f};
 	cbData.diffuseIntensity = 1.f;
-	cbData.ambient = {.0f, .0f, .0f};
+	cbData.ambient = {.05f, .05f, .05f};
 	cbData.attenuationConstant = 1.f;
-	cbData.attenuationLinear = .027f;
-	cbData.attenuationQuadratic = .0028f;
+	cbData.attenuationLinear = .045f;
+	cbData.attenuationQuadratic = .0075f;
 }
 
 void PointLight::Draw(Graphics &gfx) const noexcept
