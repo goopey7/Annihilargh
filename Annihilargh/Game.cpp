@@ -82,6 +82,7 @@ void Game::Tick()
 	light.DisplayControlGUI();
 	nanosuit.ShowWindow();
 	ShowPerformanceWindow();
+	ShowDocumentationWindow();
 	window.GetGraphics().EndFrame();
 }
 
@@ -91,6 +92,15 @@ void Game::ShowPerformanceWindow()
 	{
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.f / ImGui::GetIO().Framerate,
                     ImGui::GetIO().Framerate);
+	}
+	ImGui::End();
+}
+
+void Game::ShowDocumentationWindow()
+{
+	if(ImGui::Begin("Documentation"))
+	{
+		ImGui::TextWrapped("Press ESC to toggle moving camera with mouse");
 	}
 	ImGui::End();
 }

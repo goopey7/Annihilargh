@@ -14,6 +14,7 @@ public:
 private:
 	void Tick();
 	void ShowPerformanceWindow();
+	void ShowDocumentationWindow();
 	int x=0,y=0;
 	ImguiManager imgui;
 	Window window;

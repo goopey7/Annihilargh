@@ -247,10 +247,11 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics &gfx, const aiMesh &mesh, const 
 			bindables.push_back(std::make_unique<Texture>(gfx,Image::FromFile(basePath+texFileName.C_Str()),1u));
 			bHasSpecularMap=true;
 		}
-		else material.Get(AI_MATKEY_SHININESS,shininess);
+		else material.Get(AI_MATKEY_SHININESS,shininess); // get the property from the material file
 		bindables.push_back(std::make_unique<Sampler>(gfx));
 	}
 
+	// Load 3D geometry
 	std::vector<unsigned short> indices;
 	indices.reserve(mesh.mNumFaces * 3);
 	for(unsigned int i = 0; i < mesh.mNumFaces; i++)
@@ -284,7 +285,8 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics &gfx, const aiMesh &mesh, const 
 		float padding[2];
 	} matCB;
 	matCB.specularPower = shininess;
-
+	// this value was hopefully retrieved from some kind of material file if there is one
+	
 	bindables.push_back(std::make_unique<PixelConstantBuffer<MaterialCB>>(gfx, matCB, 1u));
 
 	return std::make_unique<Mesh>(gfx, std::move(bindables));

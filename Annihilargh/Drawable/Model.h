@@ -1,7 +1,5 @@
 ﻿#pragma once
-#include <optional>
 #include <assimp/scene.h>
-
 
 #include "DrawableBase.h"
 
@@ -45,9 +43,9 @@ class Model
 public:
 	Model(Graphics &gfx, const std::string fileName);
 	~Model() noexcept;
-																				// an array of const ptrs to const ptrs
-	static std::unique_ptr<Mesh> ParseMesh(Graphics &gfx, const aiMesh &mesh , const aiMaterial* const* pMaterials);
-	// we put this here instead of RenderTree() because depending on what tabs are open/close
+																			// an array of const ptrs to const ptrs
+	static std::unique_ptr<Mesh> ParseMesh(Graphics &gfx, const aiMesh &mesh, const aiMaterial* const* pMaterials);
+	// we put nextId here instead of RenderTree() because depending on what tabs are open/close
 	// render tree will change. ParseNode will always be parsed the same way everytime a tree is loaded
 	std::unique_ptr<Node> ParseNode(int &nextID, const aiNode &node) noexcept;
 	void Draw(Graphics &gfx) const;
